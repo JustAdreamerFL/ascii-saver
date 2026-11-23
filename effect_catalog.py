@@ -1,0 +1,5 @@
+"""Canonical effect names used by the library and preferences.
+
+Single source prevents mismatched animation identifiers.
+"""
+EFFECTS = ['beams', 'binarypath', 'blackhole', 'bouncyballs', 'bubbles', 'burn', 'colorshift', 'crumble', 'decrypt', 'errorcorrect', 'expand', 'fireworks', 'highlight', 'laseretch', 'matrix', 'middleout', 'orbittingvolley', 'overflow', 'pour', 'print', 'rain', 'randomsequence', 'rings', 'scattered', 'slice', 'slide', 'smoke', 'spotlights', 'spray', 'swarm', 'sweep', 'synthgrid', 'thunderstorm', 'unstable', 'vhstape', 'waves', 'wipe']

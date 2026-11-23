@@ -1,0 +1,7 @@
+{
+  "uuid": "ascii-saver-cursor@ascii-saver.local",
+  "name": "ASCII Saver Pointer Hiding",
+  "description": "Optional fullscreen-only cursor hiding for ASCII Saver on GNOME/Mutter. Automatically restores the pointer when the renderer exits.",
+  "shell-version": ["49", "50", "51"],
+  "version": 1
+}

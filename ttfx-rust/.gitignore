@@ -1,0 +1,6 @@
+/target
+/tools/parity/inputs/
+__pycache__/
+.claude/
+/reference/tte/
+.direnv

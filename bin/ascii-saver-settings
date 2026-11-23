@@ -1,0 +1,8 @@
+#!/bin/sh
+data_home=${XDG_DATA_HOME:-"$HOME/.local/share"}
+# Preserve historical argument spelling and Playlist Editor links.
+case "${1:-}" in
+  --preferences) shift ;;
+  --playlist-editor) shift; exec "$data_home/ascii-saver/venv/bin/python" "$data_home/ascii-saver/cli.py" playlist "$@" ;;
+esac
+exec "$data_home/ascii-saver/venv/bin/python" "$data_home/ascii-saver/cli.py" preferences "$@"

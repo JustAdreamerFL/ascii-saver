@@ -1,0 +1,12 @@
+[Unit]
+Description=ASCII Saver GNOME idle watcher
+After=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/ascii-saver-watcher
+Restart=on-failure
+RestartSec=4
+
+[Install]
+WantedBy=default.target
