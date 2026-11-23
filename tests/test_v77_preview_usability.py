@@ -4,6 +4,7 @@ GTK introspection isn't available in headless CI. Inspect the *actual spawn*
 arguments and GTK lifecycle methods, not release-note prose.
 """
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import ast
 from pathlib import Path
@@ -13,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def source(name):
-    return (ROOT / name).read_text(encoding='utf-8')
+    return read_source(name)
 
 
 def call_args(file_name):

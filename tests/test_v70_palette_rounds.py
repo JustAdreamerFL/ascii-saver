@@ -1,4 +1,5 @@
 """Headless contract and behavior tests for deterministic palette progression."""
+from _bootstrap import SRC, read_source  # noqa: F401
 import tempfile
 from pathlib import Path
 import unittest
@@ -103,17 +104,17 @@ class PaletteRoundTests(unittest.TestCase):
 class PaletteWiringTests(unittest.TestCase):
     def test_installer_stages_palette_engine(self):
         installer = (ROOT / 'install.sh').read_text()
-        self.assertIn('"$source_dir/palette_engine.py" "$staged_app/palette_engine.py"', installer)
+        self.assertIn('"$py_src/palette_engine.py" "$staged_app/palette_engine.py"', installer)
 
     def test_fullscreen_palette_is_clocked_by_shared_round(self):
-        text = (ROOT / 'app.py').read_text()
+        text = (SRC / 'app.py').read_text()
         start = text.index('    def _tte_argv(')
         end = text.index('    def _start(', start)
         self.assertIn('palette_round = self.palette_tick if self.windowed else self.app.shared_round', text[start:end])
         self.assertNotIn('self.palette_tick += 1', text[start:end])
 
     def test_preview_only_advances_palette_after_success(self):
-        text = (ROOT / 'app.py').read_text()
+        text = (SRC / 'app.py').read_text()
         start = text.index('    def _on_child_exited(')
         end = text.index('\n\nclass SaverApplication', start)
         callback = text[start:end]
@@ -136,7 +137,7 @@ class RendererPaletteIntegrationTests(unittest.TestCase):
         import ast
         import os
         from types import SimpleNamespace
-        source = ast.parse((ROOT / 'app.py').read_text())
+        source = ast.parse((SRC / 'app.py').read_text())
         saver = next(node for node in source.body
                      if isinstance(node, ast.ClassDef) and node.name == 'SaverWindow')
         method = next(node for node in saver.body

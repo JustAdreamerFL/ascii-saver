@@ -1,5 +1,6 @@
 """V88 Artwork Studio advanced controls: pure conversion and UI contracts."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import ast
 from dataclasses import replace
@@ -95,7 +96,7 @@ class AdvancedConversionTests(unittest.TestCase):
 
 class AdvancedUIContracts(unittest.TestCase):
     def test_progressive_options_are_collapsed_and_part_of_live_preview(self):
-        view = (ROOT / 'photo_ascii_view.py').read_text()
+        view = (SRC / 'photo_ascii_view.py').read_text()
         ast.parse(view)
         self.assertIn("Adw.ExpanderRow(title='Advanced image tools'", view)
         self.assertIn('self.advanced.set_expanded(False)', view)
@@ -118,9 +119,9 @@ class AdvancedUIContracts(unittest.TestCase):
     def test_docs_and_version_are_recorded(self):
         version = (ROOT / 'VERSION').read_text().strip()
         self.assertGreaterEqual(int(version.split('.')[1]), 88)
-        self.assertIn(f'BUILD_VERSION = "{version}"', (ROOT / 'build_info.py').read_text())
+        self.assertIn(f'BUILD_VERSION = "{version}"', (SRC / 'build_info.py').read_text())
         for f in ('CHANGELOG.md', 'RELEASE-V88.md', 'ROADMAP.md', 'TASKS.md'):
-            text = (ROOT / f).read_text()
+            text = read_source(f)
             self.assertTrue('V88' in text or '0.88.0' in text, f)
 
 

@@ -1,3 +1,4 @@
+from _bootstrap import SRC, read_source  # noqa: F401
 import unittest
 from artwork_fit import artwork_cells, fit_ratio, suggested_point_size
 

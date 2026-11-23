@@ -1,3 +1,4 @@
+from _bootstrap import SRC, read_source  # noqa: F401
 import tempfile
 import unittest
 import json

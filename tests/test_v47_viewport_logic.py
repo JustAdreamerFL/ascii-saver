@@ -1,4 +1,5 @@
 """Exercise viewport selection without requiring a GTK display or gi install."""
+from _bootstrap import SRC, read_source  # noqa: F401
 import importlib.util
 import sys
 import types
@@ -17,7 +18,7 @@ def load_with_stubbed_gi():
     repository.GLib = types.SimpleNamespace(SOURCE_REMOVE=False)
     repository.Gtk = types.SimpleNamespace(Picture=object, ScrolledWindow=object)
     gi.repository = repository
-    spec = importlib.util.spec_from_file_location('_preview_test_viewport', ROOT / 'animated_preview.py')
+    spec = importlib.util.spec_from_file_location('_preview_test_viewport', SRC / 'animated_preview.py')
     module = importlib.util.module_from_spec(spec)
     with patch.dict(sys.modules, {'gi': gi, 'gi.repository': repository}):
         spec.loader.exec_module(module)

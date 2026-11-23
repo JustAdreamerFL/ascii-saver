@@ -1,5 +1,6 @@
 """V105: executable dispatcher and the GTK Preferences NameError regression."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import ast
 import subprocess
@@ -52,11 +53,11 @@ class EntryPointTests(unittest.TestCase):
 
     def test_help_and_version_work_without_gi(self):
         for flag in ("--help", "--version"):
-            result = subprocess.run([sys.executable, str(ROOT / "cli.py"), flag],
+            result = subprocess.run([sys.executable, str(SRC / "cli.py"), flag],
                                     text=True, capture_output=True, check=False)
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertIn("ASCII Saver", result.stdout)
-        result = subprocess.run([sys.executable, str(ROOT / "cli.py"), "start", "--help"],
+        result = subprocess.run([sys.executable, str(SRC / "cli.py"), "start", "--help"],
                                 text=True, capture_output=True, check=False)
         self.assertEqual(result.returncode, 0)
 
@@ -71,15 +72,15 @@ class EntryPointTests(unittest.TestCase):
     def test_installed_launchers_share_one_dispatcher(self):
         for binary in ("ascii-saver", "ascii-saver-settings", "ascii-saverctl"):
             self.assertIn("cli.py", (ROOT / "bin" / binary).read_text())
-        self.assertIn('"play"', (ROOT / "ctl.py").read_text())
-        self.assertIn('"$source_dir/cli.py"', (ROOT / "install.sh").read_text())
-        self.assertIn('Exec=@APP@', (ROOT / 'io.github.robbybobby77.AsciiSaver.desktop.in').read_text())
+        self.assertIn('"play"', (SRC / "ctl.py").read_text())
+        self.assertIn('"$py_src/cli.py"', (ROOT / "install.sh").read_text())
+        self.assertIn('Exec=@APP@', (ROOT / 'data/io.github.robbybobby77.AsciiSaver.desktop.in').read_text())
         self.assertIn('@APP@', (ROOT / 'install.sh').read_text())
 
 
 class GuiRegressionContracts(unittest.TestCase):
     def test_preferences_banner_controls_are_fields_across_methods(self):
-        source = (ROOT / 'preferences_shell.py').read_text()
+        source = (SRC / 'preferences_shell.py').read_text()
         tree = ast.parse(source)
         cls = next(node for node in tree.body if isinstance(node, ast.ClassDef) and node.name == 'ShellBuilderMixin')
         methods = {n.name: ast.get_source_segment(source,n) for n in cls.body if isinstance(n, ast.FunctionDef)}
@@ -93,7 +94,7 @@ class GuiRegressionContracts(unittest.TestCase):
         self.assertNotIn('compact_actions.add_setter(banner_discard', navigation)
 
     def test_preferences_command_does_not_create_dashboard_first(self):
-        source = (ROOT / 'settings.py').read_text()
+        source = (SRC / 'settings.py').read_text()
         tree = ast.parse(source)
         cls = next(node for node in tree.body if isinstance(node, ast.ClassDef) and node.name == 'SettingsApplication')
         fn = next(node for node in cls.body if isinstance(node, ast.FunctionDef) and node.name == 'do_command_line')
@@ -109,7 +110,7 @@ class GuiRegressionContracts(unittest.TestCase):
         mock.activate.assert_called_once_with()
 
     def test_help_and_components_are_modal_and_escape_closable(self):
-        src = (ROOT / 'app_menu.py').read_text()
+        src = (SRC / 'app_menu.py').read_text()
         self.assertIn("Adw.Window(title=title, transient_for=parent, modal=True)", src)
         self.assertIn('Gdk.KEY_Escape', src)
         self.assertIn("win.close()", src)

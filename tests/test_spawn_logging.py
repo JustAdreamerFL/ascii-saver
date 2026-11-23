@@ -1,3 +1,4 @@
+from _bootstrap import SRC, read_source  # noqa: F401
 import unittest
 from spawn_events import spawn_event
 

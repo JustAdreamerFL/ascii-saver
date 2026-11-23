@@ -1,5 +1,6 @@
 """V68: preview and display playback must not advance each other's history."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import ast
 import random
@@ -16,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class PlaylistIsolationTests(unittest.TestCase):
     def test_application_wires_separate_preview_and_fullscreen_schedulers(self):
-        source = (ROOT / "app.py").read_text(encoding="utf-8")
+        source = (SRC / "app.py").read_text(encoding="utf-8")
         tree = ast.parse(source)
         application = next(node for node in tree.body if isinstance(node, ast.ClassDef)
                            and node.name == "SaverApplication")
@@ -73,7 +74,7 @@ class PlaylistIsolationTests(unittest.TestCase):
         self.assertEqual(select_effect(new, rotation=bag), "print")
 
     def test_fullscreen_window_owns_a_private_shuffle_bag(self):
-        source = (ROOT / "app.py").read_text(encoding="utf-8")
+        source = (SRC / "app.py").read_text(encoding="utf-8")
         self.assertIn('self._effect_bag = EffectShuffleBag()', source)
         self.assertIn('rotation=self._effect_bag', source)
 

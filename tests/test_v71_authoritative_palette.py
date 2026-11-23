@@ -3,6 +3,7 @@
 These run without GTK. The executable's --no-color formatting behavior is
 checked against Rust source, since a Rust toolchain is not installed here.
 """
+from _bootstrap import SRC, read_source  # noqa: F401
 import ast
 import unittest
 from pathlib import Path
@@ -63,7 +64,7 @@ class VtePaletteTests(unittest.TestCase):
         self.assertEqual(terminal.calls[0][1], '#000000')
 
     def test_unsaved_palette_is_used_by_real_preferences_method(self):
-        tree = ast.parse((ROOT / 'preferences_state.py').read_text())
+        tree = ast.parse((SRC / 'preferences_state.py').read_text())
         cls = next(n for n in tree.body if isinstance(n, ast.ClassDef)
                    and n.name == 'PreferenceStateMixin')
         method = next(n for n in cls.body if isinstance(n, ast.FunctionDef)
@@ -90,7 +91,7 @@ class PaletteRendererContractTests(unittest.TestCase):
     def test_all_live_renderers_launch_ttfx_without_effect_rgb(self):
         for name in ('app.py', 'preferences_gallery.py', 'effect_preview_window.py'):
             with self.subTest(name=name):
-                code = (ROOT / name).read_text()
+                code = read_source(name)
                 tree = ast.parse(code)
                 argv_lists = [node for node in ast.walk(tree)
                               if isinstance(node, ast.List)
@@ -103,11 +104,11 @@ class PaletteRendererContractTests(unittest.TestCase):
                 self.assertIn('override_effect_colors' if name == 'app.py' else 'effect_color_arguments', code)
 
     def test_library_previews_use_current_swatches(self):
-        code = (ROOT / 'preferences_gallery.py').read_text()
+        code = (SRC / 'preferences_gallery.py').read_text()
         self.assertGreaterEqual(code.count('self._preview_palette_config()'), 2)
         self.assertIn('set_vte_palette(terminal, self._preview_palette_config(), Gdk)', code)
         self.assertIn('palette_config=self._preview_palette_config()', code)
-        code = (ROOT / 'effect_preview_window.py').read_text()
+        code = (SRC / 'effect_preview_window.py').read_text()
         self.assertIn('set_vte_palette(terminal, config, Gdk)', code)
 
     def test_rust_no_color_path_prevents_explicit_rgb_and_xterm_colors(self):

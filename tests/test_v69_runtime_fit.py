@@ -1,5 +1,6 @@
 """Execute the actual renderer font-fit method without importing GTK/VTE."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import ast
 from contextlib import redirect_stderr
@@ -16,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def fit_method():
-    source = ast.parse((ROOT / 'app.py').read_text(encoding='utf-8'))
+    source = ast.parse((SRC / 'app.py').read_text(encoding='utf-8'))
     klass = next(x for x in source.body if isinstance(x, ast.ClassDef)
                  and x.name == 'SaverWindow')
     method = next(x for x in klass.body if isinstance(x, ast.FunctionDef)

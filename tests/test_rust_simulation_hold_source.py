@@ -3,6 +3,7 @@
 Rust's `for .. in` takes an IntoIterator; repeat_count already returns a Range.
 The real compile check still takes place in verify-build.sh when Cargo is installed.
 """
+from _bootstrap import SRC, read_source  # noqa: F401
 from pathlib import Path
 import re
 import unittest

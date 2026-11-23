@@ -3,6 +3,7 @@
 These checks do not assert that KWin has grouped the real Wayland windows.
 """
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import ast
 from pathlib import Path
@@ -15,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def source_method(filename, owner, name):
-    tree = ast.parse((ROOT / filename).read_text())
+    tree = ast.parse(read_source(filename))
     cls = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == owner)
     method = next(n for n in cls.body if isinstance(n, ast.FunctionDef) and n.name == name)
     module = ast.fix_missing_locations(ast.Module(body=[method], type_ignores=[]))
@@ -42,25 +43,25 @@ class DummyEditor:
 
 class WindowIdentityTests(unittest.TestCase):
     def test_library_is_transient_to_preferences_without_separate_taskbar_slot(self):
-        source = (ROOT / 'preferences_gallery_view.py').read_text()
+        source = (SRC / 'preferences_gallery_view.py').read_text()
         self.assertIn('self.gallery_window = Adw.Window(', source)
         self.assertIn('transient_for=self, title="ASCII Saver · Effect library"', source)
         self.assertIn('transient_for=self', source[source.index('self.gallery_window ='):source.index('self.gallery_window.set_default_size')])
-        self.assertIn('self.gallery_window.hide()', (ROOT / 'preferences_gallery.py').read_text())
+        self.assertIn('self.gallery_window.hide()', (SRC / 'preferences_gallery.py').read_text())
 
     def test_playlist_editor_uses_main_application_id_and_no_process_spawn(self):
-        action = (ROOT / 'preferences_actions.py').read_text()
+        action = (SRC / 'preferences_actions.py').read_text()
         self.assertIn('self.get_application().open_playlist_editor()', action)
         fn = source_method('preferences_actions.py', 'PreferenceActionsMixin', '_open_playlist_editor')
         app = types.SimpleNamespace(open_playlist_editor=Mock())
         fn(types.SimpleNamespace(get_application=lambda: app), None)
         app.open_playlist_editor.assert_called_once_with()
-        source = (ROOT / 'playlist_editor.py').read_text()
+        source = (SRC / 'playlist_editor.py').read_text()
         self.assertIn("from settings import SettingsApplication", source)
         self.assertIn("'--playlist-editor'", source)
         self.assertNotIn('AsciiSaver.Playlists', source)
         self.assertIn('class Editor(Adw.ApplicationWindow)', source)
-        settings = (ROOT / 'settings.py').read_text()
+        settings = (SRC / 'settings.py').read_text()
         self.assertIn('application_id=APP_ID', settings)
         self.assertIn('io.github.robbybobby77.AsciiSaver', settings)
         self.assertIn('io.github.robbybobby77.AsciiSaver.desktop', (ROOT / 'install.sh').read_text())
@@ -117,7 +118,7 @@ class WindowIdentityTests(unittest.TestCase):
 
     def test_version_is_dated_and_explicitly_unverified(self):
         self.assertGreaterEqual(tuple(map(int, (ROOT / 'VERSION').read_text().strip().split('.'))), (0, 84, 0))
-        notes = (ROOT / 'RELEASE-V84.md').read_text()
+        notes = (ROOT / 'docs/releases/RELEASE-V84.md').read_text()
         self.assertIn('KDE Wayland', notes)
         self.assertIn('not verified', notes)
         self.assertIn('## 0.84.0 (experimental) - 2026-11-07', (ROOT / 'CHANGELOG.md').read_text())

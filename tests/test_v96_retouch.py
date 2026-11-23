@@ -1,5 +1,6 @@
 """V96 manual artwork retouch: pure transforms and direct buffer edit contracts."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import ast
 from pathlib import Path
@@ -77,7 +78,7 @@ class RetouchEngineTests(unittest.TestCase):
 
 class RetouchUIContracts(unittest.TestCase):
     def test_gtk_menu_has_explicit_tools_and_native_undo(self):
-        source = (ROOT / 'artwork_editor.py').read_text(encoding='utf8')
+        source = (SRC / 'artwork_editor.py').read_text(encoding='utf8')
         ast.parse(source)
         for required in (
             'Gtk.MenuButton(label="Retouch")',
@@ -106,9 +107,9 @@ class RetouchUIContracts(unittest.TestCase):
     def test_installer_and_documentation_reflect_v96(self):
         self.assertTrue(all(module in (ROOT / 'install.sh').read_text() for module in ('artwork_editor_io', 'artwork_retouch', 'artwork_templates')))
         self.assertGreaterEqual(tuple(map(int, (ROOT / 'VERSION').read_text().strip().split('.'))), (0, 96, 0))
-        self.assertIn((ROOT / 'VERSION').read_text().strip(), (ROOT / 'build_info.py').read_text())
+        self.assertIn((ROOT / 'VERSION').read_text().strip(), (SRC / 'build_info.py').read_text())
         for name in ('ROADMAP.md', 'TASKS.md', 'CHANGELOG.md', 'MASTER-BACKLOG.md', 'RELEASE-V96.md'):
-            self.assertIn('V96', (ROOT / name).read_text(), name)
+            self.assertIn('V96', read_source(name), name)
 
 
 if __name__ == '__main__':
@@ -176,7 +177,7 @@ class DirectBufferBehaviorTests(unittest.TestCase):
 
     @staticmethod
     def method(name):
-        source = (ROOT / 'artwork_editor.py').read_text()
+        source = (SRC / 'artwork_editor.py').read_text()
         cls = next(node for node in ast.parse(source).body
                    if isinstance(node, ast.ClassDef) and node.name == 'ArtworkEditor')
         fn = next(node for node in cls.body if isinstance(node, ast.FunctionDef)

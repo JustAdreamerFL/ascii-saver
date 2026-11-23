@@ -2,11 +2,12 @@
 
 GTK/Wayland acceptance still requires a real desktop with libadwaita.
 """
+from _bootstrap import SRC, read_source  # noqa: F401
 import ast
 from pathlib import Path
 import unittest
 ROOT = Path(__file__).resolve().parents[1]
-def source(name): return (ROOT/name).read_text()
+def source(name): return read_source(name)
 
 class PreferencesHIGTests(unittest.TestCase):
     def test_only_one_category_selector_in_header(self):

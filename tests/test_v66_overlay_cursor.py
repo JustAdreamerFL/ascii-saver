@@ -4,12 +4,13 @@ The target runtime must still be verified under live GNOME/Mutter. These tests
 are source-level because CI has no GTK4/VTE display; the input/cursor strategy
 was independently verified by the user's GTK4 overlay test on GNOME Wayland.
 """
+from _bootstrap import SRC, read_source  # noqa: F401
 import ast
 import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = (ROOT / 'app.py').read_text(encoding='utf-8')
+SOURCE = (SRC / 'app.py').read_text(encoding='utf-8')
 
 
 class OverlayCursorTests(unittest.TestCase):

@@ -1,5 +1,6 @@
 """Regression tests for reported Diagnostics / Edit Artwork workflow problems."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 import ast
 import tempfile
 import unittest
@@ -14,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def source(name: str) -> str:
-    return (ROOT / name).read_text(encoding='utf-8')
+    return read_source(name)
 
 
 class DiagnosticsModelTests(unittest.TestCase):

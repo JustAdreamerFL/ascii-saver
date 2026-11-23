@@ -1,4 +1,5 @@
 """Headless validation of preferences, with no GTK or window system needed."""
+from _bootstrap import SRC, read_source  # noqa: F401
 import unittest
 from preferences_model import validate_form
 

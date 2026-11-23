@@ -1,4 +1,5 @@
 """Headless regression tests for V69 monitor font fitting and config isolation."""
+from _bootstrap import SRC, read_source  # noqa: F401
 from pathlib import Path
 import unittest
 
@@ -83,7 +84,7 @@ class ConfigDefaultsIsolation(unittest.TestCase):
 
 class RuntimeFitWiring(unittest.TestCase):
     def test_renderer_restores_baseline_and_supports_shared_fit(self):
-        src = (ROOT / 'app.py').read_text()
+        src = (SRC / 'app.py').read_text()
         start = src.index('    def _auto_fit_monitor_artwork(')
         end = src.index('    def _tte_argv(', start)
         fit = src[start:end]
@@ -93,7 +94,7 @@ class RuntimeFitWiring(unittest.TestCase):
         self.assertIn('choose_artwork_font_sizes(', fit)
 
     def test_shared_fit_control_is_not_hidden_in_independent_section(self):
-        ui = (ROOT / 'preferences_pages.py').read_text()
+        ui = (SRC / 'preferences_pages.py').read_text()
         self.assertLess(ui.index('self.section_groups["displays"].add(self.auto_fit_artwork)'),
                         ui.index('self.monitor_revealer = Gtk.Revealer()'))
 

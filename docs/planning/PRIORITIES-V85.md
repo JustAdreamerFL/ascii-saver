@@ -1,6 +1,6 @@
 # Priorities after V85
 
-Date: 2026-11-08. Keep [TASKS.md](TASKS.md) as the short checked list and [MASTER-BACKLOG.md](MASTER-BACKLOG.md) as the complete issue register.
+Date: 2026-11-08. Keep [TASKS.md](../../TASKS.md) as the short checked list and [MASTER-BACKLOG.md](../../MASTER-BACKLOG.md) as the complete issue register.
 
 ## UX source change just completed
 

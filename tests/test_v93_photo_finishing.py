@@ -1,5 +1,6 @@
 """V93 photo finishing: deterministic conversion, legacy recipe compatibility and UI."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import ast
 from dataclasses import replace
@@ -129,7 +130,7 @@ class PhotoFinishingTests(unittest.TestCase):
 
 class FinishingUIContracts(unittest.TestCase):
     def test_advanced_controls_save_reopen_presets_and_live_preview(self):
-        view = (ROOT / 'photo_ascii_view.py').read_text()
+        view = (SRC / 'photo_ascii_view.py').read_text()
         ast.parse(view)
         for part in ("self.advanced.set_expanded(False)",
                      "self.posterize = Adw.ComboRow(",
@@ -149,11 +150,11 @@ class FinishingUIContracts(unittest.TestCase):
     def test_version_documentation_and_installer(self):
         version = (ROOT / 'VERSION').read_text().strip()
         self.assertGreaterEqual(tuple(map(int, version.split('.'))), (0, 93, 0))
-        self.assertIn(f'BUILD_VERSION = "{version}"', (ROOT / 'build_info.py').read_text())
+        self.assertIn(f'BUILD_VERSION = "{version}"', (SRC / 'build_info.py').read_text())
         self.assertIn('photo_ascii photo_ascii_view photo_project photo_presets',
                       (ROOT / 'install.sh').read_text())
         for file in ('CHANGELOG.md', 'TASKS.md', 'ROADMAP.md', 'RELEASE-V93.md'):
-            self.assertIn('V93', (ROOT / file).read_text(), file)
+            self.assertIn('V93', read_source(file), file)
 
 
 if __name__ == '__main__':

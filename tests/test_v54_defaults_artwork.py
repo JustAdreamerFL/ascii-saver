@@ -1,4 +1,5 @@
 """Headless regression checks for Round 2 UI and artwork-library requests."""
+from _bootstrap import SRC, read_source  # noqa: F401
 import ast
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -70,9 +71,9 @@ class RoundTwoTests(unittest.TestCase):
         self.assertEqual(display_name('DP-2',{'DP-2':'Portrait monitor'}),'Portrait monitor (DP-2)')
 
     def test_ui_presents_defaults_separate_json_editor_and_small_window_navigation(self):
-        controls = (ROOT/'preferences_controls.py').read_text()
-        pages = (ROOT/'preferences_pages.py').read_text()
-        shell = (ROOT/'preferences_shell.py').read_text()
+        controls = (SRC / 'preferences_controls.py').read_text()
+        pages = (SRC / 'preferences_pages.py').read_text()
+        shell = (SRC / 'preferences_shell.py').read_text()
         self.assertIn('slider.set_value_pos(Gtk.PositionType.RIGHT)', controls)
         self.assertIn('install_numeric_reset(nested', pages)
         self.assertIn('install_numeric_reset(row', pages)
@@ -86,6 +87,6 @@ class RoundTwoTests(unittest.TestCase):
         installer = (ROOT/'install.sh').read_text()
         for name in ('preferences_defaults', 'artwork_library', 'measurements_ui'):
             self.assertIn(name, installer)
-        self.assertIn('self.set_title("ASCII Saver · Preview")', (ROOT/'app.py').read_text())
+        self.assertIn('self.set_title("ASCII Saver · Preview")', (SRC / 'app.py').read_text())
 
 if __name__ == '__main__': unittest.main()

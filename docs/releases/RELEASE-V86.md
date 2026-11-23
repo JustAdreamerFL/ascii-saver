@@ -20,12 +20,12 @@
 
 ## Documentation consolidation
 
-- Canonical [ROADMAP.md](ROADMAP.md) documents the newly approved Artwork Studio
+- Canonical [ROADMAP.md](../../ROADMAP.md) documents the newly approved Artwork Studio
   milestone, progressive basic-to-advanced UX, adaptive real-time comparison
   requirements and later optional online ASCII catalog search/filter/import.
-- [TASKS.md](TASKS.md) tracks approved feature work with honest checkboxes.
-  [MASTER-BACKLOG.md](MASTER-BACKLOG.md) keeps the original issue identifiers.
-- Original [UX-ROADMAP.md](docs/archive/UX-ROADMAP-V54.md) was archived verbatim.
+- [TASKS.md](../../TASKS.md) tracks approved feature work with honest checkboxes.
+  [MASTER-BACKLOG.md](../../MASTER-BACKLOG.md) keeps the original issue identifiers.
+- Original [UX-ROADMAP.md](../archive/UX-ROADMAP-V54.md) was archived verbatim.
   The root `UX-ROADMAP.md` now directs readers to the canonical roadmap.
 - Other historical bug reports, renderer-specific backlogs and dated release
   notes remain in the project, intentionally not flattened into one document.

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-repository=${ASCII_SAVER_REPOSITORY:-${KDE_ASCII_SAVER_REPOSITORY:-RobbyBobby77/kde-ascii-saver}}
+repository=${ASCII_SAVER_REPOSITORY:-${KDE_ASCII_SAVER_REPOSITORY:-JustAdreamerFL/ascii-saver}}
 requested_version=${ASCII_SAVER_VERSION:-latest}
 release_base_url=${ASCII_SAVER_RELEASE_BASE_URL:-"https://github.com/$repository/releases"}
 installer_args=()

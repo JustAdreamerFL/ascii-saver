@@ -3,6 +3,7 @@
 All behavioral tests run headlessly without GTK and validate the real state
 helpers used in UI handlers. Window contracts are static until live GTK tests.
 """
+from _bootstrap import SRC, read_source  # noqa: F401
 import ast
 import json
 import sys
@@ -23,7 +24,7 @@ from palette_editor_model import validate_palette, reset_colors, add_color, remo
 from window_shortcuts import is_close_shortcut
 
 
-def src(name): return (ROOT/name).read_text(encoding='utf-8')
+def src(name): return read_source(name)
 
 
 class PaletteBehavior(unittest.TestCase):

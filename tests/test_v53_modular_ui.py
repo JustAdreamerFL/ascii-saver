@@ -1,4 +1,5 @@
 """Verify architectural boundaries without requiring a working GTK display."""
+from _bootstrap import SRC, read_source  # noqa: F401
 import ast
 import re
 import unittest
@@ -18,7 +19,7 @@ MODULES = {
 
 class ModularUITests(unittest.TestCase):
     def test_settings_is_orchestration_not_monolith(self):
-        source = (ROOT / 'settings.py').read_text()
+        source = (SRC / 'settings.py').read_text()
         self.assertLess(len(source.splitlines()), 260)
         tree = ast.parse(source)
         cls = next(node for node in tree.body if isinstance(node, ast.ClassDef) and node.name == 'SettingsWindow')
@@ -32,7 +33,7 @@ class ModularUITests(unittest.TestCase):
     def test_controllers_implement_their_methods(self):
         for module, names in MODULES.items():
             with self.subTest(module=module):
-                text = (ROOT / f'{module}.py').read_text()
+                text = read_source(f'{module}.py')
                 tree = ast.parse(text)
                 defined = {node.name for node in ast.walk(tree) if isinstance(node, ast.FunctionDef)}
                 self.assertTrue(names.issubset(defined), names - defined)
@@ -43,16 +44,16 @@ class ModularUITests(unittest.TestCase):
             self.assertRegex(src, rf'for module in [^\n]*\b{re.escape(name)}\b')
 
     def test_native_switch_rows_are_real_preferences_not_gtk_suffixes(self):
-        pages = (ROOT / 'preferences_controls.py').read_text() + (ROOT / 'preferences_pages.py').read_text()
+        pages = (SRC / 'preferences_controls.py').read_text() + (SRC / 'preferences_pages.py').read_text()
         self.assertIn('self.enabled = Adw.SwitchRow()', pages)
         self.assertIn('self.per_monitor = Adw.SwitchRow()', pages)
         self.assertIn('self.playlist_mode = Adw.SwitchRow()', pages)
         self.assertIn('self.section_groups[section].add(widget)', pages)
-        state = (ROOT / 'preferences_state.py').read_text()
+        state = (SRC / 'preferences_state.py').read_text()
         self.assertIn('(Gtk.Switch, Adw.SwitchRow)', state)
 
     def test_no_gtk_dependency_in_pure_model(self):
-        source = (ROOT / 'preferences_model.py').read_text()
+        source = (SRC / 'preferences_model.py').read_text()
         tree = ast.parse(source)
         imports = [alias.name.split('.')[0] for node in ast.walk(tree)
                    if isinstance(node, ast.Import) for alias in node.names]

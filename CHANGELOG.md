@@ -13,7 +13,7 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 - Move all six Tools into a Preferences Tools page, remove duplicate tool actions from the main menu/dashboard, and keep an explicit Library preview-mode preference.
 - Capture Esc/Ctrl+W/Ctrl+Q at the window level for Preferences, Playlist Editor, Artwork Editor and transient tools, with editor close-request confirmation preserved; add clear Text/Draw editor mode controls, and permit single-column Unicode box-drawing artwork in Draw mode.
 - Center inline Effect Library VTE vertically within its bounded preview viewport without taking away card scroll space.
-- Add 20 V109 headless tests and retire obsolete source-only layout assertions. Live GNOME/KDE GTK visual validation remains outstanding; see [RELEASE-V109.md](RELEASE-V109.md).
+- Add 20 V109 headless tests and retire obsolete source-only layout assertions. Live GNOME/KDE GTK visual validation remains outstanding; see [RELEASE-V109.md](docs/releases/RELEASE-V109.md).
 
 
 ## 0.108.0 (experimental) - 2026-11-09
@@ -24,7 +24,7 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 - Use an Adwaita window and proper title for persistent Preview with Esc/Ctrl+W/Ctrl+Q. Add close shortcuts to transient tools. Keep Effect Library transient to Preferences, center its inline preview and clean up its renderer on close.
 - Center filter dropdown labels via GTK list-item factories; permit sensible filter width; trim redundant labels and keep clean Preferences footer hidden.
 - Add 25 headless V108 tests; update superseded source-test expectations without discarding actual behavior tests. **Live GTK/GNOME/KDE GUI validation remains necessary**.
-- See [RELEASE-V108.md](RELEASE-V108.md).
+- See [RELEASE-V108.md](docs/releases/RELEASE-V108.md).
 
 ## 0.107.0 (experimental) - 2026-11-09
 - Replace five compressed Preferences navigation tabs with one always-visible category selector in the libadwaita HeaderBar. All five categories, direct navigation and keyboard access remain.
@@ -32,7 +32,7 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 - Return General to editable activation settings only. Move renderer/watcher statuses to the main Dashboard and move diagnostics, performance graphs, measured effect timings and artwork editing into the app's Tools menu.
 - Collapse advanced palette transition controls, remove the permanent “Changes saved” footer and use toasts for actions. Save/Discard remains a bottom action bar only when the configuration is dirty.
 - Remove a duplicate native Close in the System Diagnostics window, retain Esc. Update legacy source contracts to assert the replacement design and add V107 regression tests. Live GTK/GNOME/KDE sizing remains unverified.
-- See [RELEASE-V107.md](RELEASE-V107.md).
+- See [RELEASE-V107.md](docs/releases/RELEASE-V107.md).
 
 ## 0.106.0 (experimental) - 2026-11-09
 - Remove the duplicate Close button from modal Help, Keyboard Shortcuts fallback and System Information dialogs. Keep the native Adwaita titlebar close button and Esc.
@@ -40,7 +40,7 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 - Fix palettes appearing stuck on their first color. Multi-color palettes cycle automatically by default, once per successfully completed animation. Legacy config files containing the old implicit `cycle_palette: false` migrate to cycling. New `palette_mode: static` is written when users explicitly disable cycling in V106 and is honored on reload. Preserve smooth interpolation, ping-pong and per-display palettes.
 - Rebuild cramped controls in Preferences as proper Adw.PreferencesRow custom layouts which move the selector below the label below 620sp, including advanced numeric controls. Remove the Save/Discard overlay covering the first rows and use a stable bottom action tray instead. These are source-tested UI changes, not yet visually validated on real GTK/Wayland.
 - Add 11 new headless regression tests, update superseded overlay/duplicate-close contracts, and retain old release notes.
-- See [RELEASE-V106.md](RELEASE-V106.md).
+- See [RELEASE-V106.md](docs/releases/RELEASE-V106.md).
 
 ## 0.105.0 (experimental) - 2026-11-08
 - Repair the Preferences startup NameError caused by unsaved-change banner
@@ -54,7 +54,7 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
   with an explicit Close button and Escape handling.
 - Add 13 new headless regression tests, update superseded source contracts,
   and preserve the distinction between offline tests and live GTK validation.
-- See [RELEASE-V105.md](RELEASE-V105.md).
+- See [RELEASE-V105.md](docs/releases/RELEASE-V105.md).
 
 ## 0.104.0 (experimental) - 2026-11-08
 - Synchronize fullscreen monitor launches with one GTK main-loop callback
@@ -66,13 +66,13 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
   callbacks after hotplug, shutdown or advance. Windowed Preview is unchanged.
 - Add simulated monitor/round/hotplug regression tests and update legacy fake
   window fixtures. Real GTK/Wayland timing must still be measured on devices.
-- See [RELEASE-V104.md](RELEASE-V104.md).
+- See [RELEASE-V104.md](docs/releases/RELEASE-V104.md).
 
 ## 0.103.0 (experimental) - 2026-11-08
 - Add an optional **Reverse palette at the ends** appearance switch. With three or more colors, palette progression now supports first → middle → last → middle → first, rather than jumping from last to first. Existing cyclic behavior remains the default for saved and legacy configurations.
 - Interpolate between effects in either direction with the existing Effects per color transition setting. Preserve deterministic shared-round synchronization across displays, per-monitor palette overrides and preview's independent progression.
 - Validate and persist the new boolean setting, track it in unsaved-change detection, and add headless regression tests.
-- See [RELEASE-V103.md](RELEASE-V103.md).
+- See [RELEASE-V103.md](docs/releases/RELEASE-V103.md).
 
 ## 0.102.0 (experimental) - 2026-11-08
 - Restore KDE/GNOME idle watcher **renderer ownership parity**. KDE's
@@ -94,7 +94,7 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
   and symlinked PID files, wrong-path/argv tests, plus source-level watcher
   integration contracts. Actual Qt/KIdleTime and GNOME/GIO builds and desktop
   idle behavior remain unverified until suitable dependencies/devices exist.
-- Full details: [RELEASE-V102.md](RELEASE-V102.md).
+- Full details: [RELEASE-V102.md](docs/releases/RELEASE-V102.md).
 
 
 ## 0.101.0 (experimental) - 2026-11-08
@@ -112,7 +112,7 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
   re-enable controls during a command. Split execution into a GTK-free
   `dashboard_playback.py`, bound subprocess time to 10 s and preserve error
   messages for failed launches/stops. Add new lifecycle and UI contracts.
-- Full details: [RELEASE-V101.md](RELEASE-V101.md).
+- Full details: [RELEASE-V101.md](docs/releases/RELEASE-V101.md).
 
 ## 0.100.0 (experimental) - 2026-11-08
 - Add a compact **Work area** popover in Draw on Canvas to expand its visual
@@ -127,7 +127,7 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 - Add GTK-free expanded-area, safety, viewport-culling and UI wiring tests.
   Live GNOME/KDE scrolling and work-area popover verification is still open;
   the Rust renderer has not been rebuilt.
-- Full details: [RELEASE-V100.md](RELEASE-V100.md).
+- Full details: [RELEASE-V100.md](docs/releases/RELEASE-V100.md).
 
 ## 0.99.0 (experimental) - 2026-11-08
 - Let Canvas users move a visible cell cursor using arrow keys, apply their
@@ -142,7 +142,7 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 - Add GTK-free keyboard, bounds, scrolling and simulated intermediate-buffer
   regression tests. Live GNOME/KDE keyboard/fractional-scale testing remains
   open. No Rust renderer rebuild is claimed.
-- Full details: [RELEASE-V99.md](RELEASE-V99.md).
+- Full details: [RELEASE-V99.md](docs/releases/RELEASE-V99.md).
 
 
 ## 0.98.0 (experimental) - 2026-11-08
@@ -150,7 +150,7 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 - Use Pango-measured logical character-cell geometry consistently for painting and drawing. Keep the top-left visible character approximately anchored on zoom, clamp scroll adjustments after GTK resizes the canvas, and reject stale scheduled scroll updates when zoom changes rapidly. ScrolledWindow remains responsible for navigation around large artwork.
 - Add focusable Canvas keyboard Undo/Redo (`Ctrl+Z`, `Ctrl+Shift+Z`, `Ctrl+Y`), restoring focus to Canvas after the history action rather than to the hidden Text view. Cancel any unfinished stroke on zoom or switching back to Text mode.
 - Add GTK-free geometry, scrolling, keyboard-controller and focus behavior tests. Existing renderer and artwork persistence formats are unchanged. Live fractional-scale GNOME/KDE Wayland pointer accuracy, zoom layout and scroll restoration still need physical validation; no rebuilt Rust renderer is claimed.
-- Full details: [RELEASE-V98.md](RELEASE-V98.md).
+- Full details: [RELEASE-V98.md](docs/releases/RELEASE-V98.md).
 
 
 ## 0.97.0 (experimental) - 2026-11-08
@@ -158,7 +158,7 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 - Interpolate rapid cursor motion across skipped cells, preserve original artwork line endings and untouched whitespace, allow filling empty rows, and avoid extending text when erasing blank grid cells. Limit canvas mode to 200 columns, 100 rows and printable 7-bit ASCII; unsupported material remains safely accessible in Text mode.
 - Commit each mouse stroke to the same GtkTextBuffer in a single grouped Undo operation, without writing a file, changing the artwork's source photo or bypassing the existing Save/Discard rules. Keep native Undo/Redo and current tool palette.
 - Add GTK-free interpolation, geometry, Unicode/size protection, no-overwrite and simulated native-buffer tests. Installer and docs updated. Full GTK mouse/input/focus/scroll and GNOME/KDE testing still required; no Rust renderer rebuild claimed.
-- Full details: [RELEASE-V97.md](RELEASE-V97.md).
+- Full details: [RELEASE-V97.md](docs/releases/RELEASE-V97.md).
 
 
 ## 0.96.0 (experimental) - 2026-11-08
@@ -177,14 +177,14 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 - Add GTK-free cell/selection/edit safety tests, native GTK integration source
   checks, installer inclusion of `artwork_retouch.py` and updated milestone
   status. Full GNOME/KDE keyboard, focus and responsive UI testing pending.
-- Full details: [RELEASE-V96.md](RELEASE-V96.md).
+- Full details: [RELEASE-V96.md](docs/releases/RELEASE-V96.md).
 
 ## 0.95.0 (experimental) - 2026-11-08
 - **Online discovery performance and creative browsing:** Browse Online now renders at most 48 remote ASCII entries on a filter/sort change, with an explicit **Show More Artwork** button that appends the next batch without resetting selection and scroll position. Search no longer allocates every art card on each keystroke.
 - Add **Sort**: Repository order, Title A–Z, Smallest first, Largest first, and seeded Shuffle. **Surprise Me** makes a fresh random ordering from the already loaded matching collection; the same shuffle remains stable when paging and never downloads extra data.
 - Harden online refresh UX: prevent parallel refreshes, disable import during loading, keep existing in-memory artworks visible if refresh fails, preserve a selected tag on successful refresh when it still exists, and report shown/matched/total results accurately. No automatic importing, rewriting, or background polling.
 - Documented ascii-bin feed confirmed reachable through public web inspection on 2026-11-08, but direct online fetch and GTK/KDE/GNOME interactions could not be executed in the working container. Added deterministic headless sorting/shuffle/page tests and source-level GTK contracts.
-- Full details: [RELEASE-V95.md](RELEASE-V95.md).
+- Full details: [RELEASE-V95.md](docs/releases/RELEASE-V95.md).
 
 ## 0.94.0 (experimental) - 2026-11-08
 - Add a **Custom** character-density ramp to Photo to ASCII: enter 2–63 unique printable 7-bit ASCII symbols from darkest to lightest. A final whitespace cell is implicit, so pure-white and center-fit padding render as blank cells. Choosing Custom reveals the existing collapsed Advanced section automatically.
@@ -192,14 +192,14 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 - Restore the exact custom ramp in saved photo projects and conversion presets, and load earlier V89–V93 recipes lacking it with the same neutral default. Existing built-in ramps and results are unchanged.
 - On invalid input, show inline error status, disable Use/Save, and clear the previous preview instead of leaving a stale artwork visible or spamming toast notifications. Switching back to a built-in ramp restores normal rendering even if the unfinished custom text remains on screen.
 - Add V94 headless tests for pixel density mapping, validation, preset/project compatibility, safe preview failure and GTK UI wiring. Real live GTK/VTE/GNOME/KDE testing remains outstanding.
-- Full details: [RELEASE-V94.md](RELEASE-V94.md).
+- Full details: [RELEASE-V94.md](docs/releases/RELEASE-V94.md).
 
 ## 0.93.0 (experimental) - 2026-11-08
 - Extend the Photo to ASCII **Advanced image tools** with optional posterization (2–8 luminance bands or Off) and a choice of white, gray or black backdrop when compositing translucent RGBA photos. Keep basic mode uncluttered and the existing live side-by-side/stacked comparison responsive to changes.
 - Make transparency controls inactive for photos without an alpha channel. Defaults are unchanged (no posterization, white background), preserving V92 output unless the user opts in. Center-fit padding remains blank regardless of the matte.
 - Retain and restore both options in saved photo projects and user conversion presets; V89–V92 projects and V91–V92 personal presets that lack the new fields still load with original defaults. Validate invalid or unknown data rather than silently discarding it. Adjust the built-in Graphic Ink and 8-Bit Arcade looks to use distinct, intentional tone-limited effects.
 - Add headless conversion, alpha, legacy-schema migration and GUI wiring regressions; full GTK/Wayland visuals and remote network validation remain unverified.
-- Full details: [RELEASE-V93.md](RELEASE-V93.md).
+- Full details: [RELEASE-V93.md](docs/releases/RELEASE-V93.md).
 
 
 ## 0.92.0 (experimental) - 2026-11-08
@@ -207,14 +207,14 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 - Add opt-in **Browse Online** with an initial source, the publicly available [ascii-bin](https://github.com/amwhoi/ascii-bin) collection. Its documented plain-text feed supports text previews, searchable descriptions/tags, shape/tag filters and explicit Import a Copy. Responsive list/preview layout; network download runs outside GTK's main thread.
 - Enforce strict remote payload and artwork limits, control-character sanitation, safe private cached fallback for offline use, exclusive local file creation, and rollback on metadata failure. Imports record source and an explicit warning: the repository claims CC0, but does not verify rights of all original contributors. No automatic commercial-use claims or online publishing.
 - Add headless provider/metadata/migration/rollback/caching tests and GTK UI source contracts; package new modules. **Live HTTPS, GTK and GNOME/KDE Wayland testing not performed** in this environment.
-- Full details: [RELEASE-V92.md](RELEASE-V92.md).
+- Full details: [RELEASE-V92.md](docs/releases/RELEASE-V92.md).
 
 ## 0.91.0 (experimental) - 2026-11-08
 - Add **Creative Looks** to Photo to ASCII: six clearly differentiated, offline conversion recipes (Classic Terminal, Film Noir, Soft Horizon, Graphic Ink, 8-Bit Arcade and Architectural Detail). Selecting and applying one updates the same live preview and editing controls, without saving over an existing asset or changing the original photo.
 - Add **My conversion presets** as a collapsed advanced area. Users can explicitly save current basic/advanced conversion settings under a meaningful name, reapply personal presets or remove them with confirmation; built-in presets cannot be deleted. Reject duplicate visible names, invalid files and unsafe paths.
 - Store personal presets in a versioned, bounded, validated `photo-presets/*.json` directory. Exclusive-create + rollback protects from partial writes and overwrites. Malformed optional presets are skipped without breaking the six built-in styles. Saved photo-project recipe format remains compatible with V89/V90.
 - Add headless persistence/security/round-trip tests, GTK UI wiring tests and installer payload. **Actual GTK/Wayland UI layout, keyboard operation and KWin grouping remain unverified.**
-- Full details: [RELEASE-V91.md](RELEASE-V91.md).
+- Full details: [RELEASE-V91.md](docs/releases/RELEASE-V91.md).
 
 - Artwork Studio remains in progress: richer image tools, additional library metadata, and vetted online artwork browsing are planned. GTK/KDE/GNOME live verification is outstanding.
 
@@ -224,62 +224,62 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 - Add explicit Edit Tags: up to twelve validated user labels stored atomically in private `artwork-meta/*.json` sidecars, never by rewriting the `.txt` artwork. Broken metadata does not hide valid art. Reject symlinked libraries, oversized/invalid text, unexpected metadata and unsafe paths.
 - Allow **Save a Copy** of any of the eight original creative templates to a new collision-safe user artwork from the gallery. No implicit overwrite or online dependency.
 - Add GTK-free indexing/filtering/metadata/security tests and UI source contracts. All GTK rendering, sizing and keyboard accessibility remain to be tested on actual GNOME/KDE systems.
-- Full details: [RELEASE-V90.md](RELEASE-V90.md).
+- Full details: [RELEASE-V90.md](docs/releases/RELEASE-V90.md).
 
 ## 0.89.0 (experimental) - 2026-11-08
 - Save as New Artwork in Photo to ASCII now stores a self-contained, versioned conversion project alongside the renderer-compatible `.txt`: an exact copy of the original photo, SHA-256 checksums, and the full set of basic/advanced conversion settings. Plain text assets and existing saved artwork remain compatible.
 - Artwork Editor offers **Reopen Photo** for artwork with a saved project. The photo and all conversion controls are restored for live preview; exporting produces a new, collision-safe artwork instead of overwriting either the old `.txt` or original source image. When the `.txt` was manually changed, the editor explains that those text edits are separate from the photo recipe.
 - Reject tampered project metadata, source hash mismatches, path traversal, symlinked storage folders and oversized files. Failed writes roll back the newly created project and artwork; stored project metadata never contains arbitrary external source paths or executable instructions.
 - Update installer, UI, documentation and headless persistence/rollback/reopen regression tests. **GTK/Wayland UI operation, source import and real desktop integration are not verified.**
-- Full details: [RELEASE-V89.md](RELEASE-V89.md).
+- Full details: [RELEASE-V89.md](docs/releases/RELEASE-V89.md).
 
 ## 0.88.0 (experimental) - 2026-11-08
 - Add progressive Advanced image tools in the Photo to ASCII editor: gamma correction (0.5–2.5), local edge definition (0–100) and optional Floyd-Steinberg dithering with a one-action reset, collapsed by default.
 - Separate tone sampling, optional edge contrast and glyph quantization; respect letterbox padding, bounds and selected character ramp. Neutral defaults reproduce the V87 conversion behavior.
 - The existing live side-by-side/stacked preview is updated by the same debounced controls, while explicit Save as New and Use in Editor continue to protect the original file and unsaved text.
 - Add headless behavioral tests for gamma, dithering, edges, padding and GUI contracts; update TASKS, ROADMAP, backlog and release notes. Live GTK/Wayland validation and full photo recipe persistence are still outstanding.
-- Full details: [RELEASE-V88.md](RELEASE-V88.md).
+- Full details: [RELEASE-V88.md](docs/releases/RELEASE-V88.md).
 
 ## 0.87.0 (experimental) - 2026-11-08
 - Add a built-in Photo to ASCII window from Edit Artwork, with local PNG/JPEG/WebP/BMP import, bounded RGB/RGBA conversion, alpha-on-white compositing, terminal-cell aspect correction, center crop or full-image fit.
 - Live original/ASCII comparison side by side, stacking vertically under a libadwaita breakpoint; edit width, height, brightness, contrast, inversion and three density mappings with debounced previews.
 - Export through explicit Save as New Artwork into the existing local `.txt` library using exclusive creation and duplicate-safe names, or Use in Editor with unsaved-text confirmation. No implicit overwrites of source photos or existing artwork.
 - Headless conversion/export safety tests, installer module updates, TASKS/ROADMAP/BACKLOG updates. GTK/Wayland visual and live file-chooser tests remain unverified.
-- Full details: [RELEASE-V87.md](RELEASE-V87.md).
+- Full details: [RELEASE-V87.md](docs/releases/RELEASE-V87.md).
 
 ## 0.86.0 (experimental) - 2026-11-08
 - Start the approved Artwork Studio milestone with eight original creative ASCII templates, an offline searchable style chooser, responsive side-by-side/stacked sample preview, and safe insertion into the existing built-in text editor.
 - Keep current Save/Discard semantics: applying a template modifies only the buffer, asks before replacing unsaved edits, and never writes the artwork to disk without explicit Save.
 - Consolidate active UX goals and future milestones into `ROADMAP.md`, link from `TASKS.md`, `MASTER-BACKLOG.md` and README. Archive the original V54 UX roadmap verbatim instead of losing history; preserve specialized renderer backlogs and release records as evidence.
 - Add headless tests for template quality, selection/dirty-state safeguards, responsive preview contracts, packaging and document links. GTK/GNOME/KDE Wayland validation remains open.
-- Full details: [RELEASE-V86.md](RELEASE-V86.md).
+- Full details: [RELEASE-V86.md](docs/releases/RELEASE-V86.md).
 
 ## 0.85.0 (experimental) - 2026-11-08
 - Responsive Effect Library: replace fixed three-column grid with a 1–3-column FlowBox while keeping selection, preview and scroll region intact.
 - Stack search/filter and preview actions on narrow library windows, and stack Playlist Editor filters when its navigation collapses.
 - Add a clear empty-search state and one-action filter reset to both galleries. These UI-only filters preserve saved and unsaved effect selections.
 - Add headless regression tests for filter/reset behavior and UI layout contracts. GNOME/KDE Wayland GUI behavior is not verified.
-- Full details: [RELEASE-V85.md](RELEASE-V85.md).
+- Full details: [RELEASE-V85.md](docs/releases/RELEASE-V85.md).
 
 ## 0.84.0 (experimental) - 2026-11-07
 - E02/B213 source correction: make Playlist Editor a reusable application-owned window instead of launching a second, differently identified Wayland application process.
 - Make Effect Library an independent application window rather than a transient Preferences dialog, so KDE Task Manager is allowed to show it and group it under ASCII Saver.
 - Reuse one playlist editor, release its live PTY preview and animated thumbnails at close, and reload only saved playlists without discarding unrelated unsaved Preferences changes.
 - Add GTK-free lifecycle and identity regression tests. KDE Wayland taskbar behavior remains unverified.
-- Full details: [RELEASE-V84.md](RELEASE-V84.md).
+- Full details: [RELEASE-V84.md](docs/releases/RELEASE-V84.md).
 
 ## 0.83.0 (experimental) - 2026-11-07
 - Restore a complete issue index in `MASTER-BACKLOG.md`, cross-linked from `TASKS.md` and the README; retain historical backlogs and distinguish source implementation, runtime verification and deferred ideas.
 - Fix narrow dashboard and Preferences watcher/renderer labels (A05): bound long text to a single line and keep the full value readable/selectable through tooltips, without changing process states or creating new background services.
 - Add headless regressions for status presentation and release tracking. Full GTK/KDE/GNOME visual confirmation is still pending.
-- Full details: [RELEASE-V83.md](RELEASE-V83.md).
+- Full details: [RELEASE-V83.md](docs/releases/RELEASE-V83.md).
 
 ## 0.82.0 (experimental) - 2026-11-07
 - Show visible qualitative duration and intensity labels on every Effect Library and Playlist Editor card (D05), consistent with existing filters.
 - Distinguish automatic activation from native watcher process status on the main dashboard; Configure opens Preferences (B212).
 - Create TASKS.md as the current checked issue tracker; reconcile stale hot-plug checkbox in historical roadmap.
 - Add headless regression tests and install new shared card metadata module. GTK/GNOME/KDE runtime validation remains pending.
-- Full details: [RELEASE-V82.md](RELEASE-V82.md).
+- Full details: [RELEASE-V82.md](docs/releases/RELEASE-V82.md).
 
 - Documentation-only update: reconstructed dates for all surviving release entries (V19–V81), retaining estimated-date labels where evidence is incomplete.
 
@@ -287,7 +287,7 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 - Removed the duplicated visible Effect Library Play selector from Preferences; the library now owns the visible choice (B214).
 - Kept saved `effect_preview_mode`, synchronization with the internal state control, partial Save/Discard and existing preview behavior unchanged.
 - Reordered and backfilled documented version history. Added GTK-free tests of preview-control ownership and release tracking.
-- Full details: [RELEASE-V81.md](RELEASE-V81.md).
+- Full details: [RELEASE-V81.md](docs/releases/RELEASE-V81.md).
 
 ## 0.80.0 (experimental) - 2026-11-07
 - Refresh per-monitor FPS, palette and artwork settings when displays are attached or removed while Preferences is open.
@@ -435,7 +435,7 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 - GNOME fullscreen renderer publishes a session D-Bus lease *only while mapped*.
 - Extension watches lease ownership, uses Mutter's cursor visibility API and restores the pointer on name disappearance, screen lock or disable.
 - Windowed preview and KDE never publish the lease.
-- Full details: [RELEASE-V65.md](RELEASE-V65.md).
+- Full details: [RELEASE-V65.md](docs/releases/RELEASE-V65.md).
 
 ## 0.64.0 (experimental) - 2026-11-03
 
@@ -447,11 +447,11 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 - GNOME HIG primary-menu button in the dashboard, with Preferences, Keyboard Shortcuts, Help, About, and Quit; System Information is kept separately.
 - Standard keyboard shortcuts (Ctrl+, / Ctrl+? / F1 / F10 / Ctrl+W / Ctrl+Q).
 - Uses Adw.AboutDialog and Adw.ShortcutsDialog where available; older libadwaita uses native-window fallbacks.
-- Full details: [RELEASE-V63.md](RELEASE-V63.md).
+- Full details: [RELEASE-V63.md](docs/releases/RELEASE-V63.md).
 
 ## 0.62.0 (experimental) - 2026-11-02
 - The GTK4 fullscreen cursor mitigation in V61 did not work in the Fedora GNOME/Mutter test. V62 uses GTK4's documented named `none` cursor, attaches realize/map handlers **before** presenting the fullscreen window, and applies the cursor to the root GTK widget, VTE child, GDK surface, and default pointer device. It reasserts the cursor on pointer-enter without polling or cursor warping. The normal windowed preview keeps its ordinary pointer.
-- Full details: [RELEASE-V62.md](RELEASE-V62.md).
+- Full details: [RELEASE-V62.md](docs/releases/RELEASE-V62.md).
 
 ## 0.61.0 (experimental) - 2026-11-02 (estimated)
 
@@ -464,13 +464,13 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 - **Edit Artwork (Preferences / General):** open the existing in-app `Adw.Window` text editor directly, instead of running `ctl.py edit` in a subprocess with captured stdout. Captured terminal editors could output ANSI escape codes into the page rather than displaying a graphical editor.
 - **Clean application identity:** installer and uninstaller operate only on `ascii-saver`. The installer does not copy, move, stop or remove the legacy `kde-ascii-saver` files, configuration, service or cache. This also means updating from an old KDE-prefixed release will **not** automatically import its settings.
 - **User data safety:** existing `~/.config/ascii-saver/` artwork and preferences remain untouched on upgrades; the old installation can be uninstalled independently.
-- Full details: [RELEASE-V60.md](RELEASE-V60.md).
+- Full details: [RELEASE-V60.md](docs/releases/RELEASE-V60.md).
 
 ## 0.59.0 (experimental) - 2026-11-02 (estimated)
 - Renamed application identity, launcher commands, desktop entry, service, config and cache directories from `kde-ascii-saver` to `ascii-saver`.
 - Added backward-compatible migration of old preferences, artwork and Cargo cache without deleting source configuration.
 - Fixed GNOME startup: queries `org.gnome.ScreenSaver` for lock state, not the freedesktop idle-inhibition service. KScreenLocker remains the KDE backend.
-- Full details: [RELEASE-V59.md](RELEASE-V59.md).
+- Full details: [RELEASE-V59.md](docs/releases/RELEASE-V59.md).
 
 ## 0.58.0 (experimental) - 2026-11-01 (estimated)
 
@@ -496,23 +496,23 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 
 ## 0.55.0 (experimental) - 2026-10-18
 - This version adds persistent Cargo release cache, a Preview/Close Preview dashboard button replacing Stop, fixes repeated playlist effects in windowed preview, shuffles shared effects across rounds when not ordered, reserves reset-button width (no slider jump), shortens the save toast to Saved, unifies watcher/renderer status models, and makes monitor artwork chooser/Edit/Reset controls clearer. A watcher-memory PSS diagnostic, renderer post-start failure log in `~/.cache/kde-ascii-saver/renderer.log`, and backlog are included.
-- Full details: [RELEASE-V55.md](RELEASE-V55.md).
+- Full details: [RELEASE-V55.md](docs/releases/RELEASE-V55.md).
 
 ## 0.54.0 (experimental) - 2026-10-18
 - **Factory reset buttons:** Every numeric setting in Preferences, including advanced animation timing, effect hold, idle delay, global/per-monitor FPS and palette steps, has a contextual restore-default icon. It appears only while the value differs from the immutable application default; resetting a previously saved custom value is tracked as an unsaved edit. Timing defaults: all multipliers and simulation hold = 1; FPS = 60. Sliders show their values above rather than on the right.
 - **JSON editing:** Raw playlist JSON opens in a standalone text editor window with validation and explicit Apply to Preferences. Normal users should use the visual editor instead.
 - **Adaptive categories and Save/Discard:** Removed duplicate titlebar Save action. The floating, non-layout-shifting banner is the single Save/Discard surface, with a solid Adwaita window background. At very narrow widths, header category dropdown replaces overflowing category tabs.
-- Full details: [RELEASE-V54.md](RELEASE-V54.md).
+- Full details: [RELEASE-V54.md](docs/releases/RELEASE-V54.md).
 
 ## 0.53.0 (experimental) - 2026-10-17
 
-- Modular libadwaita frontend and GTK-independent preferences validation. See [RELEASE-V53.md](RELEASE-V53.md) and [ARCHITECTURE.md](ARCHITECTURE.md).
+- Modular libadwaita frontend and GTK-independent preferences validation. See [RELEASE-V53.md](docs/releases/RELEASE-V53.md) and [ARCHITECTURE.md](docs/ARCHITECTURE.md).
 
 ## 0.52.0 (experimental) - 2026-10-17
 - Shared `adwaita_ui.py` with native preferences pages, groups and action rows.
 - Replaced the legacy two-column `Gtk.Frame`/`Gtk.Grid` preference settings with `Adw.PreferencesPage`/`Adw.PreferencesGroup`/`Adw.ActionRow`.
 - Preserved the five adaptive categories, and existing Save/Discard behavior.
-- Full details: [RELEASE-V52.md](RELEASE-V52.md).
+- Full details: [RELEASE-V52.md](docs/releases/RELEASE-V52.md).
 
 ## 0.51.0 (experimental) - 2026-10-17
 - Dedicated dashboard and adaptive libadwaita preferences with five navigation pages.
@@ -541,134 +541,134 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 - Pre-rendered the 37 bundled GIF effects offline into compact `.aspr` frame packs (ZIP containers holding compressed 224px RGBA frames, with up to 24 samples and durations). **Pillow is only needed when generating the packs; the installed application does not depend on Pillow.** The packs are included.
 - GTK4 uses `Gdk.MemoryTexture` constructed directly from the small RGBA frames. No GTK/GdkPixbuf/Glycin GIF loader is used to present effect thumbnails.
 - Both the Effect Library and Visual Playlist Editor activate thumbnails only while their cards intersect the scrolled window's actual viewport, plus a small scrolling margin. Offscreen readers stop timers and close files.
-- Full details: [RELEASE-V47.md](RELEASE-V47.md).
+- Full details: [RELEASE-V47.md](docs/releases/RELEASE-V47.md).
 
 ## 0.46.0 (experimental) - 2026-10-14
 - Animated gallery GIF playback now explicitly decodes and advances frames with GdkPixbufAnimation, Gtk.Picture and Gdk.Texture. Each preview starts only while mapped and stops updating while unmapped. All 37 supplied GIFs were verified as changing across frames.
 - Effect Library moved into a separate, reusable window. The main preferences page no longer includes the 37-row gallery.
 - Visual playlist editor gains animated effect previews, using the same mapped-only widget.
-- Full details: [RELEASE-V46.md](RELEASE-V46.md).
+- Full details: [RELEASE-V46.md](docs/releases/RELEASE-V46.md).
 
 ## 0.45.0 (experimental) - 2026-10-14
 - `ttfx-rust/src/engine/effect.rs`: remove the invalid outer `1..` in the simulation-hold paint loop. `repeat_count()` already returns `std::ops::Range<u32>`, and nesting it in another range triggers Rust `E0308` (expected integer, found `Range<u32>`).
 - Add an offline regression guard that checks this specific source contract.
 - Update the numeric CMake-compatible application version to `0.45.0`.
-- Full details: [RELEASE-V45.md](RELEASE-V45.md).
+- Full details: [RELEASE-V45.md](docs/releases/RELEASE-V45.md).
 
 ## 0.44.0 (experimental) - 2026-10-14
 - Fix CMake project VERSION by providing a strictly numeric VERSION (`0.44.0`).
 - Invoke `scripts/dependency-hint.sh` with Bash so missing executable bits do not mask errors.
 - Do not reinstall system dependencies on arbitrary CMake configuration failures after dependency checks have passed.
-- Full details: [RELEASE-V44.md](RELEASE-V44.md).
+- Full details: [RELEASE-V44.md](docs/releases/RELEASE-V44.md).
 
 ## 0.43.0 (experimental) - 2026-10-14
 - The GTK-dependent screen-lock lifecycle test now skips cleanly when PyGObject is absent, while still running on GTK-capable hosts.
 - Added offline checks for the complete 37-effect GIF library: unique IDs, nonempty and valid GIF headers, installer staging and GUI lookup paths.
 - `verify-build.sh` now runs pure-Python tests, release asset validation and installer tests before attempting Cargo.
-- Full details: [RELEASE-V43.md](RELEASE-V43.md).
+- Full details: [RELEASE-V43.md](docs/releases/RELEASE-V43.md).
 
 ## 0.42.0 (experimental) - 2026-10-14
 - Cards for all 37 effects, using GIF animations shipped with the ttfx source.
 - Click the play button to preview the same effect with your own ASCII artwork.
 - Three-column search/filter grid retains checkbox states.
-- Full details: [RELEASE-V42.md](RELEASE-V42.md).
+- Full details: [RELEASE-V42.md](docs/releases/RELEASE-V42.md).
 
 ## 0.41.0 (experimental) - 2026-10-14
 - The settings application now has an inline searchable library for all 37 effects, with suggested duration and intensity dropdowns, visible result count and existing one-at-a-time animated previews. Filtered-out effects retain their enabled state.
-- Full details: [RELEASE-V41.md](RELEASE-V41.md).
+- Full details: [RELEASE-V41.md](docs/releases/RELEASE-V41.md).
 
 ## 0.40.0 (experimental) - 2026-10-14
 - Fixed uneven output cadence in the reference Rust renderer when `--virtual-clock` and `--simulation-hold > 1` are used together with a positive FPS cap. The first output of each held group now uses the same pacing enforcement as the subsequent repeats.
-- Full details: [RELEASE-V40.md](RELEASE-V40.md).
+- Full details: [RELEASE-V40.md](docs/releases/RELEASE-V40.md).
 
 ## 0.39.0 (experimental) - 2026-10-14
 - Fixed an uncapped FPS busy-loop in the reference Rust renderer. With `--frame-rate 0`, `--simulation-hold` does not repaint an identical frame repeatedly. At positive FPS caps the configured repeat count is preserved. Added a Rust unit test.
-- Full details: [RELEASE-V39.md](RELEASE-V39.md).
+- Full details: [RELEASE-V39.md](docs/releases/RELEASE-V39.md).
 
 ## 0.38.0 (experimental) - 2026-10-14
 - A new `--simulation-hold N` (1..10) repeats each simulation frame N times at the output-frame cadence. This slows discrete-frame animations without skipping simulation steps, unlike modifying the FPS cap. N=1 is the original behavior. For N>1 the program uses the reference Rust engine rather than the optimized `fx` engine. The prior `--duration-factor` continues to affect output frame pacing, so set it to 1.0 when comparing modes.
-- Full details: [RELEASE-V38.md](RELEASE-V38.md).
+- Full details: [RELEASE-V38.md](docs/releases/RELEASE-V38.md).
 
 ## 0.37.0 (experimental) - 2026-10-14
 - Adds a **real executable smoke test** checking end-to-end CLI invocation, JSON output, effect identity, and frame counts in the instrumented Rust binary, across original and automatic engine dispatch.
 - `./verify-build.sh` now runs that smoke test after the Cargo build, failing if the renderer contract is broken.
 - Cleans unique `ttfx` report files on failed VTE launches and on application shutdown. Avoids accumulation of orphaned temporary files after errors.
-- Full details: [RELEASE-V37.md](RELEASE-V37.md).
+- Full details: [RELEASE-V37.md](docs/releases/RELEASE-V37.md).
 
 ## 0.36.0 (experimental) - 2026-10-14
 - Adds a fourth five-minute performance graph showing **measured ttfx active output FPS** per monitor, using completed `frame_stats` events.
 - Adds a per-effect FPS summary and differentiates renderer output FPS from display-presented FPS and the configured FPS cap.
 - Prevents frame statistics from being misinterpreted as CPU/RAM samples and excludes invalid measurements.
-- Full details: [RELEASE-V36.md](RELEASE-V36.md).
+- Full details: [RELEASE-V36.md](docs/releases/RELEASE-V36.md).
 
 ## 0.35.0 (experimental) - 2026-10-14
 - Fixes a confirmed schema-contract bug: Rust telemetry previously serialized Debug output (`Beams(BeamsConfig { ... })`) instead of the effect CLI key (`beams`). KDE rejected such reports when it checked the expected effect name.
-- Full details: [RELEASE-V35.md](RELEASE-V35.md).
+- Full details: [RELEASE-V35.md](docs/releases/RELEASE-V35.md).
 
 ## 0.34.0 (experimental) - 2026-10-14
 - The installer now builds the bundled Rust renderer with `cargo build --release --locked` automatically, or uses an explicitly specified `KDE_ASCII_SAVER_TTFX` binary after checking its CLI capabilities. It no longer silently selects a potentially incompatible system `ttfx`. Rust compilation occurs in a temporary transaction directory before installing the application files. A failed build stops installation without replacing the existing installed app. Requires Cargo and network access to any crates not cached locally.
-- Full details: [RELEASE-V34.md](RELEASE-V34.md).
+- Full details: [RELEASE-V34.md](docs/releases/RELEASE-V34.md).
 
 ## 0.33.0 (experimental) - 2026-10-14
 - Fixes `--virtual-clock --time-scale` so simulation time advances by `time_scale / frame_rate` each output frame.
 - Preserves original virtual timing for `--parity-dump`, so parity test fixtures are unchanged.
 - Adds two Rust regression tests, plus `./verify-build.sh` for actual Cargo tests and release build.
-- Full details: [RELEASE-V33.md](RELEASE-V33.md).
+- Full details: [RELEASE-V33.md](docs/releases/RELEASE-V33.md).
 
 ## 0.32.0 (experimental) - 2026-10-14
 - `ttfx --frame-rate 60 --time-scale 0.5 matrix` scales the internal elapsed clock of wall-clock effects while keeping the configured frame pacing. It is **not** universal duration scaling: effects based on discrete frame counts are unaffected. The separate `--duration-factor` option still scales delays and hence output FPS. Virtual-clock parity runs are unchanged.
-- Full details: [RELEASE-V32.md](RELEASE-V32.md).
+- Full details: [RELEASE-V32.md](docs/releases/RELEASE-V32.md).
 
 ## 0.31.0 (experimental) - 2026-10-13
 - Exposes Rust duration-factor in the GTK preferences, independent from the configured FPS multiplier control.
 - Persists and validates duration_factor (0.5–10.0), default 1.0.
 - Adds settings regression tests.
-- Full details: [RELEASE-V31.md](RELEASE-V31.md).
+- Full details: [RELEASE-V31.md](docs/releases/RELEASE-V31.md).
 
 ## 0.29.0 (experimental) - 2026-10-13
 - The ttfx Rust schema-2 reports are now accepted by the KDE application (the previous V28 reader only accepted schema 1). Active output FPS is recorded separately from lifetime-average output FPS. Schema-1 reports remain supported. Corrupt, failed, and effect-mismatched reports are rejected. The new parser is installed with the application.
-- Full details: [RELEASE-V29.md](RELEASE-V29.md).
+- Full details: [RELEASE-V29.md](docs/releases/RELEASE-V29.md).
 
 ## 0.28.0 (experimental) - 2026-10-13
 - `average_output_fps`: frames written divided by overall effect wall time, including setup.
 - `active_output_fps`: intervals between the first and last successfully written frames, excluding setup and teardown. Null if fewer than two frames are produced.
-- Full details: [RELEASE-V28.md](RELEASE-V28.md).
+- Full details: [RELEASE-V28.md](docs/releases/RELEASE-V28.md).
 
 ## 0.27.0 (experimental) - 2026-10-13
 - This source archive contains the updated KDE application and a patched Rust ttfx source tree in `ttfx-rust/`.
-- Full details: [RELEASE-V27.md](RELEASE-V27.md).
+- Full details: [RELEASE-V27.md](docs/releases/RELEASE-V27.md).
 
 ## 0.26.0 (experimental) - 2026-10-13
 - This release adds a third, independently scaled five-minute performance graph for GPU engine busy time alongside CPU and RSS. It separates each monitor's process samples and does not manufacture 0% GPU utilization when DRM fdinfo counters are unavailable. GPU engine time is not whole-GPU utilization, and separate engine totals may exceed 100%.
-- Full details: [RELEASE-V26.md](RELEASE-V26.md).
+- Full details: [RELEASE-V26.md](docs/releases/RELEASE-V26.md).
 
 ## 0.25.0 (experimental) - 2026-10-13
 - Adds Linux DRM fdinfo per-process GPU engine busy-time sampling. This is NOT chip utilization and does not include KWin compositing or other processes. On unsupported drivers the field is unavailable. The GPU ratios of parallel engines may exceed 100% and must not be called whole-GPU usage.
-- Full details: [RELEASE-V25.md](RELEASE-V25.md).
+- Full details: [RELEASE-V25.md](docs/releases/RELEASE-V25.md).
 
 ## 0.24.0 (experimental) - 2026-10-13
 - Records the screensaver host process CPU and RSS separately from each monitor's ttfx subprocess. The GUI shows shared overhead separately and warns that summed RSS is not de-duplicated memory consumption. GPU percentage and real frames per second remain unavailable. This source is not validated on live Plasma Wayland.
-- Full details: [RELEASE-V24.md](RELEASE-V24.md).
+- Full details: [RELEASE-V24.md](docs/releases/RELEASE-V24.md).
 
 ## 0.23.0 (experimental) - 2026-10-13
 - Effect start records are emitted only when VTE reports a positive child PID. Failed spawns produce `effect_spawn_failed` records. No changes to speed scaling or actual FPS measurement are claimed.
-- Full details: [RELEASE-V23.md](RELEASE-V23.md).
+- Full details: [RELEASE-V23.md](docs/releases/RELEASE-V23.md).
 
 ## 0.21.0 (experimental) - 2026-10-13
 - Record selected effect, monitor, playback multiplier and effective `ttfx` FPS cap before each launch.
 - Distinguish an FPS cap from actual rendered FPS. The latter remains unavailable.
 - Show the most recent FPS cap per monitor/effect in the performance viewer.
-- Full details: [RELEASE-V21.md](RELEASE-V21.md).
+- Full details: [RELEASE-V21.md](docs/releases/RELEASE-V21.md).
 
 ## 0.20.0 (experimental) - 2026-10-13
 - Effect play buttons now open a single inline VTE terminal under the effects grid, rather than opening many separate windows.
 - Stop preview destroys the terminal and cancels pending launches; selecting a different effect replaces the active preview.
 - The preview uses the installed Rust ttfx and configured artwork, capped at 30 FPS.
-- Full details: [RELEASE-V20.md](RELEASE-V20.md).
+- Full details: [RELEASE-V20.md](docs/releases/RELEASE-V20.md).
 
 ## 0.19.0 (experimental) - 2026-10-13
 - This release fixes the completed-artwork fallback so it centers a multi-line logo as one visual block rather than independently centering each line. It preserves relative indentation and trailing whitespace, expands tabs at eight-column stops using terminal-cell widths, strips control characters, and clips rows/columns. This matters when an animation has finished and the monitor is waiting for the synchronized transition barrier.
-- Full details: [RELEASE-V19.md](RELEASE-V19.md).
+- Full details: [RELEASE-V19.md](docs/releases/RELEASE-V19.md).
 
 ## Earlier tagged releases
 
@@ -760,6 +760,6 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
   `AboutToLock` without `ActiveChanged(false)` cannot block idle launch.
 - Fedora/RHEL dependency hint now includes `python3-pip` and `python3-devel`.
 
-[Unreleased]: https://github.com/RobbyBobby77/kde-ascii-saver/compare/v0.2.0...HEAD
-[0.2.0]: https://github.com/RobbyBobby77/kde-ascii-saver/releases/tag/v0.2.0
-[0.1.0]: https://github.com/RobbyBobby77/kde-ascii-saver/releases/tag/v0.1.0
+[Unreleased]: https://github.com/JustAdreamerFL/ascii-saver/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/JustAdreamerFL/ascii-saver/releases/tag/v0.2.0
+[0.1.0]: https://github.com/JustAdreamerFL/ascii-saver/releases/tag/v0.1.0

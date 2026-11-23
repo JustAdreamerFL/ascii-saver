@@ -1,14 +1,15 @@
 """V81 regression contracts: one visible preview selector, stable preference state."""
+from _bootstrap import SRC, read_source  # noqa: F401
 from pathlib import Path
 import ast
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-CONTROLS = (ROOT / "preferences_controls.py").read_text(encoding="utf-8")
-PAGES = (ROOT / "preferences_pages.py").read_text(encoding="utf-8")
-GALLERY = (ROOT / "preferences_gallery_view.py").read_text(encoding="utf-8")
-STATE = (ROOT / "preferences_state.py").read_text(encoding="utf-8")
-GALLERY_LOGIC = (ROOT / "preferences_gallery.py").read_text(encoding="utf-8")
+CONTROLS = (SRC / "preferences_controls.py").read_text(encoding="utf-8")
+PAGES = (SRC / "preferences_pages.py").read_text(encoding="utf-8")
+GALLERY = (SRC / "preferences_gallery_view.py").read_text(encoding="utf-8")
+STATE = (SRC / "preferences_state.py").read_text(encoding="utf-8")
+GALLERY_LOGIC = (SRC / "preferences_gallery.py").read_text(encoding="utf-8")
 
 class PreviewScopeTests(unittest.TestCase):
     def test_one_visible_play_mode_selector_in_effect_library_only(self):

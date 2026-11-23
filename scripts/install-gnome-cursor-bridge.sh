@@ -37,8 +37,8 @@ if command -v gnome-shell >/dev/null 2>&1; then
     fi
 fi
 mkdir -p -- "$target"
-install -m 0644 "$source_dir/gnome-shell-extension/$uuid/extension.js" "$target/extension.js"
-install -m 0644 "$source_dir/gnome-shell-extension/$uuid/metadata.json" "$target/metadata.json"
+install -m 0644 "$source_dir/integrations/gnome-shell-extension/$uuid/extension.js" "$target/extension.js"
+install -m 0644 "$source_dir/integrations/gnome-shell-extension/$uuid/metadata.json" "$target/metadata.json"
 printf 'Installed optional GNOME cursor bridge to %s\n' "$target"
 if gnome-extensions enable "$uuid" 2>/dev/null; then
     printf 'Enabled the extension. GNOME fullscreen cursor hiding is now available.\n'

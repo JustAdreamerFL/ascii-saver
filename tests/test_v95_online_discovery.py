@@ -1,5 +1,6 @@
 """V95 online discovery: bounded browsing, sorting, shuffle, safe refresh UI."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import ast
 from dataclasses import replace
@@ -75,7 +76,7 @@ class SortingAndDiscoveryTests(unittest.TestCase):
 
 class OnlineViewContracts(unittest.TestCase):
     def test_refresh_is_single_flight_and_preserves_in_memory_gallery(self):
-        source = (ROOT / 'artwork_online_view.py').read_text()
+        source = (SRC / 'artwork_online_view.py').read_text()
         tree = ast.parse(source)
         refresh = next(node for c in tree.body if isinstance(c, ast.ClassDef) and c.name == 'OnlineArtworkWindow'
                        for node in c.body if isinstance(node, ast.FunctionDef) and node.name == '_refresh')
@@ -86,7 +87,7 @@ class OnlineViewContracts(unittest.TestCase):
         self.assertIn('self.refresh_button.set_sensitive(True)', source)
 
     def test_filters_sort_paged_render_no_auto_download_or_implicit_import(self):
-        source = (ROOT / 'artwork_online_view.py').read_text()
+        source = (SRC / 'artwork_online_view.py').read_text()
         ast.parse(source)
         for expected in ('Gtk.DropDown.new_from_strings(list(SORT_OPTIONS))',
                          "Gtk.Button(label='Surprise Me')",
@@ -105,9 +106,9 @@ class OnlineViewContracts(unittest.TestCase):
     def test_package_version_and_task_tracking(self):
         version = (ROOT / 'VERSION').read_text().strip()
         self.assertGreaterEqual(tuple(map(int, version.split('.'))), (0, 95, 0))
-        self.assertIn(f'BUILD_VERSION = "{version}"', (ROOT / 'build_info.py').read_text())
+        self.assertIn(f'BUILD_VERSION = "{version}"', (SRC / 'build_info.py').read_text())
         for file in ('ROADMAP.md', 'TASKS.md', 'CHANGELOG.md', 'MASTER-BACKLOG.md', 'RELEASE-V95.md'):
-            self.assertIn('V95', (ROOT / file).read_text(), file)
+            self.assertIn('V95', read_source(file), file)
 
 
 if __name__ == '__main__':

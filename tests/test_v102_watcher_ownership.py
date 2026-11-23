@@ -4,6 +4,7 @@ Actually compile the platform-neutral process-check header as both C and C++.
 This does not claim a full Qt/KIdleTime or GNOME/GIO build.
 """
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import os
 from pathlib import Path
@@ -30,7 +31,7 @@ class NativeProcessIdentityTests(unittest.TestCase):
         ):
             output = cls.temp / name
             subprocess.run(
-                [compiler, *flags, "-Wall", "-Wextra", "-Werror", "-I", str(ROOT),
+                [compiler, *flags, "-Wall", "-Wextra", "-Werror", "-I", str(ROOT / "native" / "kde"),
                  str(ROOT / "tests" / "native_watcher_identity_probe.c"), "-o", str(output)],
                 check=True, capture_output=True, timeout=20,
             )
@@ -116,7 +117,7 @@ class NativeProcessIdentityTests(unittest.TestCase):
 
 class WatcherIntegrationContracts(unittest.TestCase):
     def test_kde_defers_on_manual_renderer_before_launch_and_retry(self):
-        source = (ROOT / "watcher.cpp").read_text()
+        source = (ROOT / "native/kde/watcher.cpp").read_text()
         self.assertIn('#include "watcher_process_identity.h"', source)
         self.assertIn('blockedByActivity() || rendererAlreadyRunning()', source)
         self.assertIn('&& !blockedByActivity() && !rendererAlreadyRunning()', source)
@@ -125,7 +126,7 @@ class WatcherIntegrationContracts(unittest.TestCase):
         self.assertIn('m_idleDeferred = true;', start)
 
     def test_gnome_holds_nonblocking_pid_lock_and_checks_legacy_watcher(self):
-        source = (ROOT / "gnome_idle_watcher.c").read_text()
+        source = (ROOT / "native/gnome/gnome_idle_watcher.c").read_text()
         self.assertIn('#include "watcher_process_identity.h"', source)
         self.assertIn('flock(fd, LOCK_EX | LOCK_NB)', source)
         self.assertIn('ascii_saver_pid_is_watcher(old_pid)', source)

@@ -2,6 +2,8 @@
 set -euo pipefail
 
 source_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
+py_src="$source_dir/src"
+data_src="$source_dir/data"
 data_home=${XDG_DATA_HOME:-"$HOME/.local/share"}
 config_home=${XDG_CONFIG_HOME:-"$HOME/.config"}
 app_dir="$data_home/ascii-saver"
@@ -526,7 +528,7 @@ build_dir="$transaction_dir/build"
 mkdir -p "$staged_app"
 
 configure_watcher() {
-    cmake -S "$source_dir" -B "$build_dir" \
+    cmake -S "$source_dir/native/kde" -B "$build_dir" \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_INSTALL_PREFIX="$staged_app" \
         -DCMAKE_INSTALL_BINDIR=.
@@ -553,7 +555,7 @@ else
     read -r -a native_libs <<< "$(pkg-config --libs gio-2.0 json-glib-1.0)"
     if ! cc -std=gnu11 -O2 -Wall -Wextra -Werror=implicit-function-declaration \
          -DASCII_SAVER_VERSION=\"$(head -n 1 "$source_dir/VERSION")\" \
-         "${native_cflags[@]}" "$source_dir/gnome_idle_watcher.c" \
+         "${native_cflags[@]}" "$source_dir/native/gnome/gnome_idle_watcher.c" \
          -o "$staged_app/ascii-saver-watcher" "${native_libs[@]}"; then
         printf 'Failed to compile the GNOME C/GIO idle watcher.\n' >&2
         exit 1
@@ -608,15 +610,15 @@ done
 install -m 0755 "$ttfx_binary" "$staged_app/venv/bin/ttfx"
 ln -s ttfx "$staged_app/venv/bin/tte"
 
-install -m 0644 "$source_dir/screen_lock_backend.py" "$staged_app/screen_lock_backend.py"
-install -m 0644 "$source_dir/effect_rotation.py" "$staged_app/effect_rotation.py"
-install -m 0644 "$source_dir/preview_sequence.py" "$staged_app/preview_sequence.py"
-install -m 0644 "$source_dir/status_model.py" "$staged_app/status_model.py"
-install -m 0644 "$source_dir/dashboard_playback.py" "$staged_app/dashboard_playback.py"
-install -m 0755 "$source_dir/app.py" "$staged_app/app.py"
-install -m 0755 "$source_dir/cli.py" "$staged_app/cli.py"
-install -m 0755 "$source_dir/ctl.py" "$staged_app/ctl.py"
-install -m 0755 "$source_dir/settings.py" "$staged_app/settings.py"
+install -m 0644 "$py_src/screen_lock_backend.py" "$staged_app/screen_lock_backend.py"
+install -m 0644 "$py_src/effect_rotation.py" "$staged_app/effect_rotation.py"
+install -m 0644 "$py_src/preview_sequence.py" "$staged_app/preview_sequence.py"
+install -m 0644 "$py_src/status_model.py" "$staged_app/status_model.py"
+install -m 0644 "$py_src/dashboard_playback.py" "$staged_app/dashboard_playback.py"
+install -m 0755 "$py_src/app.py" "$staged_app/app.py"
+install -m 0755 "$py_src/cli.py" "$staged_app/cli.py"
+install -m 0755 "$py_src/ctl.py" "$staged_app/ctl.py"
+install -m 0755 "$py_src/settings.py" "$staged_app/settings.py"
 # Preprocessed low-memory RGBA previews: GTK never decodes GIFs or starts Glycin.
 mkdir -p "$staged_app/effects"
 for pack in "$source_dir"/preview-packs/*.aspr; do
@@ -628,48 +630,48 @@ if [[ $(find "$staged_app/effects" -maxdepth 1 -name '*.aspr' | wc -l) -ne 37 ]]
     exit 1
 fi
 install -m 0755 "$source_dir/uninstall.sh" "$staged_app/uninstall.sh"
-install -m 0644 "$source_dir/helpers.py" "$staged_app/helpers.py"
-install -m 0644 "$source_dir/window_shortcuts.py" "$staged_app/window_shortcuts.py"
-install -m 0644 "$source_dir/artwork_history.py" "$staged_app/artwork_history.py"
-install -m 0644 "$source_dir/artwork_selection.py" "$staged_app/artwork_selection.py"
-install -m 0644 "$source_dir/palette_editor_model.py" "$staged_app/palette_editor_model.py"
-install -m 0644 "$source_dir/adwaita_ui.py" "$staged_app/adwaita_ui.py"
-install -m 0644 "$source_dir/monitor_labels.py" "$staged_app/monitor_labels.py"
-install -m 0644 "$source_dir/monitor_config.py" "$staged_app/monitor_config.py"
+install -m 0644 "$py_src/helpers.py" "$staged_app/helpers.py"
+install -m 0644 "$py_src/window_shortcuts.py" "$staged_app/window_shortcuts.py"
+install -m 0644 "$py_src/artwork_history.py" "$staged_app/artwork_history.py"
+install -m 0644 "$py_src/artwork_selection.py" "$staged_app/artwork_selection.py"
+install -m 0644 "$py_src/palette_editor_model.py" "$staged_app/palette_editor_model.py"
+install -m 0644 "$py_src/adwaita_ui.py" "$staged_app/adwaita_ui.py"
+install -m 0644 "$py_src/monitor_labels.py" "$staged_app/monitor_labels.py"
+install -m 0644 "$py_src/monitor_config.py" "$staged_app/monitor_config.py"
 # Modular libadwaita screens, state tracking, preview and diagnostics.
 for module in effect_catalog preferences_model preferences_shell preferences_controls preferences_pages preferences_state preferences_gallery preferences_gallery_view preferences_displays preferences_actions preferences_defaults artwork_library artwork_catalog artwork_library_view artwork_online artwork_online_view artwork_editor artwork_editor_io artwork_retouch artwork_canvas artwork_canvas_view artwork_templates artwork_templates_view photo_ascii photo_ascii_view photo_project photo_presets diagnostics_model diagnostics_view measurements_ui; do
-    install -m 0644 "$source_dir/$module.py" "$staged_app/$module.py"
+    install -m 0644 "$py_src/$module.py" "$staged_app/$module.py"
 done
-install -m 0644 "$source_dir/final_frame.py" "$staged_app/final_frame.py"
-install -m 0644 "$source_dir/artwork_fit.py" "$staged_app/artwork_fit.py"
-install -m 0644 "$source_dir/palette_engine.py" "$staged_app/palette_engine.py"
-install -m 0644 "$source_dir/edit_state.py" "$staged_app/edit_state.py"
-install -m 0644 "$source_dir/playlist_engine.py" "$staged_app/playlist_engine.py"
-install -m 0644 "$source_dir/effect_selection.py" "$staged_app/effect_selection.py"
-install -m 0644 "$source_dir/effect_library.py" "$staged_app/effect_library.py"
-install -m 0644 "$source_dir/effect_metadata.py" "$staged_app/effect_metadata.py"
-install -m 0644 "$source_dir/animated_preview.py" "$staged_app/animated_preview.py"
-install -m 0644 "$source_dir/preview_asset.py" "$staged_app/preview_asset.py"
-install -m 0644 "$source_dir/preview_tint.py" "$staged_app/preview_tint.py"
-install -m 0644 "$source_dir/spawn_events.py" "$staged_app/spawn_events.py"
-install -m 0644 "$source_dir/frame_report.py" "$staged_app/frame_report.py"
-install -m 0644 "$source_dir/gpu_accounting.py" "$staged_app/gpu_accounting.py"
-install -m 0644 "$source_dir/effect_profiles.py" "$staged_app/effect_profiles.py"
-install -m 0644 "$source_dir/measured_playlists.py" "$staged_app/measured_playlists.py"
-install -m 0644 "$source_dir/playlist_editor.py" "$staged_app/playlist_editor.py"
-install -m 0644 "$source_dir/playlist_gallery_model.py" "$staged_app/playlist_gallery_model.py"
-install -m 0644 "$source_dir/effect_preview_window.py" "$staged_app/effect_preview_window.py"
-install -m 0644 "$source_dir/auto_playlists.py" "$staged_app/auto_playlists.py"
+install -m 0644 "$py_src/final_frame.py" "$staged_app/final_frame.py"
+install -m 0644 "$py_src/artwork_fit.py" "$staged_app/artwork_fit.py"
+install -m 0644 "$py_src/palette_engine.py" "$staged_app/palette_engine.py"
+install -m 0644 "$py_src/edit_state.py" "$staged_app/edit_state.py"
+install -m 0644 "$py_src/playlist_engine.py" "$staged_app/playlist_engine.py"
+install -m 0644 "$py_src/effect_selection.py" "$staged_app/effect_selection.py"
+install -m 0644 "$py_src/effect_library.py" "$staged_app/effect_library.py"
+install -m 0644 "$py_src/effect_metadata.py" "$staged_app/effect_metadata.py"
+install -m 0644 "$py_src/animated_preview.py" "$staged_app/animated_preview.py"
+install -m 0644 "$py_src/preview_asset.py" "$staged_app/preview_asset.py"
+install -m 0644 "$py_src/preview_tint.py" "$staged_app/preview_tint.py"
+install -m 0644 "$py_src/spawn_events.py" "$staged_app/spawn_events.py"
+install -m 0644 "$py_src/frame_report.py" "$staged_app/frame_report.py"
+install -m 0644 "$py_src/gpu_accounting.py" "$staged_app/gpu_accounting.py"
+install -m 0644 "$py_src/effect_profiles.py" "$staged_app/effect_profiles.py"
+install -m 0644 "$py_src/measured_playlists.py" "$staged_app/measured_playlists.py"
+install -m 0644 "$py_src/playlist_editor.py" "$staged_app/playlist_editor.py"
+install -m 0644 "$py_src/playlist_gallery_model.py" "$staged_app/playlist_gallery_model.py"
+install -m 0644 "$py_src/effect_preview_window.py" "$staged_app/effect_preview_window.py"
+install -m 0644 "$py_src/auto_playlists.py" "$staged_app/auto_playlists.py"
 for module in performance_logger performance_ui performance_series performance_summary effect_timing; do
-    install -m 0644 "$source_dir/$module.py" "$staged_app/$module.py"
+    install -m 0644 "$py_src/$module.py" "$staged_app/$module.py"
 done
 install -m 0644 "$source_dir/VERSION" "$staged_app/VERSION"
-install -m 0644 "$source_dir/build_info.py" "$staged_app/build_info.py"
-install -m 0644 "$source_dir/component_versions.py" "$staged_app/component_versions.py"
-install -m 0644 "$source_dir/gnome_dock.py" "$staged_app/gnome_dock.py"
-install -m 0644 "$source_dir/gnome_cursor_bridge.py" "$staged_app/gnome_cursor_bridge.py"
-install -m 0644 "$source_dir/app_menu.py" "$staged_app/app_menu.py"
-install -m 0644 "$source_dir/application_actions.py" "$staged_app/application_actions.py"
+install -m 0644 "$py_src/build_info.py" "$staged_app/build_info.py"
+install -m 0644 "$py_src/component_versions.py" "$staged_app/component_versions.py"
+install -m 0644 "$py_src/gnome_dock.py" "$staged_app/gnome_dock.py"
+install -m 0644 "$py_src/gnome_cursor_bridge.py" "$staged_app/gnome_cursor_bridge.py"
+install -m 0644 "$py_src/app_menu.py" "$staged_app/app_menu.py"
+install -m 0644 "$py_src/application_actions.py" "$staged_app/application_actions.py"
 printf "%s\n" "$backend" > "$staged_app/watcher-backend"
 
 # Rust ttfx is already installed in staged_app/venv/bin.
@@ -733,12 +735,12 @@ fi
 
 escaped_app=$(printf '%s' "$bin_dir/ascii-saver" | sed 's/[&|]/\\&/g')
 sed "s|@APP@|$escaped_app|" \
-    "$source_dir/io.github.robbybobby77.AsciiSaver.desktop.in" \
+    "$data_src/io.github.robbybobby77.AsciiSaver.desktop.in" \
     | write_managed_file \
         "$applications_dir/io.github.robbybobby77.AsciiSaver.desktop" 0644
-install_managed_file "$source_dir/io.github.robbybobby77.AsciiSaver.metainfo.xml" \
+install_managed_file "$data_src/io.github.robbybobby77.AsciiSaver.metainfo.xml" \
     "$metainfo_dir/io.github.robbybobby77.AsciiSaver.metainfo.xml" 0644
-install_managed_file "$source_dir/resources/io.github.robbybobby77.AsciiSaver.svg" \
+install_managed_file "$data_src/icons/io.github.robbybobby77.AsciiSaver.svg" \
     "$icons_dir/io.github.robbybobby77.AsciiSaver.svg" 0644
 # Use a full path: icon themes and external launchers sometimes fail to resolve
 # a custom theme-name icon even though Plasma's task manager does.
@@ -753,9 +755,9 @@ update-desktop-database "$applications_dir" 2>/dev/null || true
 
 if "$has_user_systemd"; then
     if [[ "$backend" == gnome ]]; then
-        service_source="$source_dir/gnome-ascii-saver.service"
+        service_source="$data_src/systemd/gnome-ascii-saver.service"
     else
-        service_source="$source_dir/ascii-saver.service"
+        service_source="$data_src/systemd/ascii-saver.service"
     fi
     install_managed_file "$service_source" \
         "$systemd_dir/ascii-saver.service" 0644
@@ -772,7 +774,7 @@ else
     rm -f -- "$systemd_dir/ascii-saver.service"
     escaped_watcher=$(printf '%s' "$bin_dir/ascii-saver-watcher" | sed 's/[&|]/\\&/g')
     sed "s|@WATCHER@|$escaped_watcher|" \
-        "$source_dir/io.github.robbybobby77.AsciiSaver.Watcher.desktop.in" \
+        "$data_src/io.github.robbybobby77.AsciiSaver.Watcher.desktop.in" \
         | sed "s|OnlyShowIn=KDE;|OnlyShowIn=$([[ "$backend" == gnome ]] && echo 'GNOME;' || echo 'KDE;')|" \
         | write_managed_file \
             "$autostart_dir/io.github.robbybobby77.AsciiSaver.Watcher.desktop" 0644
@@ -819,8 +821,8 @@ fi
 # Optional fullscreen protection for KWin Wayland/X11. Never fail application installation.
 if [[ "$backend" == kde && "$check_only" == false && "$manage_session" == true ]]; then
     if command -v kpackagetool6 >/dev/null && command -v kwriteconfig6 >/dev/null; then
-        kpackagetool6 --type=KWin/Script -u "$source_dir/kwin-fullscreen" >/dev/null 2>&1 \
-            || kpackagetool6 --type=KWin/Script -i "$source_dir/kwin-fullscreen" >/dev/null 2>&1 \
+        kpackagetool6 --type=KWin/Script -u "$source_dir/integrations/kwin-fullscreen" >/dev/null 2>&1 \
+            || kpackagetool6 --type=KWin/Script -i "$source_dir/integrations/kwin-fullscreen" >/dev/null 2>&1 \
             || printf 'Optional fullscreen helper installation failed.
 ' >&2
         kwriteconfig6 --file kwinrc --group Plugins --key ascii-saver-fullscreenEnabled true

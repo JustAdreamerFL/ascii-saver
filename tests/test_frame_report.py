@@ -1,3 +1,4 @@
+from _bootstrap import SRC, read_source  # noqa: F401
 import unittest
 from frame_report import parse_frame_report
 class FrameStatsTests(unittest.TestCase):

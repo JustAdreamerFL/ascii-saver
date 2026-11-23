@@ -4,7 +4,7 @@ from pathlib import Path
 import sys
 
 root = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(root))
+sys.path.insert(0, str(root / "src"))
 from effect_selection import EFFECTS
 from preview_asset import PackedPreview
 
@@ -25,9 +25,9 @@ for name in EFFECTS:
         assert len(pack.mask_frame(pack.frame_count - 1)) == pack.width * pack.height
 installer = (root / "install.sh").read_text()
 for marker in ("preview-packs/*.aspr", '"$staged_app/effects"',
-               '"$source_dir/preview_asset.py"', '"$source_dir/preview_tint.py"',
-               '"$source_dir/effect_library.py"'):
+               '"$py_src/preview_asset.py"', '"$py_src/preview_tint.py"',
+               '"$py_src/effect_library.py"'):
     assert marker in installer, f"Installer missing asset staging instruction: {marker}"
-assert 'ctl.data_dir / "effects"' in (root / "preferences_gallery_view.py").read_text()
+assert 'ctl.data_dir / "effects"' in (root / "src" / "preferences_gallery_view.py").read_text()
 assert (root / "ttfx-rust/Cargo.lock").is_file()
 print(f"PASS: {len(EFFECTS)} effect IDs, small decoder-free preview packs and installer payload")

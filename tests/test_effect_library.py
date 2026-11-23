@@ -1,3 +1,4 @@
+from _bootstrap import SRC, read_source  # noqa: F401
 import unittest
 from effect_library import select_effects
 from playlist_engine import EFFECTS, group

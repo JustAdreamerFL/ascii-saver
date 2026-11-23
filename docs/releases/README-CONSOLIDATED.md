@@ -127,6 +127,6 @@ Wayland window, especially after unlock. On GNOME, run `ascii-saverctl dock stat
 to inspect fullscreen-related dock settings; `dock apply` explicitly enables a
 reversible, global fullscreen-hiding profile, and `dock restore` returns to the
 previous configuration. No settings are changed automatically by installation.
-See [GNOME dock compatibility](GNOME-DOCK-COMPAT.md) for limits and security.
+See [GNOME dock compatibility](../platform/GNOME-DOCK-COMPAT.md) for limits and security.
 The current pointer behavior should be verified separately; cursor mitigation
 is not part of this release.

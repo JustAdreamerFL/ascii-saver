@@ -1,4 +1,5 @@
 """V76 regression checks for truthful per-monitor performance presentation."""
+from _bootstrap import SRC, read_source  # noqa: F401
 import ast
 from pathlib import Path
 import unittest
@@ -85,7 +86,7 @@ class GroupedPerformanceTests(unittest.TestCase):
 
 class ViewContractTests(unittest.TestCase):
     def test_native_scrolling_and_separate_groups(self):
-        src = (ROOT / 'performance_ui.py').read_text()
+        src = (SRC / 'performance_ui.py').read_text()
         ast.parse(src)
         self.assertIn('scroll.set_vexpand(True)', src)
         self.assertIn('Adw.PreferencesGroup(title=', src)
@@ -95,7 +96,7 @@ class ViewContractTests(unittest.TestCase):
         self.assertNotIn("self.table=Gtk.Label", src)
 
     def test_four_chart_axes_and_discrete_fps(self):
-        src = (ROOT / 'performance_ui.py').read_text()
+        src = (SRC / 'performance_ui.py').read_text()
         self.assertIn("('Resident memory (MiB)', 'rss_mib')", src)
         self.assertIn("('GPU process-engine busy (%)', 'gpu_percent')", src)
         self.assertIn("('ttfx output FPS (completed effects)', 'active_output_fps')", src)
@@ -106,7 +107,7 @@ class ViewContractTests(unittest.TestCase):
 
     def test_new_summary_module_installed_and_syntax_checked(self):
         self.assertIn('performance_summary effect_timing', (ROOT / 'install.sh').read_text())
-        ast.parse((ROOT / 'performance_summary.py').read_text())
+        ast.parse((SRC / 'performance_summary.py').read_text())
 
 
 if __name__ == '__main__':

@@ -1,5 +1,6 @@
 """Tests for opt-in GNOME dock compatibility without touching live settings."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import json
 import tempfile

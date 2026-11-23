@@ -1,4 +1,5 @@
 """Regression checks for independent vs pinned library previews, without GTK."""
+from _bootstrap import SRC, read_source  # noqa: F401
 from ui_sources import all_ui_source
 
 import ast
@@ -35,7 +36,7 @@ class PreviewModeTests(unittest.TestCase):
         self.assertIn('self.effect_preview_mode.connect("notify::selected", self._mark_dirty)', source)
 
     def test_dedicated_window_is_reused_and_does_not_route_through_screensaver(self):
-        source = (ROOT / "preferences_gallery.py").read_text()
+        source = (SRC / "preferences_gallery.py").read_text()
         tree = ast.parse(source)
         settings_class = next(x for x in tree.body if isinstance(x, ast.ClassDef) and x.name == 'GalleryControllerMixin')
         preview = next(x for x in settings_class.body if isinstance(x, ast.FunctionDef) and x.name == '_preview_effect')
@@ -47,14 +48,14 @@ class PreviewModeTests(unittest.TestCase):
         self.assertIn('self.preview_area.set_child(host)', text)
 
     def test_preview_survives_library_close_and_has_manual_close(self):
-        source = (ROOT / "preferences_gallery.py").read_text()
+        source = (SRC / "preferences_gallery.py").read_text()
         tree = ast.parse(source)
         settings_class = next(x for x in tree.body if isinstance(x, ast.ClassDef) and x.name == 'GalleryControllerMixin')
         close_gallery = next(x for x in settings_class.body if isinstance(x, ast.FunctionDef) and x.name == '_close_gallery')
         text = ast.get_source_segment(source, close_gallery)
         self.assertNotIn('_effect_preview_window.close()', text)
         self.assertIn('self.gallery_window.hide()', text)
-        separate = (ROOT / 'effect_preview_window.py').read_text()
+        separate = (SRC / 'effect_preview_window.py').read_text()
         self.assertIn('self.set_default_size(1100, 660)', separate)
         self.assertNotIn("close.connect('clicked', lambda *_: self.close())", separate)
         self.assertIn("replay.connect('clicked', self._replay)", separate)

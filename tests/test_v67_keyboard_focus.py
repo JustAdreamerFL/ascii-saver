@@ -4,13 +4,14 @@ The fake window model exercises the same startup path, without claiming a
 compositor/Wayland integration test has happened.
 """
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import ast
 from pathlib import Path
 import unittest
 from unittest.mock import Mock
 
-SOURCE = (Path(__file__).resolve().parents[1] / "app.py").read_text(encoding="utf-8")
+SOURCE = (Path(__file__).resolve().parents[1] / "src" / "app.py").read_text(encoding="utf-8")
 
 
 def saver_method(name):

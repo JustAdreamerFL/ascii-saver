@@ -1,3 +1,4 @@
+from _bootstrap import SRC, read_source  # noqa: F401
 import unittest
 from helpers import new_config, _apply_config
 from pathlib import Path

@@ -1,19 +1,19 @@
 # ASCII Saver
 
-> **V109 (experimental, 2026-11-09):** Appearance now allows turning off **Override effect RGB colors** so Rust animations retain their own ANSI/RGB output; the setting is saved and used in all preview paths. Preferences has a real labeled sidebar on wide windows and a compact selector on narrow ones. Timing sliders take full-width rows. All editing and diagnostics tools are inside Preferences > Tools. The editor shows both Text and Draw, and the shared window-shortcut handler captures Esc/Ctrl+W/Ctrl+Q before focused child controls. Effect Library pinned preview receives a vertically centered host. Headless tests pass; real GNOME/KDE Wayland GUI confirmation still needed. See [RELEASE-V109.md](RELEASE-V109.md).
+> **V109 (experimental, 2026-11-09):** Appearance now allows turning off **Override effect RGB colors** so Rust animations retain their own ANSI/RGB output; the setting is saved and used in all preview paths. Preferences has a real labeled sidebar on wide windows and a compact selector on narrow ones. Timing sliders take full-width rows. All editing and diagnostics tools are inside Preferences > Tools. The editor shows both Text and Draw, and the shared window-shortcut handler captures Esc/Ctrl+W/Ctrl+Q before focused child controls. Effect Library pinned preview receives a vertically centered host. Headless tests pass; real GNOME/KDE Wayland GUI confirmation still needed. See [RELEASE-V109.md](docs/releases/RELEASE-V109.md).
 
-> **V108 (experimental, 2026-11-09):** Stability/UX corrections from direct Fedora feedback. Global and per-display palettes now support Add/Remove/Reset (1–8 colors), and per-display colors can be enabled independently. My Artwork has **Recently used** (records new playback from V108), Draw supports click and freehand drag with selected-text painting, and Online Surprise Me explicitly selects its chosen artwork in the loaded preview list. Windowed Preview is a titled Adwaita window with Esc/Ctrl+W/Ctrl+Q, tool windows have closing shortcuts, Effect Library is transient to Preferences, its inline preview is centered and gallery filters have wider, centered choices. Clean-state Preferences footer remains hidden. These features passed headless tests; **real GTK/Wayland interactive testing is still required**. See [RELEASE-V108.md](RELEASE-V108.md).
+> **V108 (experimental, 2026-11-09):** Stability/UX corrections from direct Fedora feedback. Global and per-display palettes now support Add/Remove/Reset (1–8 colors), and per-display colors can be enabled independently. My Artwork has **Recently used** (records new playback from V108), Draw supports click and freehand drag with selected-text painting, and Online Surprise Me explicitly selects its chosen artwork in the loaded preview list. Windowed Preview is a titled Adwaita window with Esc/Ctrl+W/Ctrl+Q, tool windows have closing shortcuts, Effect Library is transient to Preferences, its inline preview is centered and gallery filters have wider, centered choices. Clean-state Preferences footer remains hidden. These features passed headless tests; **real GTK/Wayland interactive testing is still required**. See [RELEASE-V108.md](docs/releases/RELEASE-V108.md).
 
-> **V107 (experimental, 2026-11-09):** Rebuilt Preferences after the V106 Fedora screenshot. Removed width-forcing header tabs and in-Preferences status/diagnostic cards; all five sections use one compact selector, all wide controls stack under their labels, advanced palette transitions are collapsed, and the clean “Changes saved” footer is hidden. Diagnostics, graphs, measurement history and editing are reachable through the main window's **Tools** menu. Source tests pass; real GNOME/KDE GTK visual confirmation is pending. See [RELEASE-V107.md](RELEASE-V107.md).
+> **V107 (experimental, 2026-11-09):** Rebuilt Preferences after the V106 Fedora screenshot. Removed width-forcing header tabs and in-Preferences status/diagnostic cards; all five sections use one compact selector, all wide controls stack under their labels, advanced palette transitions are collapsed, and the clean “Changes saved” footer is hidden. Diagnostics, graphs, measurement history and editing are reachable through the main window's **Tools** menu. Source tests pass; real GNOME/KDE GTK visual confirmation is pending. See [RELEASE-V107.md](docs/releases/RELEASE-V107.md).
 
-> **V106 (experimental, 2026-11-09):** Fixes based on real Fedora feedback: single native Close control in Help/System Information, same desktop identity for Preview, automatic multi-color palette cycling with explicit Static override, and narrow Preferences rows that stack labels/controls instead of clipping. Save/Discard now stays in a stable bottom tray. All changes are headless tested; GNOME/KDE GUI confirmation remains open. See [RELEASE-V106.md](RELEASE-V106.md).
+> **V106 (experimental, 2026-11-09):** Fixes based on real Fedora feedback: single native Close control in Help/System Information, same desktop identity for Preview, automatic multi-color palette cycling with explicit Static override, and narrow Preferences rows that stack labels/controls instead of clipping. Save/Discard now stays in a stable bottom tray. All changes are headless tested; GNOME/KDE GUI confirmation remains open. See [RELEASE-V106.md](docs/releases/RELEASE-V106.md).
 
 > **V104 (experimental, 2026-11-08):** Synchronized fullscreen monitor
 > cohort launches. One shared callback starts all monitors for the next
 > effect/palette round; round-aware hotplug timers cannot restart a removed
 > display or run in the wrong round. Standalone Preview and V103 palettes are
 > preserved. Simulation tests passed, real KDE/GNOME Wayland testing is still
-> pending. See [RELEASE-V104.md](RELEASE-V104.md).
+> pending. See [RELEASE-V104.md](docs/releases/RELEASE-V104.md).
 
 ASCII-art terminal-effect screensaver for KDE Plasma/KWin and GNOME/Mutter.
 The fullscreen renderer is GTK4/VTE with a modified Rust `ttfx` binary;
@@ -25,33 +25,53 @@ integration depend on the compositor. ASCII Saver does not replace or cover
 the secure KDE/GNOME lock screen. GNOME Shell extensions such as Dash to Dock
 can appear above normal fullscreen Wayland windows.
 
+## Repository layout
+
+| Path | Contents |
+|---|---|
+| `src/` | GTK/VTE renderer, dashboard, preferences and pure Python helpers |
+| `native/kde/` | Qt 6/KF6 idle watcher and its CMake build |
+| `native/gnome/` | GNOME/Mutter GIO idle watcher |
+| `data/` | Desktop entries, metainfo, icon and systemd units |
+| `integrations/` | Optional GNOME Shell and KWin helper extensions |
+| `bin/` | Installed launcher scripts |
+| `config/` | Default user configuration and logo |
+| `docs/` | Architecture, installation, platform, design, planning and release notes |
+| `tests/` | Offline unit and source-contract tests |
+| `scripts/` | Maintenance, preview-pack and smoke-test helpers |
+| `preview-packs/` | Packed effect preview assets |
+| `ttfx-rust/` | Instrumented Rust terminal-effects renderer |
+
+Run the offline suite with `python3 -m unittest discover -s tests -q` and the
+full source/installer checks with `./verify-build.sh`.
+
 See [current checked task list](TASKS.md),
 [active Artwork Studio roadmap](ROADMAP.md),
 [indexed historical backlog](MASTER-BACKLOG.md),
-[historical V85 priorities](PRIORITIES-V85.md),
-[V85 responsive galleries](RELEASE-V85.md),
-[V84 release details](RELEASE-V84.md),
-[V82 release details](RELEASE-V82.md),
-[historical V81 priorities](PRIORITIES-V81.md),
-[V81 single preview selector and release history](RELEASE-V81.md),
-[V80 hot-plug monitor preferences](RELEASE-V80.md),
-[V79 adaptive Preferences](RELEASE-V79.md),
-[V78 diagnostics and artwork editing](RELEASE-V78.md),
-[V77 preview usability](RELEASE-V77.md),
-[V76 performance graphs and measured durations](RELEASE-V76.md),
-[V75 gallery-first Playlist Editor](RELEASE-V75.md),
-[V74 contextual Save/Discard changes](RELEASE-V74.md),
-[V73 preview final-frame fixes](RELEASE-V73.md),
-[V72 palette-matched thumbnails](RELEASE-V72.md),
-[V71 authoritative palette notes](RELEASE-V71.md),
-[V69 mixed-monitor auto-fit notes](RELEASE-V69.md),
-[V68 playback reliability notes](RELEASE-V68.md),
-[V67 keyboard dismissal validation](RELEASE-V67.md),
-[full details](README-CONSOLIDATED.md),
-[GNOME dock compatibility](GNOME-DOCK-COMPAT.md), and the
-[optional GNOME cursor bridge](GNOME-CURSOR-BRIDGE.md).
+[historical V85 priorities](docs/planning/PRIORITIES-V85.md),
+[V85 responsive galleries](docs/releases/RELEASE-V85.md),
+[V84 release details](docs/releases/RELEASE-V84.md),
+[V82 release details](docs/releases/RELEASE-V82.md),
+[historical V81 priorities](docs/planning/PRIORITIES-V81.md),
+[V81 single preview selector and release history](docs/releases/RELEASE-V81.md),
+[V80 hot-plug monitor preferences](docs/releases/RELEASE-V80.md),
+[V79 adaptive Preferences](docs/releases/RELEASE-V79.md),
+[V78 diagnostics and artwork editing](docs/releases/RELEASE-V78.md),
+[V77 preview usability](docs/releases/RELEASE-V77.md),
+[V76 performance graphs and measured durations](docs/releases/RELEASE-V76.md),
+[V75 gallery-first Playlist Editor](docs/releases/RELEASE-V75.md),
+[V74 contextual Save/Discard changes](docs/releases/RELEASE-V74.md),
+[V73 preview final-frame fixes](docs/releases/RELEASE-V73.md),
+[V72 palette-matched thumbnails](docs/releases/RELEASE-V72.md),
+[V71 authoritative palette notes](docs/releases/RELEASE-V71.md),
+[V69 mixed-monitor auto-fit notes](docs/releases/RELEASE-V69.md),
+[V68 playback reliability notes](docs/releases/RELEASE-V68.md),
+[V67 keyboard dismissal validation](docs/releases/RELEASE-V67.md),
+[full details](docs/releases/README-CONSOLIDATED.md),
+[GNOME dock compatibility](docs/platform/GNOME-DOCK-COMPAT.md), and the
+[optional GNOME cursor bridge](docs/platform/GNOME-CURSOR-BRIDGE.md).
 
-**V90 local Artwork Library (extended in V92):** Choose **My Artwork** from the built-in Artwork Editor to browse saved `.txt` art and project-backed images with ASCII thumbnail previews, source and shape filters, searchable filename/tags, and Open Artwork in a separate editor. Details writes optional private tags, creator, description, license and source metadata rather than modifying renderer files; From Template / Save a Copy creates a new user asset from one of eight original styles. Local gallery is offline-ready; an optional V92 Browse Online fetches ascii-bin community art with search, filters, safe previews, cached offline fallback and source/license warnings. Rights to individual remote artworks are NOT verified. GUI tests on GNOME/KDE Wayland remain open. See [RELEASE-V90.md](RELEASE-V90.md) and [ROADMAP.md](ROADMAP.md).
+**V90 local Artwork Library (extended in V92):** Choose **My Artwork** from the built-in Artwork Editor to browse saved `.txt` art and project-backed images with ASCII thumbnail previews, source and shape filters, searchable filename/tags, and Open Artwork in a separate editor. Details writes optional private tags, creator, description, license and source metadata rather than modifying renderer files; From Template / Save a Copy creates a new user asset from one of eight original styles. Local gallery is offline-ready; an optional V92 Browse Online fetches ascii-bin community art with search, filters, safe previews, cached offline fallback and source/license warnings. Rights to individual remote artworks are NOT verified. GUI tests on GNOME/KDE Wayland remain open. See [RELEASE-V90.md](docs/releases/RELEASE-V90.md) and [ROADMAP.md](ROADMAP.md).
 
 **V100 Canvas work area:** In Draw on Canvas, choose **Work area**
 for an expandable grid up to 200 x 100 character cells, or **Fit to artwork**
@@ -60,7 +80,7 @@ user actually draws into previously empty cells. Large artworks are drawn
 using only the visible scroll viewport and an extra guard cell, reducing
 unnecessary text-layout work during scrolling. These are source-tested
 features; on-device GTK/KDE/GNOME validation remains open. See
-[RELEASE-V100.md](RELEASE-V100.md).
+[RELEASE-V100.md](docs/releases/RELEASE-V100.md).
 
 **V99 Canvas keyboard editing:** In Draw on Canvas, use the arrow keys to
 move a highlighted cell, Space to paint the selected ASCII glyph and
@@ -68,7 +88,7 @@ Delete/Backspace to erase. The cursor is scrolled into view and its position
 is shown in the existing hint line. Undo/Redo and explicit Save are shared
 with mouse painting and Text mode. Canvas edits now update only changed text,
 not the entire document, and redraw after the grouped edit completes. GTK
-keyboard and Wayland scrolling remain unverified; see [RELEASE-V99.md](RELEASE-V99.md).
+keyboard and Wayland scrolling remain unverified; see [RELEASE-V99.md](docs/releases/RELEASE-V99.md).
 
 **V98 Canvas interaction:** Canvas mode offers 75%-200% zoom, a cosmetic
 Grid switch and responsive tool groups that wrap on narrow windows. Pango
@@ -77,27 +97,27 @@ with scroll position approximately preserved when zoom changes. After clicking
 the canvas, Ctrl+Z / Ctrl+Shift+Z / Ctrl+Y use the shared Undo/Redo history.
 Neither zoom nor grid visibility changes the saved art. Actual GNOME/KDE
 fractional-scale and GTK interaction testing remains outstanding; see
-[RELEASE-V98.md](RELEASE-V98.md).
+[RELEASE-V98.md](docs/releases/RELEASE-V98.md).
 
 **V97 Draw on Canvas:** Artwork Editor now has an optional mouse-driven
 character grid for brush and eraser strokes. Quick motion is interpolated;
 one drag is one Undo step in the same editable text buffer. Toggle back to
 Text for keyboard editing or Unicode artwork. This experimental source
-feature still needs live GTK/GNOME/KDE validation; see [RELEASE-V97.md](RELEASE-V97.md).
+feature still needs live GTK/GNOME/KDE validation; see [RELEASE-V97.md](docs/releases/RELEASE-V97.md).
 
 **V96 manual artwork retouch:** The native Artwork Editor now has a small
 **Retouch** toolbar popover with a one-character ink brush and eraser at the
 text caret, plus horizontal Mirror Selection and vertical Flip Selection.
 Its native bounded Undo/Redo history and the existing explicit Save protect
 unfinished edits. It is not yet a mouse-driven pixel canvas or layered editor.
-Real GTK keyboard/focus testing remains pending; see [RELEASE-V96.md](RELEASE-V96.md).
+Real GTK keyboard/focus testing remains pending; see [RELEASE-V96.md](docs/releases/RELEASE-V96.md).
 
 **V95 online artwork discovery:** Browse Online shows up to 48 remote
 ASCII cards at once, with Show More, title/size sorting, and a Surprise Me
 shuffle that reorders the already downloaded artwork to inspire exploration.
 Online refresh cannot overlap itself, and a transient error preserves the
 items already loaded in the window. Local art and imported attribution are
-unchanged. See [RELEASE-V95.md](RELEASE-V95.md); remote network and GTK/Wayland
+unchanged. See [RELEASE-V95.md](docs/releases/RELEASE-V95.md); remote network and GTK/Wayland
 end-to-end testing remain pending.
 
 **V94 custom character ramps:** Select **Custom** in the Photo to ASCII
@@ -106,11 +126,11 @@ Enter 2–63 unique printable ASCII characters; a space for white highlights
 is appended automatically. It renders in the live comparison and survives
 preset saving and editable photo projects. Incorrect ramps prevent export
 and clear stale preview text. Older projects and built-in styles remain
-unchanged. See [RELEASE-V94.md](RELEASE-V94.md); live GTK/VTE testing pending.
+unchanged. See [RELEASE-V94.md](docs/releases/RELEASE-V94.md); live GTK/VTE testing pending.
 
-**V93 photo finishing:** Advanced Photo to ASCII now supports optional posterization into 2–8 tone bands and configurable white/gray/black backdrops for transparent pixels. Both work in the same live preview and are preserved in photo projects and personal presets; older recipes load with original default settings. [RELEASE-V93.md](RELEASE-V93.md) has details and test limitations.
+**V93 photo finishing:** Advanced Photo to ASCII now supports optional posterization into 2–8 tone bands and configurable white/gray/black backdrops for transparent pixels. Both work in the same live preview and are preserved in photo projects and personal presets; older recipes load with original default settings. [RELEASE-V93.md](docs/releases/RELEASE-V93.md) has details and test limitations.
 
-**V87–V89 Artwork Studio: Photo to ASCII.** The existing native artwork editor now offers a Photo to ASCII workflow with locally imported PNG/JPEG/WebP/BMP images, adjustable monochrome conversion, character aspect compensation and responsive original/output comparison. Explicit Save as New Artwork creates a duplicate-safe `.txt` in the local artwork collection; Use in Editor respects unsaved changes. This is source-tested; GTK/GNOME/KDE validation remains pending. V88 adds collapsed Advanced controls for gamma, edge definition and dithering with a neutral-default Reset; live GTK tests remain pending. V89 now stores the original photo plus conversion recipe alongside every newly exported `.txt` artwork. Existing artwork with a project can be reopened for non-destructive adjustments and Save as New exports another variant; live GUI testing remains pending. See [RELEASE-V89.md](RELEASE-V89.md), [RELEASE-V88.md](RELEASE-V88.md), [RELEASE-V87.md](RELEASE-V87.md) and [ROADMAP.md](ROADMAP.md).
+**V87–V89 Artwork Studio: Photo to ASCII.** The existing native artwork editor now offers a Photo to ASCII workflow with locally imported PNG/JPEG/WebP/BMP images, adjustable monochrome conversion, character aspect compensation and responsive original/output comparison. Explicit Save as New Artwork creates a duplicate-safe `.txt` in the local artwork collection; Use in Editor respects unsaved changes. This is source-tested; GTK/GNOME/KDE validation remains pending. V88 adds collapsed Advanced controls for gamma, edge definition and dithering with a neutral-default Reset; live GTK tests remain pending. V89 now stores the original photo plus conversion recipe alongside every newly exported `.txt` artwork. Existing artwork with a project can be reopened for non-destructive adjustments and Save as New exports another variant; live GUI testing remains pending. See [RELEASE-V89.md](docs/releases/RELEASE-V89.md), [RELEASE-V88.md](docs/releases/RELEASE-V88.md), [RELEASE-V87.md](docs/releases/RELEASE-V87.md) and [ROADMAP.md](ROADMAP.md).
 
 **V85 responsive gallery UX:** Effect Library cards adapt to one, two or three columns instead of forcing a fixed three-column width. On narrow windows the filters and preview actions stack, and both libraries offer Clear filters when a search has no matches. Saved and unsaved selections are unaffected. Real GTK/Wayland visual validation is still pending. See `RELEASE-V85.md`.
 
@@ -191,13 +211,13 @@ cursor bridge is retained only for explicit fallback diagnostics and is
 `scripts/install-gnome-cursor-bridge.sh --remove` if you no longer need it.
 
 A regular Wayland window cannot hide the cursor while GNOME Shell owns pointer
-focus, for example over Dash to Dock. See [V66 testing and limitations](RELEASE-V66.md).
+focus, for example over Dash to Dock. See [V66 testing and limitations](docs/releases/RELEASE-V66.md).
 
 ## Project issue tracking
 
 - [Short checked TASKS checklist](TASKS.md)
 - [Full historical MASTER-BACKLOG register](MASTER-BACKLOG.md), reconciled with the original observations, V55 backlog, renderer backlog and UX roadmap
-- [Dated CHANGELOG](CHANGELOG.md) and [V85 release notes](RELEASE-V85.md)
+- [Dated CHANGELOG](CHANGELOG.md) and [V85 release notes](docs/releases/RELEASE-V85.md)
 
 The checkbox status means source implementation only; unverified KDE/GNOME Wayland behavior is tracked separately.
 

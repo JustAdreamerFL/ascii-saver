@@ -1,4 +1,5 @@
 """V97 bounded mouse-driven ASCII canvas engine and editor wiring."""
+from _bootstrap import SRC, read_source  # noqa: F401
 from pathlib import Path
 from types import SimpleNamespace
 import ast
@@ -75,7 +76,7 @@ class CanvasEngineTests(unittest.TestCase):
 
 class CanvasGtkSourceContracts(unittest.TestCase):
     def test_mouse_controller_renders_only_then_commits(self):
-        view = (ROOT / 'artwork_canvas_view.py').read_text(encoding='utf-8')
+        view = (SRC / 'artwork_canvas_view.py').read_text(encoding='utf-8')
         ast.parse(view)
         for requirement in ('Gtk.GestureDrag()', "drag.connect('drag-begin'",
                             "drag.connect('drag-update'", "drag.connect('drag-end'",
@@ -88,7 +89,7 @@ class CanvasGtkSourceContracts(unittest.TestCase):
         self.assertNotIn('set_text(updated)', view)
 
     def test_editor_reuses_one_buffer_and_groups_strokes_for_undo(self):
-        source = (ROOT / 'artwork_editor.py').read_text(encoding='utf-8')
+        source = (SRC / 'artwork_editor.py').read_text(encoding='utf-8')
         ast.parse(source)
         for phrase in ('Gtk.ToggleButton(label="Draw")',
                        'self.canvas_view = AsciiCanvas(',
@@ -114,9 +115,9 @@ class CanvasGtkSourceContracts(unittest.TestCase):
         version = tuple(int(v) for v in (ROOT / 'VERSION').read_text().strip().split('.'))
         self.assertGreaterEqual(version, (0, 97, 0))
         self.assertIn('.'.join(str(v) for v in version),
-                      (ROOT / 'build_info.py').read_text())
+                      (SRC / 'build_info.py').read_text())
         for name in ('ROADMAP.md', 'TASKS.md', 'CHANGELOG.md', 'MASTER-BACKLOG.md', 'RELEASE-V97.md'):
-            self.assertIn('V97', (ROOT / name).read_text(), name)
+            self.assertIn('V97', read_source(name), name)
 
 
 class _FakeIter:
@@ -142,7 +143,7 @@ class _FakeBuffer:
 
 class CanvasDirectBufferTests(unittest.TestCase):
     def test_actual_commit_edits_shared_buffer_once_without_file_write(self):
-        source = (ROOT / 'artwork_editor.py').read_text()
+        source = (SRC / 'artwork_editor.py').read_text()
         cls = next(n for n in ast.parse(source).body if isinstance(n, ast.ClassDef) and n.name == 'ArtworkEditor')
         method = next(n for n in cls.body if isinstance(n, ast.FunctionDef) and n.name == '_commit_canvas_stroke')
         code = compile(ast.fix_missing_locations(ast.Module(body=[method], type_ignores=[])),
@@ -168,7 +169,7 @@ class CanvasDirectGestureTests(unittest.TestCase):
 
     @staticmethod
     def methods():
-        source = (ROOT / 'artwork_canvas_view.py').read_text()
+        source = (SRC / 'artwork_canvas_view.py').read_text()
         cls = next(n for n in ast.parse(source).body if isinstance(n, ast.ClassDef) and n.name == 'AsciiCanvas')
         methods = [n for n in cls.body if isinstance(n, ast.FunctionDef)
                    and n.name in ('_drag_begin', '_drag_update', '_drag_end')]

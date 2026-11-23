@@ -8,6 +8,15 @@ in the release pull request or issue.
 The current preview results are recorded in
 [Version 0.1.0 acceptance](ACCEPTANCE-0.1.0.md).
 
+## Manual GitHub release workflow
+
+The **Release** workflow (`.github/workflows/release.yml`) is triggered with
+**Run workflow** from the Actions tab. Select the branch to release and,
+optionally, a tag; the tag defaults to `v<VERSION>` and must match `VERSION`.
+The workflow validates the release sources, builds the generic and versioned
+archives with `scripts/build-release.sh`, and publishes all four assets plus
+generated release notes. It refuses to reuse an existing tag.
+
 ## Repository and documentation
 
 - [ ] `VERSION`, changelog heading, tag, and release title agree.

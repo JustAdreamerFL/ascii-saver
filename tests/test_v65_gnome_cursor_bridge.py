@@ -1,4 +1,5 @@
 """Regression tests for GNOME Shell cursor bridge: no GTK or Shell required."""
+from _bootstrap import SRC, read_source  # noqa: F401
 import json
 import tempfile
 import unittest
@@ -8,7 +9,7 @@ from unittest.mock import MagicMock
 from gnome_cursor_bridge import FULLSCREEN_BUS_NAME, FullscreenCursorLease
 
 ROOT = Path(__file__).resolve().parents[1]
-EXT = ROOT / 'gnome-shell-extension' / 'ascii-saver-cursor@ascii-saver.local'
+EXT = ROOT / 'integrations' / 'gnome-shell-extension' / 'ascii-saver-cursor@ascii-saver.local'
 
 
 class GioStub:
@@ -46,7 +47,7 @@ class CursorLeaseTests(unittest.TestCase):
         self.assertEqual(gio.calls, [])
 
     def test_app_requires_mapped_fullscreen_and_releases_for_lock(self):
-        source = (ROOT / 'app.py').read_text()
+        source = (SRC / 'app.py').read_text()
         self.assertIn('self.app._announce_cursor_lease()', source)
         self.assertIn('not self.windowed and self._screen_lock_backend == GNOME', source)
         self.assertIn('any(window.get_mapped()', source)

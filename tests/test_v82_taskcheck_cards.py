@@ -1,4 +1,5 @@
 """V82 regression tests for user-observed card classification and watcher status."""
+from _bootstrap import SRC, read_source  # noqa: F401
 import ast
 import unittest
 from pathlib import Path
@@ -25,15 +26,15 @@ class ClassificationTests(unittest.TestCase):
         self.assertEqual(effect_caption('wipe'), 'Short · Gentle')
 
     def test_both_card_galleries_show_visible_metadata(self):
-        library = (ROOT / 'preferences_gallery_view.py').read_text()
-        editor = (ROOT / 'playlist_editor.py').read_text()
+        library = (SRC / 'preferences_gallery_view.py').read_text()
+        editor = (SRC / 'playlist_editor.py').read_text()
         self.assertIn('label=effect_caption(name)', library)
         self.assertIn('label=effect_caption(effect)', editor)
         self.assertIn('card.append(classification)', library)
         self.assertIn('tile.append(classification)', editor)
         self.assertIn('Suggested duration and intensity, not measured', library)
         self.assertIn('Suggested duration and intensity, not measured', editor)
-        self.assertIn('"$source_dir/effect_metadata.py"', (ROOT / 'install.sh').read_text())
+        self.assertIn('"$py_src/effect_metadata.py"', (ROOT / 'install.sh').read_text())
 
 
 class ActivationStatusTests(unittest.TestCase):
@@ -53,14 +54,14 @@ class ActivationStatusTests(unittest.TestCase):
         self.assertIn('automatic launch disabled', result['watcher'])
 
     def test_dashboard_configure_does_not_mutate_unsaved_preferences(self):
-        src = (ROOT / 'settings.py').read_text()
+        src = (SRC / 'settings.py').read_text()
         self.assertIn('"Automatic activation", "Configure"', src)
         self.assertIn('application.open_preferences("general")', src)
         self.assertIn('self.automatic_row.set_subtitle(status["automatic"])', src)
         self.assertNotIn('ctl.update_config("enabled"', src)
         for item in ('settings.py','status_model.py','effect_metadata.py',
                      'playlist_editor.py','preferences_gallery_view.py'):
-            ast.parse((ROOT / item).read_text())
+            ast.parse(read_source(item))
 
 
 class TrackingTests(unittest.TestCase):

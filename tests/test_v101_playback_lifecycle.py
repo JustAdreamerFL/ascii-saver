@@ -1,5 +1,6 @@
 """V101: renderer lifecycle is mode-aware, bounded and safe to stop."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import ast
 import io
@@ -142,7 +143,7 @@ class DashboardAndStatusTests(unittest.TestCase):
         self.assertIn('playback mode: preview', output.getvalue())
 
     def test_gui_blocks_start_and_preview_during_running_command(self):
-        source = (ROOT / 'settings.py').read_text()
+        source = (SRC / 'settings.py').read_text()
         ast.parse(source)
         self.assertIn('self._playback_busy = True', source)
         self.assertIn('if self._closed or self._playback_busy:', source)
@@ -183,5 +184,5 @@ class DashboardCommandTests(unittest.TestCase):
         self.assertIn('timed out', result)
 
     def test_installer_copies_dashboard_action_module(self):
-        self.assertIn('"$source_dir/dashboard_playback.py" "$staged_app/dashboard_playback.py"',
+        self.assertIn('"$py_src/dashboard_playback.py" "$staged_app/dashboard_playback.py"',
                       (ROOT / 'install.sh').read_text())

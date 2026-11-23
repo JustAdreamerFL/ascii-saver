@@ -1,5 +1,6 @@
 """GTK-free tests for the first creative Artwork Studio milestone increment."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import ast
 from pathlib import Path
@@ -14,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def method(name):
-    source = (ROOT / 'artwork_editor.py').read_text()
+    source = (SRC / 'artwork_editor.py').read_text()
     klass = next(item for item in ast.parse(source).body
                  if isinstance(item, ast.ClassDef) and item.name == 'ArtworkEditor')
     fn = next(item for item in klass.body if isinstance(item, ast.FunctionDef)
@@ -48,7 +49,7 @@ class TemplateMilestoneTests(unittest.TestCase):
             get_template('')
 
     def test_chooser_uses_search_preview_and_real_responsive_orientation(self):
-        source = (ROOT / 'artwork_templates_view.py').read_text()
+        source = (SRC / 'artwork_templates_view.py').read_text()
         for required in ('Gtk.SearchEntry', 'self.listbox.set_filter_func',
                          "self.preview = Gtk.TextView(editable=False",
                          'self.preview.get_buffer().set_text(template.artwork)',
@@ -93,7 +94,7 @@ class TemplateMilestoneTests(unittest.TestCase):
         self.assertEqual(accepted, [('replace', TEMPLATES[2], picker)])
 
     def test_existing_editor_save_and_close_safety_remain(self):
-        src = (ROOT / 'artwork_editor.py').read_text()
+        src = (SRC / 'artwork_editor.py').read_text()
         self.assertIn('self.connect("close-request", self._close_requested)', src)
         self.assertIn('if self._text() != self.original_text and not self._close_confirmed:', src)
         self.assertIn('self._saved_count += 1', src)
@@ -111,7 +112,7 @@ class TemplateMilestoneTests(unittest.TestCase):
         self.assertIn('## Artwork Studio milestone', (ROOT / 'TASKS.md').read_text())
         self.assertIn('## Newly approved future milestone', (ROOT / 'MASTER-BACKLOG.md').read_text())
         self.assertTrue((ROOT / 'docs/archive/UX-ROADMAP-V54.md').is_file())
-        self.assertIn('GTK', (ROOT / 'RELEASE-V86.md').read_text())
+        self.assertIn('GTK', (ROOT / 'docs/releases/RELEASE-V86.md').read_text())
 
 
 if __name__ == '__main__':

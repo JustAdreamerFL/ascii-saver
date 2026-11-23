@@ -1,6 +1,6 @@
 # UI follow-up priorities after V54
 
-This is a historical V54 issue list, not a claim of resolved bugs. For current checked status and priorities, see [TASKS.md](TASKS.md).
+This is a historical V54 issue list, not a claim of resolved bugs. For current checked status and priorities, see [TASKS.md](../../TASKS.md).
 
 ## Next highest-priority UX work
 1. Rebuild Playlist Editor around full-height effect thumbnails and accessible selection / ordering; keep auto-playlist controls collapsed, secondary.

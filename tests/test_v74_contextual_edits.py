@@ -1,5 +1,6 @@
 """V74: real callback logic without a GTK/Wayland runtime."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import ast
 import json
@@ -15,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def method_from_source(filename, class_name, method, env):
     """Execute a class method's real Python body without importing GTK."""
-    tree = ast.parse((ROOT / filename).read_text(encoding="utf-8"))
+    tree = ast.parse(read_source(filename))
     owner = next(item for item in tree.body if isinstance(item, ast.ClassDef)
                  and item.name == class_name)
     node = next(item for item in owner.body if isinstance(item, ast.FunctionDef)
@@ -109,9 +110,9 @@ class EditStateTests(unittest.TestCase):
         dummy._mark_dirty.assert_not_called()
 
     def test_playlist_editor_closed_does_not_reload_other_preferences(self):
-        code = (ROOT / 'preferences_actions.py').read_text()
+        code = (SRC / 'preferences_actions.py').read_text()
         self.assertIn('self.get_application().open_playlist_editor()', code)
-        self.assertIn('self.preferences_window._reload_external_playlists()', (ROOT / 'application_actions.py').read_text())
+        self.assertIn('self.preferences_window._reload_external_playlists()', (SRC / 'application_actions.py').read_text())
         self.assertNotIn('GLib.idle_add(self._load_preferences)', code)
 
     def test_external_playlists_refresh_preserves_unsaved_other_widgets(self):
@@ -162,7 +163,7 @@ class EditStateTests(unittest.TestCase):
         dummy._set_notice.assert_called_once()
 
     def test_playlist_editor_operations_have_local_dirty_indicators(self):
-        source = (ROOT / 'playlist_editor.py').read_text()
+        source = (SRC / 'playlist_editor.py').read_text()
         tree = ast.parse(source)
         editor = next(item for item in tree.body if isinstance(item, ast.ClassDef)
                       and item.name == 'Editor')
@@ -176,12 +177,12 @@ class EditStateTests(unittest.TestCase):
         self.assertNotIn('content_header.pack_end(save)', source)
 
     def test_library_has_contextual_buttons_and_installed_state(self):
-        source = (ROOT / 'preferences_gallery_view.py').read_text()
+        source = (SRC / 'preferences_gallery_view.py').read_text()
         self.assertIn('discard_library.connect("clicked", self._discard_library_changes)', source)
         self.assertIn('save_library.connect("clicked", self._save_library_changes)', source)
         self.assertIn('library_overlay.add_overlay(self.library_unsaved_banner)', source)
         installer = (ROOT / 'install.sh').read_text()
-        self.assertIn('"$source_dir/edit_state.py"', installer)
+        self.assertIn('"$py_src/edit_state.py"', installer)
 
 
 class FakeBuffer:

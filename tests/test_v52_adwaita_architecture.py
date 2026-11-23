@@ -1,4 +1,5 @@
 """Source contracts for V52 Adwaita migration, no GTK runtime needed."""
+from _bootstrap import SRC, read_source  # noqa: F401
 from ui_sources import all_ui_source
 
 from pathlib import Path
@@ -10,7 +11,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 class AdwaitaArchitectureTests(unittest.TestCase):
     def test_real_preference_pages_groups_and_rows(self):
-        helpers = (ROOT / 'adwaita_ui.py').read_text()
+        helpers = (SRC / 'adwaita_ui.py').read_text()
         self.assertIn('class SettingsPage(Adw.PreferencesPage)', helpers)
         self.assertIn('Adw.PreferencesGroup(title=title)', helpers)
         self.assertIn('Adw.ActionRow(title=title)', helpers)
@@ -31,7 +32,7 @@ class AdwaitaArchitectureTests(unittest.TestCase):
         self.assertIn('window.set_content(toolbar)', settings)
 
     def test_action_rows_preserve_configuration_widgets(self):
-        helpers = (ROOT / 'adwaita_ui.py').read_text()
+        helpers = (SRC / 'adwaita_ui.py').read_text()
         self.assertIn('row.add_suffix(widget)', helpers)
         settings = all_ui_source()
         self.assertIn('self.per_monitor.connect("notify::active", self._update_monitor_controls)', settings)
@@ -41,7 +42,7 @@ class AdwaitaArchitectureTests(unittest.TestCase):
         self.assertIn('"monitor_visuals":', settings)
 
     def test_adaptive_playlist_editor_and_controls(self):
-        source = (ROOT / 'playlist_editor.py').read_text()
+        source = (SRC / 'playlist_editor.py').read_text()
         self.assertIn('class Editor(Adw.ApplicationWindow)', source)
         self.assertIn('columns = Adw.NavigationSplitView()', source)
         self.assertIn('Adw.NavigationPage(child=sidebar_toolbar, title="Playlists")', source)
@@ -56,7 +57,7 @@ class AdwaitaArchitectureTests(unittest.TestCase):
             ('effect_preview_window.py', 'class EffectPreviewWindow(Adw.Window)'),
             ('performance_ui.py', 'class PerformanceWindow(Adw.Window)'),
         ):
-            source = (ROOT / name).read_text()
+            source = read_source(name)
             self.assertIn(marker, source)
             if name == 'effect_preview_window.py':
                 self.assertIn('toolbar.add_top_bar(header)', source)
@@ -80,7 +81,7 @@ class AdwaitaArchitectureTests(unittest.TestCase):
 
     def test_installer_copies_ui_module(self):
         source = (ROOT / 'install.sh').read_text()
-        self.assertIn('install -m 0644 "$source_dir/adwaita_ui.py" "$staged_app/adwaita_ui.py"', source)
+        self.assertIn('install -m 0644 "$py_src/adwaita_ui.py" "$staged_app/adwaita_ui.py"', source)
 
 
 if __name__ == '__main__':

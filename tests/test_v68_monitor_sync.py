@@ -1,12 +1,13 @@
 """Headless checks for the per-monitor hold barrier and playlist advancement."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import ast
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
 
-SOURCE = (Path(__file__).resolve().parents[1] / "app.py").read_text(encoding="utf-8")
+SOURCE = (Path(__file__).resolve().parents[1] / "src" / "app.py").read_text(encoding="utf-8")
 
 
 def extracted(name):

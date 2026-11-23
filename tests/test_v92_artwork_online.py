@@ -1,5 +1,6 @@
 """V92 provider, explicit import, metadata migration and UI contract tests."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 from dataclasses import replace
 import ast
@@ -163,8 +164,8 @@ class MetadataTests(unittest.TestCase):
 
 class UIAndPackageContracts(unittest.TestCase):
     def test_real_gallery_actions_and_responsive_layout(self):
-        gallery = (ROOT / 'artwork_library_view.py').read_text()
-        online = (ROOT / 'artwork_online_view.py').read_text()
+        gallery = (SRC / 'artwork_library_view.py').read_text()
+        online = (SRC / 'artwork_online_view.py').read_text()
         for source in (gallery, online):
             ast.parse(source)
         for text in ("Gtk.Button(label='Browse Online')", 'OnlineArtworkWindow(',
@@ -183,9 +184,9 @@ class UIAndPackageContracts(unittest.TestCase):
         self.assertIn('artwork_online artwork_online_view', install)
         version = (ROOT / 'VERSION').read_text().strip()
         self.assertGreaterEqual(int(version.split('.')[1]), 92)
-        self.assertIn(f'BUILD_VERSION = "{version}"', (ROOT / 'build_info.py').read_text())
+        self.assertIn(f'BUILD_VERSION = "{version}"', (SRC / 'build_info.py').read_text())
         for file in ('TASKS.md', 'ROADMAP.md', 'CHANGELOG.md', 'MASTER-BACKLOG.md', 'RELEASE-V92.md'):
-            self.assertIn('V92', (ROOT / file).read_text())
+            self.assertIn('V92', read_source(file))
 
 
 if __name__ == '__main__':

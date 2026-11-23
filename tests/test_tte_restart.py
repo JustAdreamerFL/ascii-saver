@@ -2,6 +2,7 @@
 """TTE crash backoff policy (shared with gnome-ascii-saver helpers)."""
 
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import unittest
 

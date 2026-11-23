@@ -1,4 +1,5 @@
 """Session-specific screen lock is not the freedesktop idle inhibitor."""
+from _bootstrap import SRC, read_source  # noqa: F401
 import unittest
 from screen_lock_backend import GNOME, KDE, select_screen_lock_backend
 

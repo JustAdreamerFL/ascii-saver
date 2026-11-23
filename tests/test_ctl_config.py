@@ -2,6 +2,7 @@
 """Config merge tests for ascii-saverctl."""
 
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import io
 import json

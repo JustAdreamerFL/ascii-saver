@@ -4,6 +4,7 @@ GTK-free contract checks plus execution of the real fullscreen child-exit
 callback. Live compositor/VTE verification remains a separate manual step.
 """
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import ast
 from io import StringIO
@@ -19,7 +20,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def source_for(name: str) -> str:
-    return (ROOT / name).read_text(encoding="utf-8")
+    return read_source(name)
 
 
 def preview_spawn_arguments(filename: str) -> list[str]:

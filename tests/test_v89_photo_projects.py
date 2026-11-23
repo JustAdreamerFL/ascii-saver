@@ -1,5 +1,6 @@
 """End-to-end headless contracts for editable, immutable-source photo projects."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import ast
 from dataclasses import replace
@@ -157,8 +158,8 @@ class ProjectPersistenceTests(unittest.TestCase):
 
 class PhotoUIContractTests(unittest.TestCase):
     def test_editor_exposes_project_reopen_without_destroying_pending_photo_work(self):
-        editor = (ROOT / 'artwork_editor.py').read_text()
-        view = (ROOT / 'photo_ascii_view.py').read_text()
+        editor = (SRC / 'artwork_editor.py').read_text()
+        view = (SRC / 'photo_ascii_view.py').read_text()
         ast.parse(editor)
         ast.parse(view)
         self.assertIn('reference_for_artwork(self.config_dir, path)', editor)
@@ -179,9 +180,9 @@ class PhotoUIContractTests(unittest.TestCase):
         self.assertIn('diagnostics_model', (ROOT / 'install.sh').read_text())
         version = (ROOT / 'VERSION').read_text().strip()
         self.assertGreaterEqual(int(version.split('.')[1]), 89)
-        self.assertIn(f'BUILD_VERSION = "{version}"', (ROOT / 'build_info.py').read_text())
+        self.assertIn(f'BUILD_VERSION = "{version}"', (SRC / 'build_info.py').read_text())
         for filename in ('CHANGELOG.md', 'TASKS.md', 'ROADMAP.md', 'RELEASE-V89.md'):
-            self.assertIn('V89', (ROOT / filename).read_text(), filename)
+            self.assertIn('V89', read_source(filename), filename)
 
 
 if __name__ == '__main__':

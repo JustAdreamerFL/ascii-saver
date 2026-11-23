@@ -3,6 +3,7 @@
 These tests run without GTK. Actual breakpoints/window allocation still need
 interactive verification on GNOME and KDE Wayland.
 """
+from _bootstrap import SRC, read_source  # noqa: F401
 import ast
 from pathlib import Path
 import types
@@ -15,7 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def method(filename, class_name, function):
-    tree = ast.parse((ROOT / filename).read_text(encoding='utf-8'))
+    tree = ast.parse(read_source(filename))
     klass = next(c for c in tree.body if isinstance(c, ast.ClassDef) and c.name == class_name)
     fn = next(f for f in klass.body if isinstance(f, ast.FunctionDef) and f.name == function)
     mod = ast.fix_missing_locations(ast.Module(body=[fn], type_ignores=[]))
@@ -59,7 +60,7 @@ class FakeFlowBox:
 
 class ResponsiveGalleryTests(unittest.TestCase):
     def test_effect_library_flowbox_adapts_and_keeps_scroll_region(self):
-        source = (ROOT / 'preferences_gallery_view.py').read_text()
+        source = (SRC / 'preferences_gallery_view.py').read_text()
         self.assertIn('effect_grid = Gtk.FlowBox()', source)
         self.assertIn('effect_grid.set_min_children_per_line(1)', source)
         self.assertIn('effect_grid.set_max_children_per_line(3)', source)
@@ -71,8 +72,8 @@ class ResponsiveGalleryTests(unittest.TestCase):
                         source.index('gallery_shell.append(self.live_preview_revealer)'))
 
     def test_both_filter_toolbars_reflow_before_window_is_too_small(self):
-        library = (ROOT / 'preferences_gallery_view.py').read_text()
-        editor = (ROOT / 'playlist_editor.py').read_text()
+        library = (SRC / 'preferences_gallery_view.py').read_text()
+        editor = (SRC / 'playlist_editor.py').read_text()
         self.assertIn('compact.add_setter(library_toolbar, "orientation", Gtk.Orientation.VERTICAL)', library)
         self.assertIn('compact.add_setter(preview_mode_row, "orientation", Gtk.Orientation.VERTICAL)', library)
         self.assertIn('smallest.add_setter(library_actions, "orientation", Gtk.Orientation.VERTICAL)', library)
@@ -138,7 +139,7 @@ class ResponsiveGalleryTests(unittest.TestCase):
         self.assertEqual(host.library_intensity.get_selected(), 0)
 
     def test_playlist_empty_search_has_a_single_reset_and_no_playlist_edit(self):
-        source = (ROOT / 'playlist_editor.py').read_text()
+        source = (SRC / 'playlist_editor.py').read_text()
         self.assertIn("clear_filters.connect('clicked', self._clear_effect_filters)", source)
         self.assertIn("self.gallery_stack.add_named(empty, 'empty')", source)
         self.assertIn("self._filter_update_suspended = True", source)
@@ -161,7 +162,7 @@ class ResponsiveGalleryTests(unittest.TestCase):
         self.assertGreaterEqual(tuple(map(int, (ROOT / 'VERSION').read_text().strip().split('.'))), (0, 85, 0))
         self.assertIn('## 0.85.0 (experimental) - 2026-11-08',
                       (ROOT / 'CHANGELOG.md').read_text())
-        self.assertIn('not verified', (ROOT / 'RELEASE-V85.md').read_text())
+        self.assertIn('not verified', (ROOT / 'docs/releases/RELEASE-V85.md').read_text())
 
 
 if __name__ == '__main__':

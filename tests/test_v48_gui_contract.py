@@ -1,4 +1,5 @@
 """Regression contracts for user-reported V47 GUI bugs, no GTK import needed."""
+from _bootstrap import SRC, read_source  # noqa: F401
 from ui_sources import all_ui_source
 
 import ast
@@ -9,7 +10,7 @@ ROOT = Path(__file__).resolve().parent.parent
 
 class PreviewGuiContract(unittest.TestCase):
     def test_vte_spawn_uses_keyword_signature_matching_main_renderer(self):
-        source = (ROOT / "preferences_gallery.py").read_text()
+        source = (SRC / "preferences_gallery.py").read_text()
         tree = ast.parse(source)
         calls = [n for n in ast.walk(tree)
                  if isinstance(n, ast.Call) and isinstance(n.func, ast.Attribute)
@@ -45,7 +46,7 @@ class PreviewGuiContract(unittest.TestCase):
         self.assertNotIn('toolbar.append(self.unsaved_banner)', source)
 
     def test_preview_posters_are_decoded_one_frame_at_a_time(self):
-        source = (ROOT / 'animated_preview.py').read_text()
+        source = (SRC / 'animated_preview.py').read_text()
         self.assertIn('self.show_poster()', source)
         self.assertIn('self._set_frame_texture(pack, 0)', source)
         self.assertIn('pack.mask_frame(index)', source)

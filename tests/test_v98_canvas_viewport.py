@@ -1,4 +1,5 @@
 """V98 canvas zoom, logical coordinates, keyboard focus and stable viewport."""
+from _bootstrap import SRC, read_source  # noqa: F401
 import ast
 import math
 from pathlib import Path
@@ -78,7 +79,7 @@ def source_methods(path, cls_name, method_names, namespace):
 class CanvasViewBehaviorTests(unittest.TestCase):
     def test_zoom_cancels_pending_stroke_and_preserves_viewport(self):
         callbacks, draws = [], []
-        namespace = source_methods(ROOT / 'artwork_canvas_view.py', 'AsciiCanvas',
+        namespace = source_methods(SRC / 'artwork_canvas_view.py', 'AsciiCanvas',
                                    ('cancel_stroke', 'set_zoom', '_restore_scroll_after_zoom'),
                                    {'ZOOM_LEVELS': ZOOM_LEVELS,
                                     'zoom_scroll_offset': zoom_scroll_offset,
@@ -112,7 +113,7 @@ class CanvasViewBehaviorTests(unittest.TestCase):
             namespace['set_zoom'](host, 300)
 
     def test_stale_zoom_scroll_callback_is_rejected_and_clamped(self):
-        namespace = source_methods(ROOT / 'artwork_canvas_view.py', 'AsciiCanvas',
+        namespace = source_methods(SRC / 'artwork_canvas_view.py', 'AsciiCanvas',
                                    ('_restore_scroll_after_zoom',), {})
         h = _Adjustment(10, upper=90, page_size=40)
         v = _Adjustment(10, upper=60, page_size=60)
@@ -125,7 +126,7 @@ class CanvasViewBehaviorTests(unittest.TestCase):
         self.assertEqual(v.value, 0)
 
     def test_canvas_keyboard_shortcuts_do_not_switch_to_text_mode(self):
-        namespace = source_methods(ROOT / 'artwork_canvas_view.py', 'AsciiCanvas',
+        namespace = source_methods(SRC / 'artwork_canvas_view.py', 'AsciiCanvas',
                                    ('_key_pressed',), {
                                        'Gdk': SimpleNamespace(
                                            ModifierType=SimpleNamespace(CONTROL_MASK=1, SHIFT_MASK=2),
@@ -142,7 +143,7 @@ class CanvasViewBehaviorTests(unittest.TestCase):
         self.assertEqual(actions, ['undo', 'redo', 'redo'])
 
     def test_editor_restores_focus_to_active_mode(self):
-        namespace = source_methods(ROOT / 'artwork_editor.py', 'ArtworkEditor',
+        namespace = source_methods(SRC / 'artwork_editor.py', 'ArtworkEditor',
                                    ('_restore_editing_focus',), {})
         focus = []
         host = SimpleNamespace(draw_mode=SimpleNamespace(get_active=lambda: True),
@@ -155,8 +156,8 @@ class CanvasViewBehaviorTests(unittest.TestCase):
         self.assertEqual(focus, ['canvas', 'text'])
 
     def test_wiring_contracts_responsive_and_safe(self):
-        editor = (ROOT / 'artwork_editor.py').read_text()
-        view = (ROOT / 'artwork_canvas_view.py').read_text()
+        editor = (SRC / 'artwork_editor.py').read_text()
+        view = (SRC / 'artwork_canvas_view.py').read_text()
         for snippet in ('Gtk.FlowBox()', 'Gtk.DropDown.new_from_strings(',
                         'Gtk.CheckButton(label="Grid")', 'self.canvas_view.set_zoom(',
                         'self.canvas_view.set_grid_visible(',

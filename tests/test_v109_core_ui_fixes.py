@@ -4,6 +4,7 @@ Pure-model behavior executes headlessly; GTK widget wiring is source-contract
 coverage until a real Fedora GNOME/KDE session is available.
 """
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 import ast
 import json
 from pathlib import Path
@@ -19,7 +20,7 @@ from test_v70_palette_rounds import RendererPaletteIntegrationTests
 
 
 def source(name):
-    return (ROOT / name).read_text(encoding='utf-8')
+    return read_source(name)
 
 
 class EffectRgbModeTests(unittest.TestCase):

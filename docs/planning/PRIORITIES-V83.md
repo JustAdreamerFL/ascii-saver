@@ -1,6 +1,6 @@
 # Current priorities after V83
 
-See [TASKS.md](TASKS.md) for concise checked items and [MASTER-BACKLOG.md](MASTER-BACKLOG.md) for the fully reconciled original reports from the prior development chat.
+See [TASKS.md](../../TASKS.md) for concise checked items and [MASTER-BACKLOG.md](../../MASTER-BACKLOG.md) for the fully reconciled original reports from the prior development chat.
 
 ## Open with known user-observed evidence
 

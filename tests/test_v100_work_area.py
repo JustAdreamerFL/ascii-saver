@@ -1,5 +1,6 @@
 """V100: non-destructive expandable work area and viewport-limited drawing."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 import ast
 import math
 from pathlib import Path
@@ -14,7 +15,7 @@ from artwork_canvas import (CanvasShape, canvas_shape, paint_stroke,
 
 
 def method_source(filename, cls, names, scope):
-    text = (ROOT / filename).read_text()
+    text = read_source(filename)
     tree = ast.parse(text)
     klass = next(node for node in tree.body if isinstance(node, ast.ClassDef) and node.name == cls)
     methods = [node for node in klass.body if isinstance(node, ast.FunctionDef) and node.name in names]
@@ -167,8 +168,8 @@ class WorkspaceUIContracts(unittest.TestCase):
         self.assertEqual(len(measured), 2)
 
     def test_editor_work_area_is_a_real_advanced_popover(self):
-        editor = (ROOT / 'artwork_editor.py').read_text()
-        canvas = (ROOT / 'artwork_canvas_view.py').read_text()
+        editor = (SRC / 'artwork_editor.py').read_text()
+        canvas = (SRC / 'artwork_canvas_view.py').read_text()
         for item in ('Gtk.MenuButton(label="Work area")',
                      'Gtk.SpinButton.new_with_range(48, 200, 1)',
                      'Gtk.SpinButton.new_with_range(18, 100, 1)',
@@ -180,7 +181,7 @@ class WorkspaceUIContracts(unittest.TestCase):
         self.assertIn('visible_cell_range(', canvas)
         self.assertNotIn('save_artwork', canvas)
         self.assertGreaterEqual(tuple(map(int, (ROOT / 'VERSION').read_text().strip().split('.'))), (0, 100, 0))
-        self.assertTrue((ROOT / 'RELEASE-V100.md').is_file())
+        self.assertTrue((ROOT / 'docs/releases/RELEASE-V100.md').is_file())
 
 
 if __name__ == '__main__':

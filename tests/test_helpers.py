@@ -2,6 +2,7 @@
 """Unit tests for config validation, TTE backoff constants, and EDITOR argv."""
 
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import io
 import json

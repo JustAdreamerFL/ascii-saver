@@ -1,5 +1,6 @@
 """End-to-end headless tests of local asset indexing, metadata and safe reuse."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import ast
 import json
@@ -123,9 +124,9 @@ class CatalogTests(unittest.TestCase):
 
 class CatalogUIContracts(unittest.TestCase):
     def test_gallery_wired_to_editor_with_accessible_actions(self):
-        editor = (ROOT / 'artwork_editor.py').read_text()
-        gallery = (ROOT / 'artwork_library_view.py').read_text()
-        chooser = (ROOT / 'artwork_templates_view.py').read_text()
+        editor = (SRC / 'artwork_editor.py').read_text()
+        gallery = (SRC / 'artwork_library_view.py').read_text()
+        chooser = (SRC / 'artwork_templates_view.py').read_text()
         for source in (editor, gallery, chooser):
             ast.parse(source)
         for text in ('library = Gtk.Button(label="My Artwork")',
@@ -144,9 +145,9 @@ class CatalogUIContracts(unittest.TestCase):
     def test_install_and_docs_track_v90(self):
         self.assertIn('artwork_catalog artwork_library_view', (ROOT / 'install.sh').read_text())
         self.assertGreaterEqual(int((ROOT / 'VERSION').read_text().split('.')[1]), 90)
-        self.assertIn(f'BUILD_VERSION = "{(ROOT / "VERSION").read_text().strip()}"', (ROOT / 'build_info.py').read_text())
+        self.assertIn(f'BUILD_VERSION = "{(ROOT / "VERSION").read_text().strip()}"', (SRC / 'build_info.py').read_text())
         for filename in ('TASKS.md', 'ROADMAP.md', 'CHANGELOG.md', 'MASTER-BACKLOG.md', 'RELEASE-V90.md'):
-            self.assertIn('V90', (ROOT / filename).read_text(), filename)
+            self.assertIn('V90', read_source(filename), filename)
 
 
 if __name__ == '__main__':

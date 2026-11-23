@@ -1,5 +1,6 @@
 """V94: user-defined monochrome ramps are renderer-safe and reversible."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import ast
 from dataclasses import replace
@@ -95,7 +96,7 @@ class CustomRampTests(unittest.TestCase):
 
 class CustomRampUIContract(unittest.TestCase):
     def test_live_render_and_no_stale_export_after_invalid_user_typing(self):
-        source = (ROOT / 'photo_ascii_view.py').read_text()
+        source = (SRC / 'photo_ascii_view.py').read_text()
         ast.parse(source)
         for expected in ("self.ramp.set_model(Gtk.StringList.new(list(AVAILABLE_RAMPS)))",
                          "self.custom_ramp = Adw.EntryRow(",
@@ -111,11 +112,11 @@ class CustomRampUIContract(unittest.TestCase):
     def test_package_version_and_historical_docs(self):
         version = (ROOT / 'VERSION').read_text().strip()
         self.assertGreaterEqual(int(version.split('.')[1]), 94)
-        self.assertIn(f'BUILD_VERSION = "{version}"', (ROOT / 'build_info.py').read_text())
+        self.assertIn(f'BUILD_VERSION = "{version}"', (SRC / 'build_info.py').read_text())
         self.assertIn('photo_ascii photo_ascii_view photo_project photo_presets',
                       (ROOT / 'install.sh').read_text())
         for path in ('ROADMAP.md', 'TASKS.md', 'CHANGELOG.md', 'MASTER-BACKLOG.md', 'RELEASE-V94.md'):
-            self.assertIn('V94', (ROOT / path).read_text())
+            self.assertIn('V94', read_source(path))
 
 
 if __name__ == '__main__':

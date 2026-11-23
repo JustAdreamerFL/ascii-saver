@@ -1,5 +1,6 @@
 """Regression tests for Preferences monitor connect/disconnect handling."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 import ast
 from pathlib import Path
 import unittest
@@ -69,8 +70,8 @@ class MonitorConfigTests(unittest.TestCase):
 
 class HotplugSourceTests(unittest.TestCase):
     def test_hotplug_signal_reconciles_rows(self):
-        source = (ROOT / 'settings.py').read_text()
-        controls = (ROOT / 'preferences_controls.py').read_text()
+        source = (SRC / 'settings.py').read_text()
+        controls = (SRC / 'preferences_controls.py').read_text()
         self.assertIn('self._sync_monitor_widgets()', source)
         self.assertIn('def _sync_monitor_widgets(self):', controls)
         self.assertIn('self.monitor_rates_group.remove(fps_row)', controls)
@@ -79,16 +80,16 @@ class HotplugSourceTests(unittest.TestCase):
         self.assertIn('self._monitor_rows[connector]', controls)
 
     def test_new_monitor_controls_get_dirty_signals(self):
-        source = (ROOT / 'preferences_controls.py').read_text()
+        source = (SRC / 'preferences_controls.py').read_text()
         self.assertIn('spin.connect("value-changed", self._mark_dirty)', source)
         self.assertIn('artwork.connect("changed", self._mark_dirty)', source)
         self.assertIn('button.connect("notify::rgba", self._mark_dirty)', source)
         self.assertIn('extend_monitor_baseline(', source)
         self.assertIn('self._monitor_signals_connected = True',
-                      (ROOT / 'preferences_state.py').read_text())
+                      (SRC / 'preferences_state.py').read_text())
 
     def test_save_preserves_disconnected_config(self):
-        source = (ROOT / 'preferences_state.py').read_text()
+        source = (SRC / 'preferences_state.py').read_text()
         self.assertIn('stored_monitor_settings = merge_monitor_settings(', source)
         self.assertIn('"monitor_fps": stored_monitor_settings["monitor_fps"]', source)
         self.assertIn('"monitor_visuals": stored_monitor_settings["monitor_visuals"]', source)
@@ -96,9 +97,9 @@ class HotplugSourceTests(unittest.TestCase):
 
     def test_new_helper_installed(self):
         source = (ROOT / 'install.sh').read_text()
-        self.assertIn('"$source_dir/monitor_config.py" "$staged_app/monitor_config.py"', source)
+        self.assertIn('"$py_src/monitor_config.py" "$staged_app/monitor_config.py"', source)
         for f in ('settings.py', 'preferences_controls.py', 'preferences_state.py', 'monitor_config.py'):
-            ast.parse((ROOT / f).read_text())
+            ast.parse(read_source(f))
 
 
 if __name__ == '__main__':
@@ -110,7 +111,7 @@ class HotplugLogicTests(unittest.TestCase):
     def test_attach_detach_reattach_preserves_widgets_and_dirty_state(self):
         # Extract the real method rather than mocking its algorithm. Only the
         # GDK display and PreferencesGroup rows are fake.
-        tree = ast.parse((ROOT / 'preferences_controls.py').read_text())
+        tree = ast.parse((SRC / 'preferences_controls.py').read_text())
         cls = next(n for n in tree.body if isinstance(n, ast.ClassDef)
                    and n.name == 'PreferenceControlsMixin')
         fn = next(n for n in cls.body if isinstance(n, ast.FunctionDef)

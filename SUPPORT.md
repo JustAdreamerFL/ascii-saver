@@ -7,7 +7,7 @@ no response time or long-term support period is guaranteed.
 
 1. Read the [installation guide](docs/INSTALLATION.md) and
    [troubleshooting guide](docs/TROUBLESHOOTING.md).
-2. Search [existing issues](https://github.com/RobbyBobby77/kde-ascii-saver/issues)
+2. Search [existing issues](https://github.com/JustAdreamerFL/ascii-saver/issues)
    for the same symptom.
 3. Confirm the issue still occurs on the latest release.
 4. Run `kde-ascii-saverctl status` and collect only the relevant service logs.

@@ -1,4 +1,5 @@
 """V60 preferences editor and strict separation from KDE-prefixed installations."""
+from _bootstrap import SRC, read_source  # noqa: F401
 from pathlib import Path
 import ast
 import unittest
@@ -7,11 +8,11 @@ ROOT = Path(__file__).resolve().parents[1]
 
 class CleanIdentityTests(unittest.TestCase):
     def test_default_artwork_uses_native_editor_not_captured_terminal(self):
-        shell = (ROOT / "preferences_shell.py").read_text()
-        actions = (ROOT / "preferences_actions.py").read_text()
-        menu = (ROOT / "app_menu.py").read_text()
-        app_actions = (ROOT / "application_actions.py").read_text()
-        self.assertIn('("Edit Artwork", "Open", self._edit_default_artwork)', (ROOT / 'preferences_pages.py').read_text())
+        shell = (SRC / "preferences_shell.py").read_text()
+        actions = (SRC / "preferences_actions.py").read_text()
+        menu = (SRC / "app_menu.py").read_text()
+        app_actions = (SRC / "application_actions.py").read_text()
+        self.assertIn('("Edit Artwork", "Open", self._edit_default_artwork)', (SRC / 'preferences_pages.py').read_text())
         self.assertNotIn("'Edit Artwork', 'app.edit-artwork'", menu)
         self.assertIn('self.preferences_window._edit_default_artwork()', app_actions)
         self.assertIn('editor = ArtworkEditor(self, path, on_finished=finished, config_dir=ctl.config_dir)', actions)
@@ -22,7 +23,7 @@ class CleanIdentityTests(unittest.TestCase):
     def test_no_implicit_legacy_migration_or_cleanup(self):
         for name in ("install.sh", "uninstall.sh"):
             with self.subTest(script=name):
-                contents = (ROOT/name).read_text()
+                contents = read_source(name)
                 # Only a comment mentioning legacy paths is acceptable.
                 commands = "\n".join(line for line in contents.splitlines() if not line.strip().startswith("#"))
                 self.assertNotIn('kde-ascii-saver', commands)

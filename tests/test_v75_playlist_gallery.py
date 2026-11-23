@@ -1,4 +1,5 @@
 """V75: playlist editor uses a gallery-first layout and independent filters."""
+from _bootstrap import SRC, read_source  # noqa: F401
 import ast
 from pathlib import Path
 import unittest
@@ -38,7 +39,7 @@ class GalleryModelTests(unittest.TestCase):
 class GalleryFirstUiContracts(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.source = (ROOT / 'playlist_editor.py').read_text()
+        cls.source = (SRC / 'playlist_editor.py').read_text()
         cls.tree = ast.parse(cls.source)
 
     def test_spare_window_height_belongs_to_effect_gallery(self):
@@ -77,7 +78,7 @@ class GalleryFirstUiContracts(unittest.TestCase):
 
     def test_new_filter_module_is_shipped(self):
         installer = (ROOT / 'install.sh').read_text()
-        self.assertIn('"$source_dir/playlist_gallery_model.py"', installer)
+        self.assertIn('"$py_src/playlist_gallery_model.py"', installer)
         self.assertIn('from playlist_gallery_model import visible_effects, selection_caption', self.source)
 
 

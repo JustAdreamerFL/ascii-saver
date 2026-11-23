@@ -1,5 +1,6 @@
 """V91: genuine reusable looks, safe persistence, and progressive GTK contracts."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import ast
 import json
@@ -126,7 +127,7 @@ class CreativePhotoPresetTests(unittest.TestCase):
 
 class PhotoPresetUIContracts(unittest.TestCase):
     def test_progressive_editor_actions_are_wired_and_no_implicit_export(self):
-        view = (ROOT / 'photo_ascii_view.py').read_text()
+        view = (SRC / 'photo_ascii_view.py').read_text()
         ast.parse(view)
         for code in ("Adw.PreferencesGroup(title='Start with a creative look'",
                      "self.personal_presets.set_expanded(False)",
@@ -145,9 +146,9 @@ class PhotoPresetUIContracts(unittest.TestCase):
     def test_version_installer_and_documentation(self):
         self.assertIn('photo_project photo_presets diagnostics_model', (ROOT / 'install.sh').read_text())
         self.assertGreaterEqual(int((ROOT / 'VERSION').read_text().strip().split('.')[1]), 91)
-        self.assertIn(f'BUILD_VERSION = "{(ROOT / "VERSION").read_text().strip()}"', (ROOT / 'build_info.py').read_text())
+        self.assertIn(f'BUILD_VERSION = "{(ROOT / "VERSION").read_text().strip()}"', (SRC / 'build_info.py').read_text())
         for name in ('TASKS.md', 'ROADMAP.md', 'CHANGELOG.md', 'RELEASE-V91.md'):
-            self.assertIn('V91', (ROOT / name).read_text(), name)
+            self.assertIn('V91', read_source(name), name)
 
 
 if __name__ == '__main__':

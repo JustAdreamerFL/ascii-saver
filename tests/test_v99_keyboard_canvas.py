@@ -1,4 +1,5 @@
 """V99 keyboard-accessible ASCII canvas, visible cursor and safe incremental edits."""
+from _bootstrap import SRC, read_source  # noqa: F401
 import ast
 import math
 from pathlib import Path
@@ -69,7 +70,7 @@ class CanvasKeyboardWiringTests(unittest.TestCase):
         gdk = SimpleNamespace(ModifierType=SimpleNamespace(CONTROL_MASK=1, SHIFT_MASK=2,
                                                            ALT_MASK=4, SUPER_MASK=8),
                               keyval_name=lambda key: key)
-        return source_methods(ROOT / 'artwork_canvas_view.py', 'AsciiCanvas',
+        return source_methods(SRC / 'artwork_canvas_view.py', 'AsciiCanvas',
                               ('_key_pressed', '_notify_cell', '_paint_keyboard_cell',
                                '_reveal_keyboard_cell'),
                               {'Gdk': gdk, 'KEYBOARD_DIRECTIONS': KEYBOARD_DIRECTIONS,
@@ -151,7 +152,7 @@ class CanvasKeyboardWiringTests(unittest.TestCase):
         self.assertEqual(commits, [])
 
     def test_editor_position_hint_and_safe_text_change_suppression(self):
-        methods = source_methods(ROOT / 'artwork_editor.py', 'ArtworkEditor',
+        methods = source_methods(SRC / 'artwork_editor.py', 'ArtworkEditor',
                                  ('_canvas_position_changed', '_canvas_text_changed'), {})
         status = SimpleNamespace(text='', tooltip='',
                                  set_text=lambda v: setattr(status, 'text', v),
@@ -192,7 +193,7 @@ class _FakeBuffer:
 
 class CanvasIncrementalBufferTests(unittest.TestCase):
     def test_partial_updates_do_not_refresh_incomplete_canvas_or_touch_other_lines(self):
-        ns = source_methods(ROOT / 'artwork_editor.py', 'ArtworkEditor',
+        ns = source_methods(SRC / 'artwork_editor.py', 'ArtworkEditor',
                             ('_canvas_text_changed', '_commit_canvas_stroke'), {})
         fake = _FakeBuffer('abc\nhello\n')
         visible_refresh = []
@@ -213,7 +214,7 @@ class CanvasIncrementalBufferTests(unittest.TestCase):
         self.assertEqual(len(visible_refresh), 1)
 
     def test_append_only_and_erase_only_are_one_undo_action(self):
-        ns = source_methods(ROOT / 'artwork_editor.py', 'ArtworkEditor',
+        ns = source_methods(SRC / 'artwork_editor.py', 'ArtworkEditor',
                             ('_canvas_text_changed', '_commit_canvas_stroke'), {})
         fake = _FakeBuffer('a\n')
         host = SimpleNamespace(editor=SimpleNamespace(get_buffer=lambda: fake),
@@ -230,8 +231,8 @@ class CanvasIncrementalBufferTests(unittest.TestCase):
         self.assertEqual(fake.text, 'a\n')
 
     def test_version_and_source_integrations(self):
-        editor = (ROOT / 'artwork_editor.py').read_text()
-        canvas = (ROOT / 'artwork_canvas_view.py').read_text()
+        editor = (SRC / 'artwork_editor.py').read_text()
+        canvas = (SRC / 'artwork_canvas_view.py').read_text()
         self.assertIn('on_position=self._canvas_position_changed', editor)
         self.assertIn('self._canvas_commit_in_progress = True', editor)
         self.assertIn('self._canvas_commit_in_progress = False', editor)
@@ -241,7 +242,7 @@ class CanvasIncrementalBufferTests(unittest.TestCase):
         self.assertNotIn('save_artwork', canvas)
         self.assertGreaterEqual(tuple(map(int, (ROOT / 'VERSION').read_text().strip().split('.'))), (0, 99, 0))
         for document in ('ROADMAP.md', 'TASKS.md', 'CHANGELOG.md', 'RELEASE-V99.md'):
-            self.assertIn('V99', (ROOT / document).read_text())
+            self.assertIn('V99', read_source(document))
 
 
 if __name__ == '__main__':

@@ -2,6 +2,7 @@
 """Renderer-side KScreenLocker handoff tests."""
 
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import unittest
 from unittest import mock

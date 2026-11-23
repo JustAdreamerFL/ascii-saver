@@ -1,5 +1,6 @@
 """V104: shared GTK timer, hotplug cohorts and palette round safety."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import ast
 from pathlib import Path
@@ -9,7 +10,7 @@ from types import SimpleNamespace
 from palette_engine import palette_color_for_round
 
 ROOT = Path(__file__).resolve().parents[1]
-SOURCE = (ROOT / "app.py").read_text(encoding="utf-8")
+SOURCE = (SRC / "app.py").read_text(encoding="utf-8")
 
 
 def method(name, cls="SaverApplication"):

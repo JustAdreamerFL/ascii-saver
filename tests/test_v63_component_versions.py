@@ -1,4 +1,5 @@
 """V63 component version and HIG menu regression tests (no GTK needed)."""
+from _bootstrap import SRC, read_source  # noqa: F401
 import os
 import sys
 import tempfile
@@ -15,9 +16,9 @@ from component_versions import (BUILD_VERSION, collect_versions, running_watcher
 class ComponentTests(unittest.TestCase):
     def test_install_packaging_and_embedded_build_id(self):
         installer = (ROOT / 'install.sh').read_text()
-        self.assertIn('"$source_dir/component_versions.py"', installer)
-        self.assertIn('"$source_dir/app_menu.py"', installer)
-        self.assertIn('"$source_dir/build_info.py"', installer)
+        self.assertIn('"$py_src/component_versions.py"', installer)
+        self.assertIn('"$py_src/app_menu.py"', installer)
+        self.assertIn('"$py_src/build_info.py"', installer)
         self.assertIn('"$staged_app/watcher-backend"', installer)
         self.assertEqual(BUILD_VERSION, (ROOT / 'VERSION').read_text().strip())
 
@@ -73,20 +74,20 @@ class ComponentTests(unittest.TestCase):
                 self.assertEqual(running_watcher_status(binary, 1234), 'Unable to verify running watcher')
 
     def test_shortcuts_are_real_application_actions(self):
-        source = (ROOT / 'application_actions.py').read_text()
-        menu = (ROOT / 'app_menu.py').read_text()
+        source = (SRC / 'application_actions.py').read_text()
+        menu = (SRC / 'app_menu.py').read_text()
         for name in ('preferences', 'shortcuts', 'help', 'about', 'components', 'quit'):
             self.assertIn("'" + name + "'", source)
             self.assertIn("'app." + name + "'", menu)
         self.assertIn('Gtk.MenuButton', menu)
         self.assertIn('Adw.AboutDialog', menu)
         self.assertIn('Adw.ShortcutsDialog', menu)
-        self.assertIn('Ctrl', (ROOT / 'RELEASE-V63.md').read_text())
+        self.assertIn('Ctrl', (ROOT / 'docs/releases/RELEASE-V63.md').read_text())
 
     def test_native_watchers_identify_their_own_builds(self):
         for filename in ('gnome_idle_watcher.c', 'watcher.cpp'):
-            self.assertIn('--version', (ROOT / filename).read_text())
-        self.assertIn('ASCII_SAVER_VERSION', (ROOT / 'CMakeLists.txt').read_text())
+            self.assertIn('--version', read_source(filename))
+        self.assertIn('ASCII_SAVER_VERSION', (ROOT / 'native/kde/CMakeLists.txt').read_text())
         self.assertIn('ASCII_SAVER_VERSION', (ROOT / 'install.sh').read_text())
 
 

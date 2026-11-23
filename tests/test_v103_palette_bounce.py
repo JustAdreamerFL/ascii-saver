@@ -1,4 +1,5 @@
 """Palette direction, persistence and cross-display deterministic behavior."""
+from _bootstrap import SRC, read_source  # noqa: F401
 import json
 import tempfile
 import unittest

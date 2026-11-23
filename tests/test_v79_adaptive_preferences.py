@@ -1,13 +1,14 @@
 """Regression tests for narrow Preferences layouts, updated for V107's no-tabs design."""
+from _bootstrap import SRC, read_source  # noqa: F401
 from pathlib import Path
 import ast
 import unittest
 
 ROOT = Path(__file__).resolve().parents[1]
-SHELL = (ROOT / 'preferences_shell.py').read_text()
-CONTROLS = (ROOT / 'preferences_controls.py').read_text()
-PAGES = (ROOT / 'preferences_pages.py').read_text()
-UI = (ROOT / 'adwaita_ui.py').read_text()
+SHELL = (SRC / 'preferences_shell.py').read_text()
+CONTROLS = (SRC / 'preferences_controls.py').read_text()
+PAGES = (SRC / 'preferences_pages.py').read_text()
+UI = (SRC / 'adwaita_ui.py').read_text()
 
 class AdaptiveNavigationTests(unittest.TestCase):
     def test_one_header_selector_has_no_huge_tab_minimum_width(self):
@@ -28,7 +29,7 @@ class AdaptiveNavigationTests(unittest.TestCase):
         self.assertIn('self.banner_discard.connect("clicked", self._discard_changes)', SHELL)
         self.assertIn('toolbar_view.add_bottom_bar(self.changes_tray)', SHELL)
         self.assertNotIn('Gtk.Label(label="Changes saved"', SHELL)
-        state = (ROOT/'preferences_state.py').read_text()
+        state = (SRC / 'preferences_state.py').read_text()
         self.assertIn('self.changes_tray.set_visible(is_dirty)', state)
 
     def test_sliders_do_not_force_wide_rows(self):
@@ -48,8 +49,8 @@ class AdaptiveNavigationTests(unittest.TestCase):
     def test_compact_preview_mode_labels_keep_saved_values_identical(self):
         self.assertIn('"Separate window"', CONTROLS)
         self.assertIn('"Pinned in library"', CONTROLS)
-        gallery = (ROOT / 'preferences_gallery.py').read_text()
-        state = (ROOT / 'preferences_state.py').read_text()
+        gallery = (SRC / 'preferences_gallery.py').read_text()
+        state = (SRC / 'preferences_state.py').read_text()
         self.assertIn('"window" if self.library_preview_mode.get_selected() == 0 else "inline"', gallery)
         self.assertIn('"window" if self.effect_preview_mode.get_selected() == 0 else "inline"', state)
 

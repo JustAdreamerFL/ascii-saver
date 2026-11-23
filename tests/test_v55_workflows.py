@@ -1,5 +1,6 @@
 """Regression tests for V55 main controls, rotation, and installer contracts."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 import random
 import unittest
 from pathlib import Path
@@ -37,15 +38,15 @@ class PlaybackWorkflowTests(unittest.TestCase):
             self.assertFalse(ctl.is_windowed_preview(1234))
 
     def test_main_preview_button_and_windowed_playlist_advances(self):
-        src = (ROOT / 'settings.py').read_text()
-        app = (ROOT / 'app.py').read_text()
+        src = (SRC / 'settings.py').read_text()
+        app = (SRC / 'app.py').read_text()
         self.assertIn('"Close Preview" if status["preview"] else "Preview"', src)
         self.assertIn('self.app.preview_sequence.advance()', app)
         self.assertNotIn('("Stop the current animation", "Stop"', src)
         self.assertIn('not self.windowed else None', app)
 
     def test_reset_never_changes_row_allocation(self):
-        src = (ROOT / 'preferences_defaults.py').read_text()
+        src = (SRC / 'preferences_defaults.py').read_text()
         self.assertIn('reset.set_opacity', src)
         self.assertNotIn('reset.set_visible(not is_factory_default', src)
         self.assertFalse(is_factory_default(60, 120))
@@ -55,18 +56,18 @@ class PlaybackWorkflowTests(unittest.TestCase):
         self.assertIn('cargo_target_dir="$new_cache/cargo-target"', src)
         self.assertIn('new_cache="$cache_home/ascii-saver"', src)
         self.assertNotIn('"$transaction_dir/ttfx-target"', src)
-        self.assertIn('"$source_dir/effect_rotation.py"', src)
-        self.assertIn('"$source_dir/status_model.py"', src)
+        self.assertIn('"$py_src/effect_rotation.py"', src)
+        self.assertIn('"$py_src/status_model.py"', src)
 
     def test_artwork_has_separate_select_edit_factory_reset(self):
-        src = (ROOT / 'preferences_controls.py').read_text()
+        src = (SRC / 'preferences_controls.py').read_text()
         self.assertIn('def _edit_monitor_artwork', src)
         self.assertIn('Gtk.Button(label="Choose…")', src)
         self.assertIn('Gtk.Button(label="Edit")', src)
         self.assertIn('e.set_text("")', src)
 
     def test_failure_diagnostics_survive_startup(self):
-        src = (ROOT / 'ctl.py').read_text()
+        src = (SRC / 'ctl.py').read_text()
         self.assertIn('"renderer.log"', src)
         self.assertIn('"renderer.previous.log"', src)
         self.assertIn('os.O_RDWR | os.O_CREAT', src)

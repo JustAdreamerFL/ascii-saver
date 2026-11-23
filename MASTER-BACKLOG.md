@@ -40,7 +40,7 @@ Updated 2026-11-08 for experimental V105. This **expands**, but does not replace
 - `[x]` **Implemented in source**: code or UI was changed and covered by offline checks. Not a claim of a successful live KDE/GNOME test.
 - `[ ]` **Open or unverified**: either a currently missing feature, a reported runtime problem requiring user confirmation, or an incomplete design task. Each entry says which.
 - **Deferred** means an idea or future milestone, not something to implement automatically. Historical proposals are not approvals to ship new controls.
-- Source: [OBSERVATIONS-COMBINED.md](OBSERVATIONS-COMBINED.md) (A–F and B201–B214), [BACKLOG-V55.md](BACKLOG-V55.md), [RENDERER-BACKLOG.md](RENDERER-BACKLOG.md), [UX-ROADMAP.md](UX-ROADMAP.md), and release notes V19–V82. Older lists reflect their own version, not today’s status.
+- Source: [OBSERVATIONS-COMBINED.md](docs/planning/OBSERVATIONS-COMBINED.md) (A–F and B201–B214), [BACKLOG-V55.md](docs/planning/BACKLOG-V55.md), [RENDERER-BACKLOG.md](docs/planning/RENDERER-BACKLOG.md), [UX-ROADMAP.md](UX-ROADMAP.md), and release notes V19–V82. Older lists reflect their own version, not today’s status.
 
 ## V105: Reported Preferences and command-line defects
 
@@ -171,7 +171,7 @@ Updated 2026-11-08 for experimental V105. This **expands**, but does not replace
 - [ ] **T03** Full renderer testing on user's two differently oriented monitors is intentionally deferred until an agreed device-testing session.
 - [x] Palette output authority covers built-in RGB effects; between-effect palette progression and palette-aware animated thumbnails (V70–V72). **Real RGB/VTE and multi-monitor test pending.**
 - [x] Monitor hotplug controls and persistence for attached, detached and unsaved monitor configs (V80). **Live GNOME/KDE hotplug test pending.**
-- [ ] GNOME fullscreen cursor handling and Dash to Dock layering after lock/unlock. Native clients cannot control GNOME Shell extension stacking. See [GNOME-VALIDATION.md](GNOME-VALIDATION.md) and [GNOME-DOCK-COMPAT.md](GNOME-DOCK-COMPAT.md).
+- [ ] GNOME fullscreen cursor handling and Dash to Dock layering after lock/unlock. Native clients cannot control GNOME Shell extension stacking. See [GNOME-VALIDATION.md](docs/platform/GNOME-VALIDATION.md) and [GNOME-DOCK-COMPAT.md](docs/platform/GNOME-DOCK-COMPAT.md).
 - [ ] Watcher reported about **46 MiB RSS** in an older session. Not an actionable leak or private-memory measurement; only investigate after corroborating PSS/private usage.
 
 ## Deferred feature ideas, not approved for the next release

@@ -1,4 +1,5 @@
 """V47: all preview packs are bounded and independently decodable without GTK."""
+from _bootstrap import SRC, read_source  # noqa: F401
 from ui_sources import all_ui_source
 
 import unittest
@@ -28,7 +29,7 @@ class PackedPreviewTests(unittest.TestCase):
         self.assertIn('preview.release()', source)
         self.assertIn('gallery_scroll.get_vadjustment().connect("value-changed"', source)
         self.assertIn('self._queue_gallery_sync()', source)
-        editor = (ROOT / 'playlist_editor.py').read_text()
+        editor = (SRC / 'playlist_editor.py').read_text()
         self.assertIn('preview.release()', editor)
         self.assertIn('update_visible_previews(self.effect_scroller', editor)
 

@@ -1,4 +1,5 @@
 """V56 preview lifecycle, artwork editing and install regression checks."""
+from _bootstrap import SRC, read_source  # noqa: F401
 import random
 import tempfile
 import unittest
@@ -56,24 +57,24 @@ class ArtworkEditorIOTests(unittest.TestCase):
 
 class IntegrationContracts(unittest.TestCase):
     def test_preview_use_standalone_sequence_and_hold(self):
-        src = (ROOT / 'app.py').read_text()
+        src = (SRC / 'app.py').read_text()
         self.assertIn('self.app.preview_sequence.current()', src)
         self.assertIn('self.app.preview_sequence.advance()', src)
         self.assertIn('hold_ms + TTE_SUCCESS_RESTART_MS', src)
 
     def test_auto_fit_is_available_in_shared_and_independent_modes(self):
-        src = (ROOT / 'app.py').read_text()
+        src = (SRC / 'app.py').read_text()
         self.assertIn('choose_artwork_font_sizes(', src)
         self.assertIn('independent = bool(self.app.config.get("per_monitor", False))', src)
         self.assertIn('self.terminal.set_font(desc)', src)
-        display_src = (ROOT / 'preferences_displays.py').read_text()
+        display_src = (SRC / 'preferences_displays.py').read_text()
         self.assertNotIn('self.auto_fit_artwork.set_active(False)', display_src)
-        pages_src = (ROOT / 'preferences_pages.py').read_text()
+        pages_src = (SRC / 'preferences_pages.py').read_text()
         self.assertIn('self.section_groups["displays"].add(self.auto_fit_artwork)', pages_src)
         self.assertNotIn('monitor_options.add(self.auto_fit_artwork)', pages_src)
 
     def test_dashboard_refresh_is_immediate_after_save(self):
-        src = (ROOT / 'preferences_state.py').read_text()
+        src = (SRC / 'preferences_state.py').read_text()
         self.assertIn('dashboard._refresh_status()', src)
         self.assertIn('self._set_notice("Saved.")', src)
 

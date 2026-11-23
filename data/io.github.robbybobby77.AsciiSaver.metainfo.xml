@@ -20,8 +20,8 @@
     </p>
   </description>
   <launchable type="desktop-id">io.github.robbybobby77.AsciiSaver.desktop</launchable>
-  <url type="homepage">https://github.com/RobbyBobby77/kde-ascii-saver</url>
-  <url type="bugtracker">https://github.com/RobbyBobby77/kde-ascii-saver/issues</url>
+  <url type="homepage">https://github.com/JustAdreamerFL/ascii-saver</url>
+  <url type="bugtracker">https://github.com/JustAdreamerFL/ascii-saver/issues</url>
   <provides>
     <binary>ascii-saver-settings</binary>
   </provides>

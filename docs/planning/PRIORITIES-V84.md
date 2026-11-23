@@ -1,6 +1,6 @@
 # Current priorities after V84
 
-Updated 2026-11-07. See [TASKS.md](TASKS.md) for the current checklist and [MASTER-BACKLOG.md](MASTER-BACKLOG.md) for every historically reported observation.
+Updated 2026-11-07. See [TASKS.md](../../TASKS.md) for the current checklist and [MASTER-BACKLOG.md](../../MASTER-BACKLOG.md) for every historically reported observation.
 
 ## Source improvements just completed
 

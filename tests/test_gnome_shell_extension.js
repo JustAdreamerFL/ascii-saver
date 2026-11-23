@@ -3,7 +3,7 @@ const fs = require('node:fs');
 const assert = require('node:assert/strict');
 const vm = require('node:vm');
 const path = require('node:path');
-const source = fs.readFileSync(path.resolve(__dirname, '../gnome-shell-extension/ascii-saver-cursor@ascii-saver.local/extension.js'), 'utf8')
+const source = fs.readFileSync(path.resolve(__dirname, '../integrations/gnome-shell-extension/ascii-saver-cursor@ascii-saver.local/extension.js'), 'utf8')
     .replace(/^import .*;\s*$/gm, '')
     .replace('export default class AsciiSaverCursor extends Extension', 'class AsciiSaverCursor extends Extension')
     .concat('\nthis.AsciiSaverCursor = AsciiSaverCursor;\n');

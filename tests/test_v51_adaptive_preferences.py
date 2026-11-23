@@ -1,4 +1,5 @@
 """Offline contracts for V51 libadwaita navigation and preview lifecycle."""
+from _bootstrap import SRC, read_source  # noqa: F401
 from ui_sources import all_ui_source
 
 import ast
@@ -54,7 +55,7 @@ class AdaptivePreferencesTests(unittest.TestCase):
         self.assertIn('flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE', SETTINGS)
         self.assertIn('if "--preferences" in args:', SETTINGS)
         self.assertIn('return SettingsApplication().run(sys.argv)', SETTINGS)
-        self.assertIn('[str(settings_launcher)]', (ROOT/'ctl.py').read_text())
+        self.assertIn('[str(settings_launcher)]', (SRC / 'ctl.py').read_text())
         self.assertIn('preferences "$@"', (ROOT/'bin/ascii-saver-settings').read_text())
         installer = (ROOT/'install.sh').read_text()
         self.assertIn('("Adw", "1")', installer)

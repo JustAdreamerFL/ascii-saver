@@ -10,7 +10,7 @@ version-specific.
 ## Report a vulnerability privately
 
 Do not open a public issue. Use
-[GitHub private vulnerability reporting](https://github.com/RobbyBobby77/kde-ascii-saver/security/advisories/new)
+[GitHub private vulnerability reporting](https://github.com/JustAdreamerFL/ascii-saver/security/advisories/new)
 to submit a repository security advisory. If that mechanism is unavailable,
 contact the project owner through their GitHub profile without publishing
 exploit details.

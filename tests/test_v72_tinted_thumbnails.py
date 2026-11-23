@@ -1,4 +1,5 @@
 """V72: selected palette recolors all 37 compact sample animations."""
+from _bootstrap import SRC, read_source  # noqa: F401
 import json
 import tempfile
 import unittest
@@ -94,9 +95,9 @@ class PackedAssetTests(unittest.TestCase):
 
 class IntegrationContractTests(unittest.TestCase):
     def test_gallery_uses_saved_palette_initially_and_unsaved_changes(self):
-        source = (ROOT / 'preferences_gallery_view.py').read_text()
-        state = (ROOT / 'preferences_state.py').read_text()
-        animated = (ROOT / 'animated_preview.py').read_text()
+        source = (SRC / 'preferences_gallery_view.py').read_text()
+        state = (SRC / 'preferences_state.py').read_text()
+        animated = (SRC / 'animated_preview.py').read_text()
         self.assertIn('palette_color_for_round(palette_config, None, 0)', source)
         self.assertIn('foreground=thumbnail_color', source)
         self.assertIn('background=thumbnail_background', source)
@@ -112,14 +113,14 @@ class IntegrationContractTests(unittest.TestCase):
         self.assertNotIn('from gi.repository import GdkPixbuf', animated)
 
     def test_playlist_samples_use_same_saved_colors(self):
-        source = (ROOT / 'playlist_editor.py').read_text()
+        source = (SRC / 'playlist_editor.py').read_text()
         self.assertIn('palette_color_for_round(raw, None, 0)', source)
         self.assertIn('foreground=self.thumbnail_foreground', source)
         self.assertIn('background=self.thumbnail_background', source)
 
     def test_installer_includes_tint_module(self):
         installer = (ROOT / 'install.sh').read_text()
-        self.assertIn('"$source_dir/preview_tint.py"', installer)
+        self.assertIn('"$py_src/preview_tint.py"', installer)
 
 
 if __name__ == '__main__':

@@ -20,7 +20,7 @@ exact package names.
 ## Recommended online install
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/RobbyBobby77/ascii-saver/main/install-online.sh | bash
+curl -fsSL https://raw.githubusercontent.com/JustAdreamerFL/ascii-saver/main/install-online.sh | bash
 ```
 
 The bootstrap obtains the latest stable tagged release archive and its
@@ -33,7 +33,7 @@ Piping a network response to a shell is convenient but requires trusting that
 URL at execution time. To review exactly what will run first:
 
 ```sh
-curl -fsSLO https://raw.githubusercontent.com/RobbyBobby77/ascii-saver/main/install-online.sh
+curl -fsSLO https://raw.githubusercontent.com/JustAdreamerFL/ascii-saver/main/install-online.sh
 less install-online.sh
 bash install-online.sh
 ```
@@ -42,10 +42,10 @@ To install or roll back to a specific published release with the reviewed
 bootstrap:
 
 ```sh
-KDE_ASCII_SAVER_VERSION=v0.2.0 bash install-online.sh
+ASCII_SAVER_VERSION=v0.109.0 bash install-online.sh
 ```
 
-The bootstrap also accepts `--version v0.2.0`. Use `--yes` for an unattended
+The bootstrap also accepts `--version v0.109.0`. Use `--yes` for an unattended
 dependency install, `--no-install-deps` to print guidance only, `--check` to
 validate dependencies, and `--no-start` to leave session processes untouched.
 Run `bash install-online.sh --help` for the complete option list.
@@ -55,7 +55,7 @@ Run `bash install-online.sh --help` for the complete option list.
 This route is useful for development or for reviewing the complete source:
 
 ```sh
-git clone https://github.com/RobbyBobby77/ascii-saver.git
+git clone https://github.com/JustAdreamerFL/ascii-saver.git
 cd ascii-saver
 ./scripts/dependency-hint.sh
 ./install.sh

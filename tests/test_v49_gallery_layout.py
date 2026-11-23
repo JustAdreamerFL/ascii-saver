@@ -1,4 +1,5 @@
 """Protect against V48's narrow-strip gallery regression without GTK access."""
+from _bootstrap import SRC, read_source  # noqa: F401
 from ui_sources import all_ui_source
 
 from pathlib import Path
@@ -35,7 +36,7 @@ class GalleryLayoutTests(unittest.TestCase):
         self.assertNotIn('self.preview_area.append(terminal)', s)
 
     def test_playlist_thumbnail_click_toggles_and_play_is_separate(self):
-        s = (ROOT / 'playlist_editor.py').read_text()
+        s = (SRC / 'playlist_editor.py').read_text()
         self.assertIn("toggle_thumbnail.connect('clicked', self._toggle_effect_thumbnail, check)", s)
         self.assertIn("play.connect('clicked', self._play_effect, effect)", s)
         self.assertIn('checkbox.set_active(not checkbox.get_active())', s)
@@ -44,7 +45,7 @@ class GalleryLayoutTests(unittest.TestCase):
         self.assertNotIn("'destroy',", s)
 
     def test_preview_launcher_uses_vte_keyword_arguments_and_installs(self):
-        source = (ROOT / 'effect_preview_window.py').read_text()
+        source = (SRC / 'effect_preview_window.py').read_text()
         tree = ast.parse(source)
         calls = [node for node in ast.walk(tree)
                  if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
@@ -54,7 +55,7 @@ class GalleryLayoutTests(unittest.TestCase):
         self.assertIn('timeout', {kw.arg for kw in calls[0].keywords})
         self.assertIn('cancellable', {kw.arg for kw in calls[0].keywords})
         install = (ROOT / 'install.sh').read_text()
-        self.assertIn('"$source_dir/effect_preview_window.py"', install)
+        self.assertIn('"$py_src/effect_preview_window.py"', install)
 
 
 if __name__ == '__main__':

@@ -1,3 +1,4 @@
+from _bootstrap import SRC, read_source  # noqa: F401
 import unittest
 from pathlib import Path
 from performance_summary import summarize_performance
@@ -5,7 +6,7 @@ from performance_summary import summarize_performance
 
 class SharedPerformanceIntegration(unittest.TestCase):
     def test_shared_sample_recorded(self):
-        source = (Path(__file__).resolve().parents[1] / 'app.py').read_text()
+        source = (Path(__file__).resolve().parents[1] / 'src' / 'app.py').read_text()
         self.assertIn('self.perf_sampler.sample(os.getpid(), "__shared__", "GTK/VTE renderer")', source)
         self.assertIn('"shared_process_sample"', source)
 

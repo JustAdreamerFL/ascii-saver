@@ -1,5 +1,6 @@
 """Headless behavioral regressions for Artwork Studio photo conversion V87."""
 from __future__ import annotations
+from _bootstrap import SRC, read_source  # noqa: F401
 
 import ast
 from dataclasses import replace
@@ -140,8 +141,8 @@ class AssetExportTests(unittest.TestCase):
 
 class PhotoUIContracts(unittest.TestCase):
     def test_application_is_wired_and_adaptive_without_auto_writes(self):
-        editor = (ROOT / 'artwork_editor.py').read_text()
-        view = (ROOT / 'photo_ascii_view.py').read_text()
+        editor = (SRC / 'artwork_editor.py').read_text()
+        view = (SRC / 'photo_ascii_view.py').read_text()
         for name, source in (('artwork_editor.py', editor), ('photo_ascii_view.py', view)):
             ast.parse(source, filename=name)
         self.assertIn('photo.connect("clicked", self._open_photo)', editor)
@@ -165,11 +166,11 @@ class PhotoUIContracts(unittest.TestCase):
         self.assertIn('photo_ascii photo_ascii_view', installer)
         version = (ROOT / 'VERSION').read_text().strip()
         self.assertRegex(version, r'^0\.\d+\.0$')
-        self.assertIn(f'BUILD_VERSION = "{version}"', (ROOT / 'build_info.py').read_text())
+        self.assertIn(f'BUILD_VERSION = "{version}"', (SRC / 'build_info.py').read_text())
         self.assertIn('## 0.87.0 (experimental) - 2026-11-08',
                       (ROOT / 'CHANGELOG.md').read_text())
         for doc in ('ROADMAP.md', 'TASKS.md', 'RELEASE-V87.md'):
-            self.assertIn('Photo to ASCII', (ROOT / doc).read_text())
+            self.assertIn('Photo to ASCII', read_source(doc))
 
 
 if __name__ == '__main__':

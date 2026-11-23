@@ -1,126 +1,91 @@
-# Architecture
+# ASCII Saver: application architecture (V53)
 
-ASCII Saver separates visual rendering, idle detection, and secure locking.
-This keeps animation code outside the compositor and leaves authentication
-entirely under KScreenLocker control.
+The screensaver still uses **Python + GTK4/libadwaita** for its user interface,
+**Rust `ttfx`** for the actual effect renderer, and **C++/Qt6/KIdleTime** for
+native KDE idle detection. The V53 restructuring does **not** replace either
+of the native components, change the user's configuration file, or install a
+new desktop service.
 
-## Components
+## UI boundaries
 
-### `ascii-saver-watcher`
+| Module | Responsibility |
+|---|---|
+| `settings.py` | Application entry point and lightweight composition of windows. |
+| `preferences_shell.py` | ViewStack, adaptive view switchers, unsaved-changes banner, header navigation. |
+| `preferences_controls.py` | Constructs preference controls and monitor-specific inputs without laying out pages. |
+| `preferences_pages.py` | Places controls in native Adw pages and groups for General, Appearance, Displays, Animations and Preview. |
+| `preferences_gallery_view.py` | Builds the Effect Library window, animated cards, filters and dedicated preview container. |
+| `preferences_gallery.py` | Lazy thumbnail playback, live preview process lifetime and library controller actions. |
+| `preferences_displays.py` | Monitor-specific control visibility and font-fit diagnostics. |
+| `preferences_state.py` | GTK control bindings, compare-with-saved state, save/discard and loading from disk. |
+| `preferences_model.py` | **GTK-independent** validation of playlist JSON, color, font, excluded effects, and monitor artwork filenames. |
+| `preferences_actions.py` | Background commands, diagnostics, durations and performance windows. |
+| `effect_catalog.py` | Effect names used by the gallery; the renderer maintains its own list. |
+| `adwaita_ui.py` | Small shared builders for native `Adw.PreferencesPage`, `Adw.PreferencesGroup`, `Adw.ActionRow`. |
 
-`watcher.cpp` builds a small Qt 6 process linked to `KF6::IdleTime`.
+`SettingsWindow` composes these pieces using small mixins. An individual module
+owns one part of the application. GTK widgets are still used where libadwaita
+provides no suitable specialized replacement (font/color choosers, VTE terminal,
+animated previews and time-series graphs).
 
-- `KIdleTime::addIdleTimeout()` starts the configured idle countdown.
-- `timeoutReached()` launches the renderer.
-- `catchNextResumeEvent()` and `resumingFromIdle()` stop it on the first input.
-- `org.kde.screensaver.AboutToLock` stops the renderer before lock begins.
-- `org.freedesktop.ScreenSaver.ActiveChanged(true)` provides a second lock-state
-  guard.
-- `GetActive()` prevents launch while the session is already locked. The call
-  uses a 1s timeout (never the default ~25s QDBus block) and is skipped on the
-  hot path once `AboutToLock` or `ActiveChanged` has reported that the locker
-  is up. While that cached lock flag is set, the 1s poll and the next resume
-  event re-query `GetActive` so a cancelled `AboutToLock` without
-  `ActiveChanged(false)` cannot leave the watcher stuck.
+### Startup and save path
 
-The watcher is a `QGuiApplication`, not a `QCoreApplication`, because the
-KIdleTime Wayland backend needs access to the active Wayland seat.
+1. `SettingsApplication.open_preferences()` creates a `SettingsWindow`.
+2. Window calls UI builders in their declared order; all signals are connected
+   only after the full widget tree exists.
+3. `PreferenceStateMixin._load_preferences()` loads the user's configuration.
+4. When controls change, a snapshot is compared to the last saved snapshot.
+   Reverting a change dismisses the unsaved-changes banner.
+5. On Save, `preferences_model.validate_form()` validates free-form inputs before
+   `ctl.update_config_values()` persists values. Errors do not overwrite disk.
+6. The C++ watcher and Rust renderer continue reading the established config
+   and unchanged runtime paths.
 
-A `QLockFile` in the XDG runtime directory enforces a single watcher process.
-The watcher also records a validated PID so the controller and non-systemd
-uninstaller can stop an XDG-autostarted process cleanly. Both the watcher and
-the renderer refuse to start if `XDG_RUNTIME_DIR` is unset rather than writing
-lock or PID files into world-writable `/tmp`. PID files are claimed with
-`O_CREAT|O_EXCL|O_WRONLY` (and `O_NOFOLLOW` when available), mode `0600`, and
-are replaced only when the recorded process is gone.
+### GNOME HIG / libadwaita decisions
 
-On Wayland, KIdleTime uses `ext-idle-notify-v1` with the legacy KWin idle
-protocol as a fallback. It cannot poll current idle duration, so the watcher
-waits for one genuine resume event after startup before registering its first
-timeout. This avoids an immediate launch when the service is restarted on an
-already-idle desktop.
+- Preferences use native `Adw.PreferencesPage` + `Adw.PreferencesGroup` and
+  labeled rows, instead of arbitrary tables and nested frames.
+- Boolean preferences are `Adw.SwitchRow` (title, explanatory subtitle,
+  whole-row activation); independent monitor options are revealed only when
+  that mode is active.
+- Navigation has five flat sections, adapting between an `Adw.ViewSwitcher`
+  and an `Adw.ViewSwitcherBar` as the window narrows.
+- Persistent unsaved state uses a non-reflowing overlay with Save/Discard,
+  rather than a transient toast. Short action feedback can use `Adw.ToastOverlay`.
+- Dedicated effect browsing and playlist editing remain separate windows
+  because their content is complex; playback remains unaffected by moving the mouse.
 
-### Renderer
+Official design references:
+- [GNOME HIG navigation](https://developer.gnome.org/hig/guidelines/navigation.html)
+- [GNOME HIG](https://developer.gnome.org/hig/)
+- [Libadwaita PreferencesPage](https://gnome.pages.gitlab.gnome.org/libadwaita/doc/1-latest/class.PreferencesPage.html)
+- [Libadwaita PreferencesGroup](https://gnome.pages.gitlab.gnome.org/libadwaita/doc/1-latest/class.PreferencesGroup.html)
 
-`app.py` creates one GTK 4/VTE window for every GDK monitor and launches one TTE
-process per terminal. The Gdk monitor list is watched so plugging or unplugging
-a display while the saver is showing adds or removes overlay windows. Completed
-effects restart automatically with a new random effect. A crashing or missing
-TTE child is classified with waitpid-aware status decoding (`tte_exit_ok`),
-backs off for up to five consecutive failures, and then gives up instead of
-respawning every 80 ms.
-`config.json` values for `frame_rate`, colors, and `exclude_effects` are
-validated before they reach TTE argv.
+## Validation and limitations
 
-The renderer independently subscribes to KScreenLocker's `AboutToLock` and
-`ActiveChanged` signals and queries `GetActive` before showing windows. This
-keeps manually launched surfaces subject to the same lock handoff as
-watcher-launched surfaces. If the renderer cannot monitor the session bus, it
-fails closed instead of displaying an overlay whose lock state it cannot know.
+Run from the extracted archive:
 
-On supported Wayland compositors, GTK4 Layer Shell places each window on the
-overlay layer and anchors it to all four output edges. The renderer probes
-`Gtk4LayerShell.is_supported()` only after `Gtk.Application` startup has
-connected a display. The primary surface asks for exclusive keyboard input so
-the first key can dismiss the animation; other surfaces do not compete for
-keyboard focus. KIdleTime resume events remain the authoritative dismissal
-mechanism.
-
-On X11, or when GTK4 Layer Shell is unavailable after that probe, the renderer
-requests a normal borderless fullscreen window on each monitor.
-
-Renderer hygiene for config sanitizing, TTE backoff, exclusive PID files,
-`$EDITOR` argv, and `VERSION` lives in `helpers.py`, vendored from the GNOME
-sibling rather than extracted as a third package.
-
-### Control utility
-
-`ctl.py` manages manual launch, status, diagnostics, artwork editing, the delay,
-automatic activation, and removal. It writes configuration atomically to avoid
-leaving a partial JSON document. An unreadable `config.json` is left untouched
-rather than replaced with a one-key file. `settings.py` provides the GTK 4
-control panel and delegates process actions to the same controller.
-
-### Session integration
-
-When a systemd user manager is available, `ascii-saver.service` is tied to
-`plasma-workspace.target` and ordered after `plasma-core.target`. It stops with
-the Plasma workspace. On non-systemd distributions, the installer creates an
-`OnlyShowIn=KDE` XDG autostart entry instead and starts the same watcher binary.
-The single-instance lock makes upgrades and repeated session startup safe.
-
-## Data flow
-
-```text
-keyboard/pointer idle
-        │
-        ▼
-KWin idle protocol → KF6 KIdleTime watcher → GTK/VTE renderer → TTE process
-        │                       │                    │
-        └─ resume ──────────────┴──── terminate ────┘
-
-KScreenLocker AboutToLock/ActiveChanged ────────────┘
+```sh
+python -m unittest discover -s tests -q
+python scripts/check-release-assets.py
+python scripts/smoke-adwaita-ui.py  # requires a live GTK/libadwaita desktop
 ```
 
-## Filesystem layout after installation
+The offline tests exercise persistence rules and architectural source
+contracts, but **cannot verify actual GTK allocation or Wayland behavior**.
+The application still needs on-device tests for resizing, gallery preview
+memory usage, palette transitions, monitor fitting and KScreenLocker.
 
-```text
-~/.local/bin/ascii-saver
-~/.local/bin/ascii-saverctl
-~/.local/bin/ascii-saver-watcher
-~/.local/bin/ascii-saver-settings
-~/.local/share/ascii-saver/
-~/.local/share/applications/io.github.robbybobby77.AsciiSaver.desktop
-~/.config/ascii-saver/config.json
-~/.config/ascii-saver/logo.txt
-~/.config/systemd/user/ascii-saver.service        # systemd path
-~/.config/autostart/io.github.robbybobby77.AsciiSaver.Watcher.desktop
-```
+## GNOME backend (V57)
 
-The project honors `XDG_CONFIG_HOME` and `XDG_DATA_HOME` for configuration and
-application data. Launch wrappers remain under `~/.local/bin`.
+On KDE Plasma the Qt6/KIdleTime C++ watcher remains unchanged. On GNOME the
+installer builds `gnome_idle_watcher.c` using GLib, GIO, and Json-GLib: it
+subscribes to Mutter IdleMonitor D-Bus events and runs a GMainLoop while idle.
+The native daemon starts the same GTK/VTE Python rendering application when
+Mutter signals that the configured idle delay elapsed. The daemon itself does
+not import Python or load the GTK interface. GNOME-specific `IsInhibited`
+checks suppress launch during normal session idle inhibitors.
 
-See [Distribution support](DISTRIBUTIONS.md) for package names and validation
-levels across Linux families. Installation and release verification are
-documented separately in [Installation](INSTALLATION.md), and manual Plasma
-coverage is tracked by the [release checklist](RELEASE_CHECKLIST.md).
+This uses an *optional* Mutter API and is not guaranteed to work on every
+GNOME version. GNOME compositor behavior and default lock-screen controls
+remain authoritative. See `RELEASE-V57.md` for dependencies and test status.
