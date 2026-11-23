@@ -7,6 +7,10 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 
 ## [Unreleased]
 
+## 0.110.0 (experimental) - 2026-11-23
+- Rename the application identity to `com.github.justadreamerfl.asciisaver`, including desktop entries, AppStream metadata, icon names and the fullscreen cursor D-Bus name. Upgrades remove the previous desktop-identity files while preserving user configuration and artwork.
+- Point the online installer and project links at the current repository and publish through the manual GitHub Release workflow.
+
 ## 0.109.0 (experimental) - 2026-11-09
 - Add an explicit opt-out from V70's forced palette over effect-generated RGB; persist it in saved config and use it consistently for fullscreen, Preview, and both Effect Library preview modes. The configured foreground remains a terminal fallback with the override off.
 - Provide truly adaptive Preferences navigation: compact header category DropDown on narrow windows and a synchronized labeled sidebar at desktop widths, retaining all six categories. Reflow sliders to full rows, with clear current value, no cramped horizontal breakpoint.

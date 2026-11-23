@@ -74,7 +74,7 @@ class EntryPointTests(unittest.TestCase):
             self.assertIn("cli.py", (ROOT / "bin" / binary).read_text())
         self.assertIn('"play"', (SRC / "ctl.py").read_text())
         self.assertIn('"$py_src/cli.py"', (ROOT / "install.sh").read_text())
-        self.assertIn('Exec=@APP@', (ROOT / 'data/io.github.robbybobby77.AsciiSaver.desktop.in').read_text())
+        self.assertIn('Exec=@APP@', (ROOT / 'data/com.github.justadreamerfl.asciisaver.desktop.in').read_text())
         self.assertIn('@APP@', (ROOT / 'install.sh').read_text())
 
 

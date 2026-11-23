@@ -63,8 +63,8 @@ class WindowIdentityTests(unittest.TestCase):
         self.assertIn('class Editor(Adw.ApplicationWindow)', source)
         settings = (SRC / 'settings.py').read_text()
         self.assertIn('application_id=APP_ID', settings)
-        self.assertIn('io.github.robbybobby77.AsciiSaver', settings)
-        self.assertIn('io.github.robbybobby77.AsciiSaver.desktop', (ROOT / 'install.sh').read_text())
+        self.assertIn('com.github.justadreamerfl.asciisaver', settings)
+        self.assertIn('com.github.justadreamerfl.asciisaver.desktop', (ROOT / 'install.sh').read_text())
 
     def test_open_editor_reuses_one_window_and_no_unsolicited_preferences_reload(self):
         DummyEditor.created.clear()

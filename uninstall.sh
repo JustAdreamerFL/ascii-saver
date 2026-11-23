@@ -141,12 +141,16 @@ elif [[ -e "$app_dir" || -L "$app_dir" ]]; then
     printf 'Not removing unexpected application path: %s\n' "$app_dir" >&2
     remove_complete=false
 fi
-rm -f -- "$data_home/applications/io.github.robbybobby77.AsciiSaver.desktop" \
+rm -f -- "$data_home/applications/com.github.justadreamerfl.asciisaver.desktop" \
+    "$data_home/metainfo/com.github.justadreamerfl.asciisaver.metainfo.xml" \
+    "$data_home/icons/hicolor/scalable/apps/com.github.justadreamerfl.asciisaver.svg" \
+    "$data_home/applications/io.github.robbybobby77.AsciiSaver.desktop" \
     "$data_home/metainfo/io.github.robbybobby77.AsciiSaver.metainfo.xml" \
     "$data_home/icons/hicolor/scalable/apps/io.github.robbybobby77.AsciiSaver.svg" \
     "$bin_dir/ascii-saver" "$bin_dir/ascii-saverctl" \
     "$bin_dir/ascii-saver-watcher" "$bin_dir/ascii-saver-settings" \
     "$config_home/systemd/user/ascii-saver.service" \
+    "$config_home/autostart/com.github.justadreamerfl.asciisaver.Watcher.desktop" \
     "$config_home/autostart/io.github.robbybobby77.AsciiSaver.Watcher.desktop" \
     "$config_home/autostart/ascii-saver-watcher.desktop"
 

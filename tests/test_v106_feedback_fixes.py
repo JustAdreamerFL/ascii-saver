@@ -66,11 +66,11 @@ class GUIStructureTests(unittest.TestCase):
     def test_preview_desktop_id_and_separate_gapplication_instances(self):
         src=(SRC / 'app.py').read_text()
         settings=(SRC / 'settings.py').read_text()
-        self.assertIn('APP_ID = "io.github.robbybobby77.AsciiSaver"',src)
-        self.assertIn('APP_ID = "io.github.robbybobby77.AsciiSaver"',settings)
+        self.assertIn('APP_ID = "com.github.justadreamerfl.asciisaver"',src)
+        self.assertIn('APP_ID = "com.github.justadreamerfl.asciisaver"',settings)
         self.assertIn('flags=Gio.ApplicationFlags.NON_UNIQUE',src)
         self.assertIn('flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE', settings)
-        self.assertIn('io.github.robbybobby77.AsciiSaver.desktop', (ROOT/'install.sh').read_text())
+        self.assertIn('com.github.justadreamerfl.asciisaver.desktop', (ROOT/'install.sh').read_text())
 
     def test_compact_preference_rows_move_controls_below_labels(self):
         src=(SRC / 'preferences_shell.py').read_text()

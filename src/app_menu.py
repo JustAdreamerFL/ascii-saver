@@ -127,7 +127,7 @@ def show_about(parent):
     if hasattr(Adw, 'AboutDialog'):
         dialog = Adw.AboutDialog()
         dialog.set_application_name('ASCII Saver')
-        dialog.set_application_icon('io.github.robbybobby77.AsciiSaver')
+        dialog.set_application_icon('com.github.justadreamerfl.asciisaver')
         dialog.set_version(BUILD_VERSION)
         dialog.set_comments('Terminal-effect screensaver for GNOME and KDE Plasma.')
         dialog.set_debug_info(troubleshooting_report(versions))

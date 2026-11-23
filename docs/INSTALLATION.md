@@ -42,10 +42,10 @@ To install or roll back to a specific published release with the reviewed
 bootstrap:
 
 ```sh
-ASCII_SAVER_VERSION=v0.109.0 bash install-online.sh
+ASCII_SAVER_VERSION=v0.110.0 bash install-online.sh
 ```
 
-The bootstrap also accepts `--version v0.109.0`. Use `--yes` for an unattended
+The bootstrap also accepts `--version v0.110.0`. Use `--yes` for an unattended
 dependency install, `--no-install-deps` to print guidance only, `--check` to
 validate dependencies, and `--no-start` to leave session processes untouched.
 Run `bash install-online.sh --help` for the complete option list.
@@ -80,16 +80,16 @@ By default, installation creates:
 ~/.local/bin/ascii-saver-watcher
 ~/.local/bin/ascii-saver-settings
 ~/.local/share/ascii-saver/
-~/.local/share/applications/io.github.robbybobby77.AsciiSaver.desktop
-~/.local/share/metainfo/io.github.robbybobby77.AsciiSaver.metainfo.xml
-~/.local/share/icons/hicolor/scalable/apps/io.github.robbybobby77.AsciiSaver.svg
+~/.local/share/applications/com.github.justadreamerfl.asciisaver.desktop
+~/.local/share/metainfo/com.github.justadreamerfl.asciisaver.metainfo.xml
+~/.local/share/icons/hicolor/scalable/apps/com.github.justadreamerfl.asciisaver.svg
 ~/.config/ascii-saver/config.json
 ~/.config/ascii-saver/logo.txt
 ~/.config/systemd/user/ascii-saver.service
 ```
 
 On systems without a working systemd user manager, the last file is replaced
-by `~/.config/autostart/io.github.robbybobby77.AsciiSaver.Watcher.desktop`.
+by `~/.config/autostart/com.github.justadreamerfl.asciisaver.Watcher.desktop`.
 `XDG_CONFIG_HOME` and
 `XDG_DATA_HOME` override the corresponding config and data roots. Command
 wrappers remain in `~/.local/bin`.

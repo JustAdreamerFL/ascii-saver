@@ -42,7 +42,7 @@ On a system without a systemd user manager, status should report XDG session
 autostart. Confirm that this file exists:
 
 ```sh
-ls "${XDG_CONFIG_HOME:-$HOME/.config}/autostart/io.github.robbybobby77.AsciiSaver.Watcher.desktop"
+ls "${XDG_CONFIG_HOME:-$HOME/.config}/autostart/com.github.justadreamerfl.asciisaver.Watcher.desktop"
 ```
 
 Log out and back in after repairing a missing autostart entry by rerunning the

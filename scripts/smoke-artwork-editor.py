@@ -27,6 +27,6 @@ if __name__ == '__main__':
     with tempfile.TemporaryDirectory() as tmp:
         file_path = Path(tmp) / 'example.txt'
         file_path.write_text('  ***\n *** ***\n  ***\n', encoding='utf-8')
-        app = SmokeApp(application_id='io.github.robbybobby77.AsciiSaver.EditorSmoke',
+        app = SmokeApp(application_id='com.github.justadreamerfl.asciisaver.EditorSmoke',
                        flags=Gio.ApplicationFlags.NON_UNIQUE)
         sys.exit(app.run(['smoke-artwork-editor']))

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
-  <id>io.github.robbybobby77.AsciiSaver</id>
+  <id>com.github.justadreamerfl.asciisaver</id>
   <name>ASCII Saver</name>
   <summary>Animated terminal effect screensaver for GNOME and KDE</summary>
-  <developer id="io.github.robbybobby77">
-    <name>RobbyBobby77</name>
+  <developer id="com.github.justadreamerfl">
+    <name>JustAdreamerFL</name>
   </developer>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>MIT</project_license>
@@ -19,7 +19,7 @@
       colors, frame rate, artwork, previews, and installation diagnostics.
     </p>
   </description>
-  <launchable type="desktop-id">io.github.robbybobby77.AsciiSaver.desktop</launchable>
+  <launchable type="desktop-id">com.github.justadreamerfl.asciisaver.desktop</launchable>
   <url type="homepage">https://github.com/JustAdreamerFL/ascii-saver</url>
   <url type="bugtracker">https://github.com/JustAdreamerFL/ascii-saver/issues</url>
   <provides>
@@ -30,6 +30,7 @@
   </categories>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="0.110.0" date="2026-11-23"/>
     <release version="0.2.0" date="2026-09-20"/>
     <release version="0.1.0" date="2026-08-30"/>
   </releases>

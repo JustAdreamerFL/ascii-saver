@@ -28,7 +28,7 @@ from component_versions import collect_versions
 def main():
     Adw.init()
     app = Adw.Application(
-        application_id="io.github.robbybobby77.AsciiSaver.UISmoke",
+        application_id="com.github.justadreamerfl.asciisaver.UISmoke",
         flags=Gio.ApplicationFlags.NON_UNIQUE,
     )
     app.register(None)

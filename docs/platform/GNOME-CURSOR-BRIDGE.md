@@ -30,7 +30,7 @@ gnome-extensions enable ascii-saver-cursor@ascii-saver.local
 ```
 
 Now use `ascii-saverctl start`. A GNOME-only D-Bus name
-`io.github.robbybobby77.AsciiSaver.Fullscreen` is held only while ASCII Saver
+`com.github.justadreamerfl.asciisaver.Fullscreen` is held only while ASCII Saver
 has a **mapped fullscreen** renderer window. The extension watches the name,
 hides the global pointer while it is present, and restores the cursor when
 the renderer exits, disconnects, or when the extension is disabled. Windowed

@@ -40,7 +40,7 @@ launcher = home / ".local" / "bin" / "ascii-saver"
 settings_launcher = home / ".local" / "bin" / "ascii-saver-settings"
 service = "ascii-saver.service"
 autostart_file = (
-    config_home / "autostart" / "io.github.robbybobby77.AsciiSaver.Watcher.desktop"
+    config_home / "autostart" / "com.github.justadreamerfl.asciisaver.Watcher.desktop"
 )
 VERSION = read_version()
 LAUNCH_TIMEOUT_SECONDS = 3.0

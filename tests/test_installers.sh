@@ -195,9 +195,9 @@ env "${install_env[@]}" "$project_dir/install.sh" >/dev/null
     fail 'successful install did not include the hardened uninstaller'
 [[ -x "$install_home/.local/bin/ascii-saver-settings" ]] || \
     fail 'successful install did not include the settings launcher'
-[[ -f "$install_data/applications/io.github.robbybobby77.AsciiSaver.desktop" ]] || \
+[[ -f "$install_data/applications/com.github.justadreamerfl.asciisaver.desktop" ]] || \
     fail 'successful install did not include the control-panel desktop entry'
-[[ -f "$install_data/metainfo/io.github.robbybobby77.AsciiSaver.metainfo.xml" ]] || \
+[[ -f "$install_data/metainfo/com.github.justadreamerfl.asciisaver.metainfo.xml" ]] || \
     fail 'successful install did not include AppStream metadata'
 [[ $(<"$install_config/ascii-saver/logo.txt") == 'custom art' ]] || \
     fail 'upgrade overwrote custom art'
@@ -283,6 +283,9 @@ printf 'custom art\n' >"$isolated_config/ascii-saver/logo.txt"
 printf '{}\n' >"$isolated_config/ascii-saver/config.json"
 touch "$isolated_data/ascii-saver/app.py" \
     "$isolated_data/applications/io.github.kde_ascii_saver.AsciiSaver.desktop" \
+    "$isolated_data/applications/com.github.justadreamerfl.asciisaver.desktop" \
+    "$isolated_data/metainfo/com.github.justadreamerfl.asciisaver.metainfo.xml" \
+    "$isolated_data/icons/hicolor/scalable/apps/com.github.justadreamerfl.asciisaver.svg" \
     "$isolated_data/applications/io.github.robbybobby77.AsciiSaver.desktop" \
     "$isolated_data/metainfo/io.github.robbybobby77.AsciiSaver.metainfo.xml" \
     "$isolated_data/icons/hicolor/scalable/apps/io.github.robbybobby77.AsciiSaver.svg" \
@@ -292,13 +295,20 @@ touch "$isolated_data/ascii-saver/app.py" \
     "$isolated_home/.local/bin/ascii-saver-settings" \
     "$isolated_config/systemd/user/ascii-saver.service" \
     "$isolated_config/autostart/ascii-saver-watcher.desktop"
-touch "$isolated_config/autostart/io.github.robbybobby77.AsciiSaver.Watcher.desktop"
+touch "$isolated_config/autostart/com.github.justadreamerfl.asciisaver.Watcher.desktop" \
+    "$isolated_config/autostart/io.github.robbybobby77.AsciiSaver.Watcher.desktop"
 
 HOME="$isolated_home" XDG_DATA_HOME="$isolated_data" XDG_CONFIG_HOME="$isolated_config" \
 ASCII_SAVER_NO_SESSION=1 "$project_dir/uninstall.sh"
 [[ ! -e "$isolated_data/ascii-saver" ]] || fail 'uninstaller left application data behind'
 [[ -f "$isolated_config/ascii-saver/logo.txt" ]] || fail 'uninstaller removed custom art'
 [[ -f "$isolated_config/ascii-saver/config.json" ]] || fail 'uninstaller removed configuration'
+[[ ! -e "$isolated_data/applications/com.github.justadreamerfl.asciisaver.desktop" && \
+   ! -e "$isolated_data/applications/io.github.robbybobby77.AsciiSaver.desktop" ]] || \
+    fail 'uninstaller left desktop entries behind'
+[[ ! -e "$isolated_config/autostart/com.github.justadreamerfl.asciisaver.Watcher.desktop" && \
+   ! -e "$isolated_config/autostart/io.github.robbybobby77.AsciiSaver.Watcher.desktop" ]] || \
+    fail 'uninstaller left autostart entries behind'
 
 # The old KDE-prefixed installation is not migrated or modified by ASCII Saver.
 legacy_home="$test_dir/legacy-home"

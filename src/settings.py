@@ -30,7 +30,7 @@ from preferences_controls import PreferenceControlsMixin
 from preferences_shell import ShellBuilderMixin
 from window_shortcuts import install_close_shortcuts
 
-APP_ID = "io.github.robbybobby77.AsciiSaver"
+APP_ID = "com.github.justadreamerfl.asciisaver"
 
 
 class SettingsWindow(PreferenceStateMixin, GalleryControllerMixin, GalleryViewMixin, DisplayControllerMixin, PreferenceActionsMixin, PreferenceControlsMixin, PageBuilderMixin, ShellBuilderMixin, Adw.ApplicationWindow):

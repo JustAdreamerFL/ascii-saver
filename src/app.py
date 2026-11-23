@@ -53,7 +53,7 @@ from helpers import (  # noqa: E402
 )
 
 
-APP_ID = "io.github.robbybobby77.AsciiSaver"
+APP_ID = "com.github.justadreamerfl.asciisaver"
 VERSION = read_version()
 
 

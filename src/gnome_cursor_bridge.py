@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import logging
 
-FULLSCREEN_BUS_NAME = "io.github.robbybobby77.AsciiSaver.Fullscreen"
+FULLSCREEN_BUS_NAME = "com.github.justadreamerfl.asciisaver.Fullscreen"
 
 
 class FullscreenCursorLease:

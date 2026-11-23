@@ -691,12 +691,17 @@ remember_managed_file "$bin_dir/ascii-saver"
 remember_managed_file "$bin_dir/ascii-saverctl"
 remember_managed_file "$bin_dir/ascii-saver-watcher"
 remember_managed_file "$bin_dir/ascii-saver-settings"
+remember_managed_file "$applications_dir/com.github.justadreamerfl.asciisaver.desktop"
+remember_managed_file "$metainfo_dir/com.github.justadreamerfl.asciisaver.metainfo.xml"
+remember_managed_file "$icons_dir/com.github.justadreamerfl.asciisaver.svg"
+remember_managed_file "$systemd_dir/ascii-saver.service"
+remember_managed_file "$autostart_dir/com.github.justadreamerfl.asciisaver.Watcher.desktop"
+remember_managed_file "$autostart_dir/ascii-saver-watcher.desktop"
+# The previous desktop identity is backed up so a failed upgrade can restore it.
 remember_managed_file "$applications_dir/io.github.robbybobby77.AsciiSaver.desktop"
 remember_managed_file "$metainfo_dir/io.github.robbybobby77.AsciiSaver.metainfo.xml"
 remember_managed_file "$icons_dir/io.github.robbybobby77.AsciiSaver.svg"
-remember_managed_file "$systemd_dir/ascii-saver.service"
 remember_managed_file "$autostart_dir/io.github.robbybobby77.AsciiSaver.Watcher.desktop"
-remember_managed_file "$autostart_dir/ascii-saver-watcher.desktop"
 
 if [[ -e "$app_dir" || -L "$app_dir" ]]; then
     if [[ -L "$app_dir" || ! -d "$app_dir" ]]; then
@@ -735,22 +740,27 @@ fi
 
 escaped_app=$(printf '%s' "$bin_dir/ascii-saver" | sed 's/[&|]/\\&/g')
 sed "s|@APP@|$escaped_app|" \
-    "$data_src/io.github.robbybobby77.AsciiSaver.desktop.in" \
+    "$data_src/com.github.justadreamerfl.asciisaver.desktop.in" \
     | write_managed_file \
-        "$applications_dir/io.github.robbybobby77.AsciiSaver.desktop" 0644
-install_managed_file "$data_src/io.github.robbybobby77.AsciiSaver.metainfo.xml" \
-    "$metainfo_dir/io.github.robbybobby77.AsciiSaver.metainfo.xml" 0644
-install_managed_file "$data_src/icons/io.github.robbybobby77.AsciiSaver.svg" \
-    "$icons_dir/io.github.robbybobby77.AsciiSaver.svg" 0644
+        "$applications_dir/com.github.justadreamerfl.asciisaver.desktop" 0644
+install_managed_file "$data_src/com.github.justadreamerfl.asciisaver.metainfo.xml" \
+    "$metainfo_dir/com.github.justadreamerfl.asciisaver.metainfo.xml" 0644
+install_managed_file "$data_src/icons/com.github.justadreamerfl.asciisaver.svg" \
+    "$icons_dir/com.github.justadreamerfl.asciisaver.svg" 0644
 # Use a full path: icon themes and external launchers sometimes fail to resolve
 # a custom theme-name icon even though Plasma's task manager does.
-python3 - "$applications_dir/io.github.robbybobby77.AsciiSaver.desktop" "$icons_dir/io.github.robbybobby77.AsciiSaver.svg" <<'ICON_FIX'
+python3 - "$applications_dir/com.github.justadreamerfl.asciisaver.desktop" "$icons_dir/com.github.justadreamerfl.asciisaver.svg" <<'ICON_FIX'
 import pathlib,sys
 p=pathlib.Path(sys.argv[1]); icon=pathlib.Path(sys.argv[2])
 content=p.read_text()
-content=content.replace("Icon=io.github.robbybobby77.AsciiSaver",f"Icon={icon}")
+content=content.replace("Icon=com.github.justadreamerfl.asciisaver",f"Icon={icon}")
 p.write_text(content)
 ICON_FIX
+# Remove files installed under the pre-rename desktop identity.
+rm -f -- "$applications_dir/io.github.robbybobby77.AsciiSaver.desktop" \
+    "$metainfo_dir/io.github.robbybobby77.AsciiSaver.metainfo.xml" \
+    "$icons_dir/io.github.robbybobby77.AsciiSaver.svg" \
+    "$autostart_dir/io.github.robbybobby77.AsciiSaver.Watcher.desktop"
 update-desktop-database "$applications_dir" 2>/dev/null || true
 
 if "$has_user_systemd"; then
@@ -761,7 +771,7 @@ if "$has_user_systemd"; then
     fi
     install_managed_file "$service_source" \
         "$systemd_dir/ascii-saver.service" 0644
-    rm -f -- "$autostart_dir/io.github.robbybobby77.AsciiSaver.Watcher.desktop" \
+    rm -f -- "$autostart_dir/com.github.justadreamerfl.asciisaver.Watcher.desktop" \
         "$autostart_dir/ascii-saver-watcher.desktop"
     integration='systemd user service'
     if "$manage_session"; then
@@ -774,10 +784,10 @@ else
     rm -f -- "$systemd_dir/ascii-saver.service"
     escaped_watcher=$(printf '%s' "$bin_dir/ascii-saver-watcher" | sed 's/[&|]/\\&/g')
     sed "s|@WATCHER@|$escaped_watcher|" \
-        "$data_src/io.github.robbybobby77.AsciiSaver.Watcher.desktop.in" \
+        "$data_src/com.github.justadreamerfl.asciisaver.Watcher.desktop.in" \
         | sed "s|OnlyShowIn=KDE;|OnlyShowIn=$([[ "$backend" == gnome ]] && echo 'GNOME;' || echo 'KDE;')|" \
         | write_managed_file \
-            "$autostart_dir/io.github.robbybobby77.AsciiSaver.Watcher.desktop" 0644
+            "$autostart_dir/com.github.justadreamerfl.asciisaver.Watcher.desktop" 0644
     rm -f -- "$autostart_dir/ascii-saver-watcher.desktop"
     integration='XDG session autostart'
     if "$manage_session"; then

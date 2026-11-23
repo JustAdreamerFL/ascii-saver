@@ -31,7 +31,7 @@ class ScreenLockSignalTests(unittest.TestCase):
         self.application._screen_lock_backend = KDE
 
     def test_renderer_uses_project_controlled_application_id(self) -> None:
-        self.assertEqual(app.APP_ID, "io.github.robbybobby77.AsciiSaver.Renderer")
+        self.assertEqual(app.APP_ID, "com.github.justadreamerfl.asciisaver")
 
     def test_subscribes_to_both_lock_signals_before_querying_state(self) -> None:
         bus = mock.Mock()

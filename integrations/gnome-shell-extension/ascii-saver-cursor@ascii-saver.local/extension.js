@@ -13,7 +13,7 @@ import GLib from 'gi://GLib';
 import {Extension} from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 
-const FULLSCREEN_BUS_NAME = 'io.github.robbybobby77.AsciiSaver.Fullscreen';
+const FULLSCREEN_BUS_NAME = 'com.github.justadreamerfl.asciisaver.Fullscreen';
 
 export default class AsciiSaverCursor extends Extension {
     enable() {
