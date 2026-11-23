@@ -1,0 +1,8 @@
+#!/bin/sh
+set -eu
+APP_DIR="@APP_DIR@"
+export ASCII_SAVER_PACKAGE_DIR="$APP_DIR"
+export ASCII_SAVER_APP_DIR="$APP_DIR"
+export ASCII_SAVER_TTFX="${ASCII_SAVER_TTFX:-$APP_DIR/ttfx}"
+export ASCII_SAVER_DEFAULT_ARTWORK="${ASCII_SAVER_DEFAULT_ARTWORK:-$APP_DIR/logo.txt}"
+exec "@PYTHON@" "$APP_DIR/cli.py" "$@"

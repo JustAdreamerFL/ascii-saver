@@ -165,7 +165,12 @@ static void start_child(Watcher *w) {
         return;
     }
     w->deferred = FALSE;
-    gchar *python = g_build_filename(w->app_dir, "venv", "bin", "python", NULL);
+    gchar *venv_python = g_build_filename(w->app_dir, "venv", "bin", "python", NULL);
+    gchar *python = g_file_test(venv_python, G_FILE_TEST_IS_EXECUTABLE)
+                       ? g_strdup(venv_python)
+                       : g_find_program_in_path("python3");
+    g_free(venv_python);
+    if (!python) python = g_strdup("python3");
     gchar *script = g_build_filename(w->app_dir, "app.py", NULL);
     GSubprocessLauncher *launcher = g_subprocess_launcher_new(G_SUBPROCESS_FLAGS_STDOUT_SILENCE);
     /* A systemd user manager may not propagate XDG_CURRENT_DESKTOP. */
@@ -322,11 +327,16 @@ int main(int argc, char **argv) {
         g_printerr("GNOME watcher requires XDG_RUNTIME_DIR\n");
         return 1;
     }
-    // The installer places this binary inside the application data directory.
-    gchar *self = g_file_read_link("/proc/self/exe", NULL);
-    if (!self) return 1;
-    w.app_dir = g_path_get_dirname(self);
-    g_free(self);
+    const gchar *configured_app_dir = g_getenv("ASCII_SAVER_APP_DIR");
+    if (configured_app_dir && *configured_app_dir) {
+        w.app_dir = g_strdup(configured_app_dir);
+    } else {
+        // The dev installer places this binary inside the application data directory.
+        gchar *self = g_file_read_link("/proc/self/exe", NULL);
+        if (!self) return 1;
+        w.app_dir = g_path_get_dirname(self);
+        g_free(self);
+    }
     w.config_path = g_build_filename(g_get_user_config_dir(), "ascii-saver", "config.json", NULL);
     w.pid_path = g_strdup_printf("%s/ascii-saver-watcher-%u.pid", runtime, (guint)getuid());
     w.renderer_pid_path = g_strdup_printf("%s/ascii-saver-%u.pid", runtime, (guint)getuid());

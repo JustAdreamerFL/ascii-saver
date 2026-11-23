@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=ASCII Saver idle watcher
+Comment=Start the ASCII Saver idle integration
+Exec=@WATCHER@
+Icon=com.github.justadreamerfl.asciisaver
+Terminal=false
+OnlyShowIn=GNOME;KDE;
+NoDisplay=true
+X-KDE-autostart-after=panel

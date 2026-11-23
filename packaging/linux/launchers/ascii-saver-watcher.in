@@ -1,0 +1,13 @@
+#!/bin/sh
+set -eu
+APP_DIR="@APP_DIR@"
+case "${ASCII_SAVER_BACKEND:-${XDG_CURRENT_DESKTOP:-}}" in
+    *GNOME*|gnome) backend=gnome ;;
+    *) backend=kde ;;
+esac
+export ASCII_SAVER_PACKAGE_DIR="$APP_DIR"
+export ASCII_SAVER_APP_DIR="$APP_DIR"
+export ASCII_SAVER_BACKEND="$backend"
+export ASCII_SAVER_TTFX="${ASCII_SAVER_TTFX:-$APP_DIR/ttfx}"
+export ASCII_SAVER_DEFAULT_ARTWORK="${ASCII_SAVER_DEFAULT_ARTWORK:-$APP_DIR/logo.txt}"
+exec "$APP_DIR/ascii-saver-watcher-$backend" "$@"

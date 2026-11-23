@@ -36,6 +36,8 @@ can appear above normal fullscreen Wayland windows.
 | `native/gnome/` | GNOME/Mutter GIO idle watcher |
 | `data/` | Desktop entries, metainfo, icon and systemd units |
 | `integrations/` | Optional GNOME Shell and KWin helper extensions |
+| `debian/` | Debian/Ubuntu packaging metadata |
+| `packaging/` | Shared package payload, Fedora spec and Arch PKGBUILD |
 | `bin/` | Installed launcher scripts |
 | `config/` | Default user configuration and logo |
 | `docs/` | Architecture, installation, platform, design, planning and release notes |

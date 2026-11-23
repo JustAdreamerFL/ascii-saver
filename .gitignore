@@ -42,3 +42,6 @@ compile_commands.json
 *.so
 *.dylib
 *.dll
+
+# Prebuilt package payload input
+.package-ttfx

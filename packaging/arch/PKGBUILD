@@ -1,0 +1,33 @@
+# Maintainer: JustAdreamerFL <Slavouli@gmail.com>
+pkgname=ascii-saver
+pkgver=0.110.0
+pkgrel=1
+pkgdesc="Animated terminal effect screensaver for GNOME and KDE"
+arch=('x86_64' 'aarch64')
+url="https://github.com/JustAdreamerFL/ascii-saver"
+license=('MIT')
+depends=(
+    'desktop-file-utils'
+    'gtk4'
+    'json-glib'
+    'kidletime'
+    'libadwaita'
+    'python'
+    'python-gobject'
+    'qt6-base'
+    'vte4'
+    'xdg-utils'
+)
+makedepends=('cargo' 'cmake' 'gcc' 'pkgconf')
+optdepends=('gtk4-layer-shell: improved fullscreen panel protection')
+source=("$pkgname-$pkgver.tar.gz::$url/archive/v$pkgver.tar.gz")
+sha256sums=('SKIP')
+
+build() {
+    cd "$pkgname-$pkgver"
+    bash packaging/linux/build-payload.sh "$srcdir/ascii-saver-payload"
+}
+
+package() {
+    cp -a "$srcdir/ascii-saver-payload/." "$pkgdir/"
+}

@@ -116,13 +116,26 @@ class IdleWatcher final : public QObject
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.kde.AsciiSaver.Activity")
 
+    static QString appDataDir()
+    {
+        const QString configured = qEnvironmentVariable("ASCII_SAVER_APP_DIR");
+        if (!configured.isEmpty()) return configured;
+        return QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
+            + QStringLiteral("/ascii-saver");
+    }
+
+    static QString pythonInterpreter(const QString &dataDir)
+    {
+        const QString venv = dataDir + QStringLiteral("/venv/bin/python");
+        return QFileInfo(venv).isExecutable() ? venv : QStringLiteral("/usr/bin/python3");
+    }
+
 public:
     explicit IdleWatcher(QObject *parent = nullptr)
         : QObject(parent)
         , m_configPath(QStandardPaths::writableLocation(QStandardPaths::ConfigLocation)
                        + QStringLiteral("/ascii-saver/config.json"))
-        , m_dataDir(QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
-                    + QStringLiteral("/ascii-saver"))
+        , m_dataDir(appDataDir())
     {
         auto *idle = KIdleTime::instance();
         connect(idle,
@@ -378,7 +391,7 @@ private:
         }
         m_killTimer.stop();
         ++m_startGeneration;
-        m_process.setProgram(m_dataDir + QStringLiteral("/venv/bin/python"));
+        m_process.setProgram(pythonInterpreter(m_dataDir));
         m_process.setArguments({m_dataDir + QStringLiteral("/app.py")});
         m_process.setProcessChannelMode(QProcess::ForwardedErrorChannel);
         m_startedByWatcher = true;

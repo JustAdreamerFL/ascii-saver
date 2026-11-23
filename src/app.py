@@ -289,6 +289,10 @@ class SaverWindow(Adw.ApplicationWindow):
 
     def _artwork_path(self) -> Path:
         artwork = CONFIG_DIR / "logo.txt"
+        if not artwork.is_file():
+            packaged = os.environ.get("ASCII_SAVER_DEFAULT_ARTWORK")
+            if packaged:
+                artwork = Path(packaged)
         selected = self.app.config.get("monitor_artwork", {}).get(self.monitor_id)
         if self.app.config.get("per_monitor_visuals") and isinstance(selected, str):
             # Do not allow custom artwork paths to escape the user's config dir.

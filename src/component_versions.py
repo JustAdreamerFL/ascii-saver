@@ -19,15 +19,31 @@ def _xdg(var: str, fallback: str) -> Path:
 
 
 def data_path() -> Path:
+    package_dir = os.environ.get('ASCII_SAVER_PACKAGE_DIR')
+    if package_dir:
+        return Path(package_dir).expanduser()
     return _xdg('XDG_DATA_HOME', '.local/share') / 'ascii-saver'
+
+
+def _watcher_path(app_dir: Path) -> Path:
+    configured = os.environ.get('ASCII_SAVER_WATCHER_BINARY')
+    return Path(configured) if configured else app_dir / 'ascii-saver-watcher'
+
+
+def _engine_path(app_dir: Path) -> Path:
+    configured = os.environ.get('ASCII_SAVER_TTFX')
+    if configured:
+        return Path(configured)
+    packaged = app_dir / 'ttfx'
+    return packaged if packaged.is_file() else app_dir / 'venv/bin/ttfx'
 
 
 def watcher_backend(app_dir: Path) -> str:
     try:
         value = (app_dir / 'watcher-backend').read_text(encoding='utf-8').strip()
-        return {'gnome': 'GNOME / Mutter', 'kde': 'KDE Plasma / KIdleTime'}.get(value, 'Unknown')
     except OSError:
-        return 'Unknown (older installation)'
+        value = os.environ.get('ASCII_SAVER_BACKEND', '').strip()
+    return {'gnome': 'GNOME / Mutter', 'kde': 'KDE Plasma / KIdleTime'}.get(value, 'Unknown (older installation)')
 
 
 def _version_output(executable: Path) -> str | None:
@@ -66,7 +82,7 @@ def running_watcher_status(installed: Path, pid: int | None = None) -> str:
         proc_exe = Path(f'/proc/{pid}/exe')
         path = os.readlink(proc_exe)
         # PID reuse / unexpected processes must never be reported as our daemon.
-        if Path(path.removesuffix(' (deleted)')).name != 'ascii-saver-watcher':
+        if not Path(path.removesuffix(' (deleted)')).name.startswith('ascii-saver-watcher'):
             return 'Unable to verify running watcher'
         actual = proc_exe.stat()
         expected = installed.stat()
@@ -83,8 +99,8 @@ def collect_versions(app_dir: Path | None = None) -> dict[str, str]:
         package_version = (app_dir / 'VERSION').read_text().strip()
     except OSError:
         package_version = 'Not installed'
-    watcher = app_dir / 'ascii-saver-watcher'
-    engine = app_dir / 'venv/bin/ttfx'
+    watcher = _watcher_path(app_dir)
+    engine = _engine_path(app_dir)
     return {
         'ui': BUILD_VERSION,
         'installed': package_version,

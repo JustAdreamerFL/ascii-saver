@@ -35,12 +35,29 @@ config_home = Path(os.environ.get("XDG_CONFIG_HOME", home / ".config"))
 data_home = Path(os.environ.get("XDG_DATA_HOME", home / ".local" / "share"))
 config_dir = config_home / "ascii-saver"
 config_file = config_dir / "config.json"
-data_dir = data_home / "ascii-saver"
-launcher = home / ".local" / "bin" / "ascii-saver"
-settings_launcher = home / ".local" / "bin" / "ascii-saver-settings"
+package_dir = os.environ.get("ASCII_SAVER_PACKAGE_DIR")
+data_dir = Path(package_dir).expanduser() if package_dir else data_home / "ascii-saver"
+watcher_binary = Path(
+    os.environ.get("ASCII_SAVER_WATCHER_BINARY", data_dir / "ascii-saver-watcher")
+)
+ttfx_binary = Path(os.environ.get("ASCII_SAVER_TTFX", data_dir / "venv" / "bin" / "ttfx"))
+python_binary = Path(
+    os.environ.get("ASCII_SAVER_PYTHON", data_dir / "venv" / "bin" / "python")
+)
+launcher = Path(
+    os.environ.get("ASCII_SAVER_LAUNCHER", home / ".local" / "bin" / "ascii-saver")
+)
+settings_launcher = Path(
+    os.environ.get(
+        "ASCII_SAVER_SETTINGS_LAUNCHER", home / ".local" / "bin" / "ascii-saver-settings"
+    )
+)
 service = "ascii-saver.service"
-autostart_file = (
-    config_home / "autostart" / "com.github.justadreamerfl.asciisaver.Watcher.desktop"
+autostart_file = Path(
+    os.environ.get(
+        "ASCII_SAVER_AUTOSTART_FILE",
+        config_home / "autostart" / "com.github.justadreamerfl.asciisaver.Watcher.desktop",
+    )
 )
 VERSION = read_version()
 LAUNCH_TIMEOUT_SECONDS = 3.0
@@ -53,7 +70,7 @@ def process_matches_installed_saver(pid: int) -> bool:
 
 
 def process_matches_installed_watcher(pid: int) -> bool:
-    return process_matches_watcher(pid, data_dir / "ascii-saver-watcher")
+    return process_matches_watcher(pid, watcher_binary)
 
 
 def pid_file() -> Path | None:
@@ -341,7 +358,7 @@ def collect_diagnostics() -> list[tuple[str, bool, str]]:
         data_dir / "app.py",
         data_dir / "settings.py",
         data_dir / "helpers.py",
-        data_dir / "ascii-saver-watcher",
+        watcher_binary,
     )
     missing = [path.name for path in required_files if not path.is_file()]
     checks.append(
@@ -352,7 +369,7 @@ def collect_diagnostics() -> list[tuple[str, bool, str]]:
         )
     )
 
-    python = data_dir / "venv" / "bin" / "python"
+    python = python_binary if python_binary.is_file() else Path(shutil.which("python3") or "python3")
     namespace_check = """
 import gi
 for namespace, version in (("Gtk", "4.0"), ("Vte", "3.91")):
@@ -379,7 +396,7 @@ from gi.repository import Gtk, Vte
     else:
         checks.append(("GTK 4 and VTE", False, "application Python environment is missing"))
 
-    tte = data_dir / "venv" / "bin" / "ttfx"
+    tte = ttfx_binary
     if tte.is_file() and os.access(tte, os.X_OK):
         completed = subprocess.run(
             [str(tte), "--version"], text=True, capture_output=True, check=False
@@ -457,6 +474,11 @@ def command_doctor() -> bool:
 
 
 def command_uninstall() -> None:
+    if package_dir:
+        raise SystemExit(
+            "ascii-saverctl: this is a system package installation; "
+            "remove it with your distribution package manager"
+        )
     installed_uninstaller = data_dir / "uninstall.sh"
     if not installed_uninstaller.is_file() or not os.access(installed_uninstaller, os.X_OK):
         raise SystemExit(

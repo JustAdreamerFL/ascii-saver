@@ -1,0 +1,7 @@
+ascii-saver (0.110.0) unstable; urgency=medium
+
+  * Native Debian package: prebuilt ttfx and both idle watchers, system-wide
+    Python modules, desktop integration and no per-user venv or Cargo build.
+  * Package the renamed com.github.justadreamerfl.asciisaver identity.
+
+ -- JustAdreamerFL <Slavouli@gmail.com>  Mon, 23 Nov 2026 23:59:00 +0000

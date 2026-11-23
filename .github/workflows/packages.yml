@@ -1,0 +1,147 @@
+name: Packages
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Branch to package
+        required: true
+        default: main
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  ttfx:
+    name: Prebuilt ttfx
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+      - name: Build
+        run: |
+          cargo build --manifest-path ttfx-rust/Cargo.toml --release --locked
+          mkdir -p out
+          cp ttfx-rust/target/release/ttfx out/ttfx
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ttfx-linux-x86_64
+          path: out/ttfx
+          if-no-files-found: error
+
+  debian:
+    name: Debian package
+    needs: ttfx
+    runs-on: ubuntu-latest
+    container: debian:trixie
+    steps:
+      - name: Install git
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends git ca-certificates
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: ttfx-linux-x86_64
+          path: ttfx-bin
+      - name: Install build dependencies
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            build-essential cargo cmake debhelper devscripts fakeroot \
+            libglib2.0-dev libjson-glib-dev libkf6idletime-dev pkg-config \
+            qt6-base-dev rustc
+      - name: Build
+        run: |
+          cp ttfx-bin/ttfx .package-ttfx
+          dpkg-buildpackage -us -uc -b
+          mkdir -p out
+          cp ../ascii-saver_*_*.deb out/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages-debian
+          path: out/*.deb
+          if-no-files-found: error
+
+  fedora:
+    name: Fedora package
+    needs: ttfx
+    runs-on: ubuntu-latest
+    container: fedora:43
+    steps:
+      - name: Install git
+        run: dnf install -y git
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: ttfx-linux-x86_64
+          path: ttfx-bin
+      - name: Install build dependencies
+        run: |
+          dnf install -y \
+            cargo cmake gcc-c++ glib2-devel json-glib-devel kf6-kidletime-devel \
+            pkgconf-pkg-config qt6-qtbase-devel rpm-build rust tar gzip
+      - name: Build
+        run: |
+          cp ttfx-bin/ttfx .package-ttfx
+          version=$(head -n 1 VERSION)
+          topdir="$PWD/rpmbuild"
+          mkdir -p "$topdir/SOURCES" "$topdir/SPECS" out
+          tar --exclude=.git --exclude=build --exclude=out --exclude=rpmbuild \
+            --transform "s,^\./,ascii-saver-$version/," \
+            -czf "$topdir/SOURCES/ascii-saver-$version.tar.gz" .
+          rpmbuild -bb packaging/fedora/ascii-saver.spec \
+            --define "_topdir $topdir" \
+            --define "_sourcedir $topdir/SOURCES"
+          cp "$topdir"/RPMS/*/*.rpm out/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages-fedora
+          path: out/*.rpm
+          if-no-files-found: error
+
+  arch:
+    name: Arch package
+    needs: ttfx
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+    steps:
+      - name: Install git
+        run: pacman -Sy --noconfirm git
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: ttfx-linux-x86_64
+          path: ttfx-bin
+      - name: Install build dependencies
+        run: |
+          pacman -Syu --noconfirm \
+            cargo cmake glib2 json-glib kidletime pkgconf \
+            python qt6-base
+      - name: Build
+        run: |
+          cp ttfx-bin/ttfx .package-ttfx
+          version=$(head -n 1 VERSION)
+          mkdir -p /tmp/sources out
+          tar --exclude=.git --exclude=build --exclude=out \
+            --transform "s,^\./,ascii-saver-$version/," \
+            -czf "/tmp/sources/ascii-saver-$version.tar.gz" .
+          useradd --create-home builder
+          chown -R builder:builder "$PWD" /tmp/sources
+          su builder -c "cd '$PWD/packaging/arch' && SRCDEST=/tmp/sources PKGDEST='$PWD/out' makepkg --nodeps --noconfirm"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: packages-arch
+          path: out/*.pkg.tar.zst
+          if-no-files-found: error

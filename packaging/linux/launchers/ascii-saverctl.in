@@ -1,0 +1,18 @@
+#!/bin/sh
+set -eu
+APP_DIR="@APP_DIR@"
+case "${XDG_CURRENT_DESKTOP:-}" in
+    *GNOME*) backend=gnome ;;
+    *) backend=kde ;;
+esac
+export ASCII_SAVER_PACKAGE_DIR="$APP_DIR"
+export ASCII_SAVER_APP_DIR="$APP_DIR"
+export ASCII_SAVER_BACKEND="$backend"
+export ASCII_SAVER_TTFX="${ASCII_SAVER_TTFX:-$APP_DIR/ttfx}"
+export ASCII_SAVER_DEFAULT_ARTWORK="${ASCII_SAVER_DEFAULT_ARTWORK:-$APP_DIR/logo.txt}"
+export ASCII_SAVER_WATCHER_BINARY="$APP_DIR/ascii-saver-watcher-$backend"
+export ASCII_SAVER_PYTHON="@PYTHON@"
+export ASCII_SAVER_LAUNCHER="@BINDIR@/ascii-saver"
+export ASCII_SAVER_SETTINGS_LAUNCHER="@BINDIR@/ascii-saver-settings"
+export ASCII_SAVER_AUTOSTART_FILE="@AUTOSTART_FILE@"
+exec "@PYTHON@" "$APP_DIR/cli.py" "$@"

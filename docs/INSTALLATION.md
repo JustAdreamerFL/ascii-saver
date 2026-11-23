@@ -2,6 +2,31 @@
 
 ## Before installing
 
+### Distribution packages
+
+Native packages install system-wide under `/usr` and ship prebuilt GNOME and
+KDE watchers plus the instrumented `ttfx` renderer. The installed system needs
+the declared Python/GTK runtime packages, but no virtual environment, compiler,
+or Cargo toolchain. Remove the package with the distribution package manager
+to leave no application files behind.
+
+```sh
+# Debian / Ubuntu
+sudo apt install ./ascii-saver_0.110.0_amd64.deb
+
+# Fedora
+sudo dnf install ./ascii-saver-0.110.0-1.fc43.x86_64.rpm
+
+# Arch Linux
+sudo pacman -U ascii-saver-0.110.0-1-x86_64.pkg.tar.zst
+```
+
+The **Packages** GitHub workflow builds all three formats from a selected
+branch. See [Packaging](PACKAGING.md) for local build requirements and the
+shared payload layout.
+
+### From source or the online bootstrap
+
 ASCII Saver is intended for a Linux desktop running KDE Plasma 6. It needs
 a C++17 compiler, CMake 3.20 or newer, Qt 6, KDE Frameworks 6 KIdleTime,
 Python 3 with virtual-environment support, PyGObject, GTK 4, and GTK4 VTE
