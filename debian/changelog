@@ -1,3 +1,10 @@
+ascii-saver (0.111.0) unstable; urgency=medium
+
+  * Ship native Debian, Fedora and Arch packages.
+  * Build source archives, packages and checksums in one Release workflow.
+
+ -- JustAdreamerFL <Slavouli@gmail.com>  Mon, 23 Nov 2026 23:59:00 +0000
+
 ascii-saver (0.110.0) unstable; urgency=medium
 
   * Native Debian package: prebuilt ttfx and both idle watchers, system-wide

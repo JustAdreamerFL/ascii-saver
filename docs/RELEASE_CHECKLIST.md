@@ -14,7 +14,8 @@ The **Release** workflow (`.github/workflows/release.yml`) is triggered with
 **Run workflow** from the Actions tab. Select the branch to release and,
 optionally, a tag; the tag defaults to `v<VERSION>` and must match `VERSION`.
 The workflow validates the release sources, builds the generic and versioned
-archives with `scripts/build-release.sh`, and publishes all four assets plus
+source archives with `scripts/build-release.sh`, builds the Debian, Fedora and
+Arch packages, and publishes every artifact with combined checksums and
 generated release notes. It refuses to reuse an existing tag.
 
 ## Repository and documentation

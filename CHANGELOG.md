@@ -7,6 +7,13 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 
 ## [Unreleased]
 
+## 0.111.0 (experimental) - 2026-11-23
+- Add native Debian, Fedora and Arch packages with prebuilt watchers and ttfx.
+- Consolidate package builds into the manual Release workflow so source
+  archives, packages and checksums publish together.
+- Package installations use system Python/GTK and do not create a virtual
+  environment or require Cargo on the installed machine.
+
 ## 0.110.0 (experimental) - 2026-11-23
 - Rename the application identity to `com.github.justadreamerfl.asciisaver`, including desktop entries, AppStream metadata, icon names and the fullscreen cursor D-Bus name. Upgrades remove the previous desktop-identity files while preserving user configuration and artwork.
 - Point the online installer and project links at the current repository and publish through the manual GitHub Release workflow.

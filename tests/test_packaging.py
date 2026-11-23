@@ -48,11 +48,12 @@ class PackagingTests(unittest.TestCase):
         self.assertTrue((ROOT / "debian/control").is_file())
         self.assertTrue((ROOT / "packaging/fedora/ascii-saver.spec").is_file())
         self.assertTrue((ROOT / "packaging/arch/PKGBUILD").is_file())
-        workflow = (ROOT / ".github/workflows/packages.yml").read_text(encoding="utf-8")
+        workflow = (ROOT / ".github/workflows/release.yml").read_text(encoding="utf-8")
         self.assertIn("Debian package", workflow)
         self.assertIn("Fedora package", workflow)
         self.assertIn("Arch package", workflow)
         self.assertIn("ttfx-linux-x86_64", workflow)
+        self.assertIn("release-assets", workflow)
 
     def test_package_cache_is_ignored(self):
         ignore = (ROOT / ".gitignore").read_text(encoding="utf-8")

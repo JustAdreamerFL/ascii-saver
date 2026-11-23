@@ -21,8 +21,8 @@ sudo dnf install ./ascii-saver-0.110.0-1.fc43.x86_64.rpm
 sudo pacman -U ascii-saver-0.110.0-1-x86_64.pkg.tar.zst
 ```
 
-The **Packages** GitHub workflow builds all three formats from a selected
-branch. See [Packaging](PACKAGING.md) for local build requirements and the
+The **Release** GitHub workflow builds both source archives and all three
+package formats from a selected branch, then publishes them together. See [Packaging](PACKAGING.md) for local build requirements and the
 shared payload layout.
 
 ### From source or the online bootstrap
@@ -67,10 +67,10 @@ To install or roll back to a specific published release with the reviewed
 bootstrap:
 
 ```sh
-ASCII_SAVER_VERSION=v0.110.0 bash install-online.sh
+ASCII_SAVER_VERSION=v0.111.0 bash install-online.sh
 ```
 
-The bootstrap also accepts `--version v0.110.0`. Use `--yes` for an unattended
+The bootstrap also accepts `--version v0.111.0`. Use `--yes` for an unattended
 dependency install, `--no-install-deps` to print guidance only, `--check` to
 validate dependencies, and `--no-start` to leave session processes untouched.
 Run `bash install-online.sh --help` for the complete option list.

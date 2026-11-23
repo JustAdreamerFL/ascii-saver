@@ -1,5 +1,7 @@
 # ASCII Saver
 
+> **V111 (experimental, 2026-11-23):** Native Debian, Fedora and Arch packages are published with the source archives, using system Python/GTK and prebuilt watchers/ttfx, with no venv or Cargo required on the installed system. The manual Release workflow now builds and publishes all artifacts together. See [RELEASE-V111.md](docs/releases/RELEASE-V111.md).
+
 > **V110 (experimental, 2026-11-23):** Application identity is now `com.github.justadreamerfl.asciisaver` across GTK, desktop entries, AppStream metadata, icons and the fullscreen cursor bridge. Upgrades remove files from the previous identity while preserving configuration and artwork. The online installer and release workflow target `JustAdreamerFL/ascii-saver`. See [RELEASE-V110.md](docs/releases/RELEASE-V110.md).
 
 > **V109 (experimental, 2026-11-09):** Appearance now allows turning off **Override effect RGB colors** so Rust animations retain their own ANSI/RGB output; the setting is saved and used in all preview paths. Preferences has a real labeled sidebar on wide windows and a compact selector on narrow ones. Timing sliders take full-width rows. All editing and diagnostics tools are inside Preferences > Tools. The editor shows both Text and Draw, and the shared window-shortcut handler captures Esc/Ctrl+W/Ctrl+Q before focused child controls. Effect Library pinned preview receives a vertically centered host. Headless tests pass; real GNOME/KDE Wayland GUI confirmation still needed. See [RELEASE-V109.md](docs/releases/RELEASE-V109.md).

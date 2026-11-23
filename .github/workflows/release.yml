@@ -22,15 +22,17 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  release:
+  prepare:
+    name: Validate release
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.metadata.outputs.version }}
+      tag: ${{ steps.metadata.outputs.tag }}
     steps:
-      - name: Check out the selected branch
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.branch }}
           fetch-depth: 0
-
       - name: Validate release metadata
         id: metadata
         shell: bash
@@ -51,7 +53,6 @@ jobs:
             exit 1
           fi
           printf 'version=%s\ntag=%s\n' "$version" "$tag" >> "$GITHUB_OUTPUT"
-
       - name: Validate release sources
         shell: bash
         run: |
@@ -61,20 +62,183 @@ jobs:
           bash -n install-online.sh
           bash -n uninstall.sh
 
-      - name: Build release archives
+  ttfx:
+    name: Prebuilt ttfx
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: stable
+      - name: Build
+        run: |
+          cargo build --manifest-path ttfx-rust/Cargo.toml --release --locked
+          mkdir -p out
+          cp ttfx-rust/target/release/ttfx out/ttfx
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ttfx-linux-x86_64
+          path: out/ttfx
+          if-no-files-found: error
+
+  source:
+    name: Source archives
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+      - name: Build archives
         shell: bash
         run: bash scripts/build-release.sh dist
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-source
+          path: dist/*
+          if-no-files-found: error
 
-      - name: Publish GitHub release
+  debian:
+    name: Debian package
+    needs: [prepare, ttfx]
+    runs-on: ubuntu-latest
+    container: debian:trixie
+    steps:
+      - name: Install git
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends git ca-certificates
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: ttfx-linux-x86_64
+          path: ttfx-bin
+      - name: Install build dependencies
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            build-essential cargo cmake debhelper devscripts fakeroot \
+            libglib2.0-dev libjson-glib-dev libkf6idletime-dev pkg-config \
+            qt6-base-dev rustc
+      - name: Build
+        shell: bash
+        run: |
+          install -m 0755 ttfx-bin/ttfx .package-ttfx
+          dpkg-buildpackage -us -uc -b
+          mkdir -p artifacts
+          cp ../ascii-saver_*_*.deb artifacts/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-debian
+          path: artifacts/*.deb
+          if-no-files-found: error
+
+  fedora:
+    name: Fedora package
+    needs: [prepare, ttfx]
+    runs-on: ubuntu-latest
+    container: fedora:43
+    steps:
+      - name: Install git
+        run: dnf install -y git
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: ttfx-linux-x86_64
+          path: ttfx-bin
+      - name: Install build dependencies
+        run: |
+          dnf install -y \
+            cargo cmake gcc-c++ glib2-devel json-glib-devel kf6-kidletime-devel \
+            pkgconf-pkg-config qt6-qtbase-devel rpm-build rust tar gzip
+      - name: Build
+        shell: bash
+        run: |
+          install -m 0755 ttfx-bin/ttfx .package-ttfx
+          version=$(head -n 1 VERSION)
+          topdir="$PWD/rpmbuild"
+          mkdir -p "$topdir/SOURCES" "$topdir/SPECS" artifacts
+          tar --exclude=.git --exclude=build --exclude=out --exclude=rpmbuild \
+            --transform "s,^\./,ascii-saver-$version/," \
+            -czf "$topdir/SOURCES/ascii-saver-$version.tar.gz" .
+          rpmbuild -bb packaging/fedora/ascii-saver.spec \
+            --define "_topdir $topdir" \
+            --define "_sourcedir $topdir/SOURCES"
+          cp "$topdir"/RPMS/*/*.rpm artifacts/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-fedora
+          path: artifacts/*.rpm
+          if-no-files-found: error
+
+  arch:
+    name: Arch package
+    needs: [prepare, ttfx]
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+    steps:
+      - name: Install git
+        run: pacman -Sy --noconfirm git
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.branch }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: ttfx-linux-x86_64
+          path: ttfx-bin
+      - name: Install build dependencies
+        run: |
+          pacman -Syu --noconfirm \
+            cargo cmake glib2 json-glib kidletime pkgconf \
+            python qt6-base
+      - name: Build
+        shell: bash
+        run: |
+          install -m 0755 ttfx-bin/ttfx .package-ttfx
+          version=$(head -n 1 VERSION)
+          mkdir -p /tmp/sources out artifacts
+          tar --exclude=.git --exclude=build --exclude=out \
+            --transform "s,^\./,ascii-saver-$version/," \
+            -czf "/tmp/sources/ascii-saver-$version.tar.gz" .
+          useradd --create-home builder
+          chown -R builder:builder "$PWD" /tmp/sources
+          su builder -c "cd '$PWD/packaging/arch' && SRCDEST=/tmp/sources PKGDEST='$PWD/out' makepkg --nodeps --noconfirm"
+          cp out/ascii-saver-"$version"-*.pkg.tar.zst artifacts/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-arch
+          path: artifacts/*.pkg.tar.zst
+          if-no-files-found: error
+
+  publish:
+    name: Publish GitHub release
+    needs: [prepare, source, debian, fedora, arch]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          path: release-assets
+          merge-multiple: true
+      - name: Generate checksums
+        shell: bash
+        run: |
+          cd release-assets
+          sha256sum *.deb *.rpm *.pkg.tar.zst *.tar.gz > SHA256SUMS
+      - name: Publish
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "${{ steps.metadata.outputs.tag }}" \
+          gh release create "${{ needs.prepare.outputs.tag }}" \
             --target "${{ inputs.branch }}" \
-            --title "ASCII Saver ${{ steps.metadata.outputs.version }}" \
+            --title "ASCII Saver ${{ needs.prepare.outputs.version }}" \
             --generate-notes \
-            dist/ascii-saver.tar.gz \
-            dist/ascii-saver.tar.gz.sha256 \
-            "dist/ascii-saver-${{ steps.metadata.outputs.version }}.tar.gz" \
-            "dist/ascii-saver-${{ steps.metadata.outputs.version }}.tar.gz.sha256"
+            release-assets/*
