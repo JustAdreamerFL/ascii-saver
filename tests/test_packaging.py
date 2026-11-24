@@ -50,10 +50,17 @@ class PackagingTests(unittest.TestCase):
         self.assertTrue((ROOT / "packaging/arch/PKGBUILD").is_file())
         workflow = (ROOT / ".github/workflows/release.yml").read_text(encoding="utf-8")
         self.assertIn("Debian package", workflow)
-        self.assertIn("Fedora package", workflow)
+        self.assertIn("Fedora ${{ matrix.version }} package", workflow)
         self.assertIn("Arch package", workflow)
         self.assertIn("ttfx-linux-x86_64", workflow)
         self.assertIn("release-assets", workflow)
+        self.assertIn("debian_version", workflow)
+        self.assertIn("fedora_versions", workflow)
+        self.assertIn("arch_image", workflow)
+        self.assertIn("default: latest", workflow)
+        self.assertIn("docker run --rm fedora:latest", workflow)
+        self.assertIn("latest - 1", workflow)
+        self.assertIn("default: base-devel", workflow)
 
     def test_package_cache_is_ignored(self):
         ignore = (ROOT / ".gitignore").read_text(encoding="utf-8")

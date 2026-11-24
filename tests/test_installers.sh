@@ -49,7 +49,7 @@ cp -- "$specific_dir/ascii-saver-$version.tar.gz" "$latest_dir/ascii-saver.tar.g
 
 TEST_INSTALL_MARKER="$marker" TEST_INSTALL_ARGS="$args_file" \
 ASCII_SAVER_RELEASE_BASE_URL="file://$release_root" TMPDIR="$test_dir/download-tmp" \
-    "$project_dir/install-online.sh" --version "v$version" --yes --no-start --non-interactive
+    "$project_dir/install-online.sh" --source --version "v$version" --yes --no-start --non-interactive
 [[ -f "$marker" ]] || fail 'verified versioned archive did not run its installer'
 mapfile -t forwarded_args <"$args_file"
 [[ "${forwarded_args[*]}" == '--yes --no-start --non-interactive' ]] || \
@@ -61,7 +61,7 @@ fi
 rm -f -- "$marker" "$args_file"
 TEST_INSTALL_MARKER="$marker" TEST_INSTALL_ARGS="$args_file" \
 ASCII_SAVER_RELEASE_BASE_URL="file://$release_root" TMPDIR="$test_dir/download-tmp" \
-    "$project_dir/install-online.sh"
+    "$project_dir/install-online.sh" --source
 [[ -f "$marker" ]] || fail 'latest release alias did not run its installer'
 
 rm -f -- "$marker"
@@ -69,10 +69,63 @@ printf '%064d  %s\n' 0 "ascii-saver-$version.tar.gz" \
     >"$specific_dir/ascii-saver-$version.tar.gz.sha256"
 if TEST_INSTALL_MARKER="$marker" TEST_INSTALL_ARGS="$args_file" \
     ASCII_SAVER_RELEASE_BASE_URL="file://$release_root" \
-    "$project_dir/install-online.sh" --version "$version" >/dev/null 2>&1; then
+    "$project_dir/install-online.sh" --source --version "$version" >/dev/null 2>&1; then
     fail 'bootstrap accepted a bad checksum'
 fi
 [[ ! -e "$marker" ]] || fail 'installer ran after checksum failure'
+
+# Package mode selects the exact distro release and verifies the package.
+package_release="$test_dir/package-release/download/v$version"
+mkdir -p "$package_release"
+printf 'deb\n' >"$package_release/ascii-saver_${version}_amd64.deb"
+printf 'fc45\n' >"$package_release/ascii-saver-$version-1.fc45.x86_64.rpm"
+printf 'fc44\n' >"$package_release/ascii-saver-$version-1.fc44.x86_64.rpm"
+printf 'arch\n' >"$package_release/ascii-saver-$version-1-x86_64.pkg.tar.zst"
+(
+    cd -- "$package_release"
+    sha256sum "ascii-saver_${version}_amd64.deb" ascii-saver-"$version"-* \
+        >SHA256SUMS
+)
+cat >"$test_dir/os-debian" <<'EOF'
+ID=debian
+VERSION_ID="13"
+EOF
+cat >"$test_dir/os-fedora-45" <<'EOF'
+ID=fedora
+VERSION_ID=45
+EOF
+cat >"$test_dir/os-fedora-44" <<'EOF'
+ID=fedora
+VERSION_ID=44
+EOF
+cat >"$test_dir/os-arch" <<'EOF'
+ID=arch
+EOF
+for check in \
+    "os-debian ascii-saver_${version}_amd64.deb" \
+    "os-fedora-45 ascii-saver-$version-1.fc45.x86_64.rpm" \
+    "os-fedora-44 ascii-saver-$version-1.fc44.x86_64.rpm" \
+    "os-arch ascii-saver-$version-1-x86_64.pkg.tar.zst"; do
+    os_file=${check%% *}
+    expected_package=${check#* }
+    output=$(ASCII_SAVER_RELEASE_BASE_URL="file://$test_dir/package-release" \
+        ASCII_SAVER_OS_RELEASE="$test_dir/$os_file" \
+        "$project_dir/install-online.sh" --version "v$version" --check)
+    [[ "$output" == *"$expected_package"* ]] || \
+        fail "package mode selected the wrong file for $os_file"
+done
+printf '0%.0s' {1..64} >"$package_release/ascii-saver_${version}_amd64.deb"
+(
+    cd -- "$package_release"
+    printf '%064d  %s\n' 0 "ascii-saver_${version}_amd64.deb" \
+        >"$test_dir/bad-package.sha"
+    cp "$test_dir/bad-package.sha" SHA256SUMS
+)
+if ASCII_SAVER_RELEASE_BASE_URL="file://$test_dir/package-release" \
+    ASCII_SAVER_OS_RELEASE="$test_dir/os-debian" \
+    "$project_dir/install-online.sh" --version "v$version" --check >/dev/null 2>&1; then
+    fail 'package mode accepted the wrong checksum'
+fi
 
 # Exercise an upgrade and rollback without building or contacting the live
 # session. The fakes only replace the expensive build/venv steps.

@@ -1,6 +1,6 @@
 # Maintainer: JustAdreamerFL <Slavouli@gmail.com>
 pkgname=ascii-saver
-pkgver=0.111.0
+pkgver=0.112.0
 pkgrel=1
 pkgdesc="Animated terminal effect screensaver for GNOME and KDE"
 arch=('x86_64' 'aarch64')

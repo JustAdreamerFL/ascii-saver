@@ -1,5 +1,7 @@
 # ASCII Saver
 
+> **V112 (experimental, 2026-11-24):** The online installer now installs the matching Debian, Fedora or Arch package through the system package manager, with `--source` available for development installs. Release notes highlight the newest package for each distribution and collapse older Fedora builds. See [RELEASE-V112.md](docs/releases/RELEASE-V112.md).
+
 > **V111 (experimental, 2026-11-23):** Native Debian, Fedora and Arch packages are published with the source archives, using system Python/GTK and prebuilt watchers/ttfx, with no venv or Cargo required on the installed system. The manual Release workflow now builds and publishes all artifacts together. See [RELEASE-V111.md](docs/releases/RELEASE-V111.md).
 
 > **V110 (experimental, 2026-11-23):** Application identity is now `com.github.justadreamerfl.asciisaver` across GTK, desktop entries, AppStream metadata, icons and the fullscreen cursor bridge. Upgrades remove files from the previous identity while preserving configuration and artwork. The online installer and release workflow target `JustAdreamerFL/ascii-saver`. See [RELEASE-V110.md](docs/releases/RELEASE-V110.md).

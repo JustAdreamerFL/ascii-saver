@@ -15,8 +15,10 @@ The **Release** workflow (`.github/workflows/release.yml`) is triggered with
 optionally, a tag; the tag defaults to `v<VERSION>` and must match `VERSION`.
 The workflow validates the release sources, builds the generic and versioned
 source archives with `scripts/build-release.sh`, builds the Debian, Fedora and
-Arch packages, and publishes every artifact with combined checksums and
-generated release notes. It refuses to reuse an existing tag.
+Arch packages, and publishes every artifact with combined checksums and a
+generated release body. The body highlights the newest package for each
+distribution and puts the automatically resolved previous Fedora release in an expandable section. It
+refuses to reuse an existing tag.
 
 ## Repository and documentation
 

@@ -2,13 +2,16 @@
 
 ASCII Saver has two installation models:
 
-- **Development/user-local:** `install.sh` / `install-online.sh` create a
-  private application directory with a virtual environment, compile both native
-  watchers and `ttfx`, and install desktop integration under the user's home.
+- **User mode:** `install-online.sh` detects the distribution, release and
+  architecture, downloads the matching package, verifies it, and installs it
+  with `apt`, `dnf` or `pacman`. No virtual environment or Cargo build runs on
+  the installed machine.
+- **Development mode:** `install.sh` (or `install-online.sh --source`) creates a
+  private application directory with a virtual environment, compiles both native
+  watchers and `ttfx`, and installs desktop integration under the user's home.
 - **Distribution packages:** Debian, Fedora and Arch packages install
   system-wide under `/usr`, use the distribution Python/GTK runtime, and ship
-  prebuilt watchers and `ttfx`. No virtual environment or Cargo build runs on
-  the installed machine.
+  prebuilt watchers and `ttfx`.
 
 ## Shared payload
 
@@ -76,3 +79,34 @@ makepkg -s
 
 The version in `VERSION`, `debian/changelog`, the RPM spec and `PKGBUILD` must
 match. `tests/test_packaging.py` enforces this for the repository.
+
+
+## Choosing build distributions
+
+The **Release** workflow defaults Debian to `debian:latest` and Arch to the
+rolling `archlinux:base-devel`. For Fedora it reads the stable version from
+`fedora:latest` and builds that release plus the previous one, so the newest
+RPM is highlighted and the previous release is available in the collapsed
+section. New Fedora releases therefore require no workflow edit.
+Optional workflow inputs override each target:
+
+- `debian_version` — any Debian/Ubuntu image tag (`trixie`, `bookworm`, ...)
+- `fedora_versions` — comma-separated Fedora tags (`45,44`, `latest`, ...)
+- `arch_image` — any Arch image tag (`base-devel`, dated base-devel tags, ...)
+
+Each package job writes the resolved `PRETTY_NAME` to the workflow summary, so
+a published release records exactly which distribution build was used.
+
+
+## Supported package targets
+
+| Family | Supported build targets | Notes |
+|---|---|---|
+| Debian | Debian 13 (trixie), selected with `debian_version` | Debian 12 is not supported because the KDE watcher needs KF6. |
+| Fedora | Fedora 45 and 44 by default; any tags accepted in `fedora_versions` | The newest RPM is highlighted; older RPMs appear in a collapsed section. Update the default pair after each Fedora release. |
+| Arch | Current rolling `base-devel` image | Arch has no supported point releases; older snapshots are not published. |
+
+The release body is generated from the actual uploaded assets. It shows the
+newest Debian, Fedora and Arch package in the main table, puts older Fedora
+builds behind an expandable section, and adds expandable sections for source
+archives and checksums.

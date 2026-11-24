@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 Name:           ascii-saver
-Version:        0.111.0
+Version:        0.112.0
 Release:        1%{?dist}
 Summary:        Animated terminal effect screensaver for GNOME and KDE
 
@@ -63,6 +63,5 @@ LIBDIR=%{_libdir} bash packaging/linux/build-payload.sh %{buildroot}
 %doc ttfx-rust/NOTICE ttfx-rust/LICENSE
 
 %changelog
-* Mon Nov 23 2026 JustAdreamerFL <Slavouli@gmail.com> - 0.111.0-1
-- Native RPM package with prebuilt ttfx and GNOME/KDE watchers.
-- Consolidated source and package publishing in the Release workflow.
+* Tue Nov 24 2026 JustAdreamerFL <Slavouli@gmail.com> - 0.112.0-1
+- Native package installer and automatic current/previous Fedora builds.

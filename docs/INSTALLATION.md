@@ -11,36 +11,30 @@ or Cargo toolchain. Remove the package with the distribution package manager
 to leave no application files behind.
 
 ```sh
-# Debian / Ubuntu
-sudo apt install ./ascii-saver_0.110.0_amd64.deb
+# Debian 13 / Ubuntu 26.04+
+sudo apt install ./ascii-saver_0.112.0_amd64.deb
 
-# Fedora
-sudo dnf install ./ascii-saver-0.110.0-1.fc43.x86_64.rpm
+# Fedora 45 or 44
+sudo dnf install ./ascii-saver-0.112.0-1.fc45.x86_64.rpm
 
 # Arch Linux
-sudo pacman -U ascii-saver-0.110.0-1-x86_64.pkg.tar.zst
+sudo pacman -U ascii-saver-0.112.0-1-x86_64.pkg.tar.zst
 ```
 
 The **Release** GitHub workflow builds both source archives and all three
 package formats from a selected branch, then publishes them together. See [Packaging](PACKAGING.md) for local build requirements and the
 shared payload layout.
 
-### From source or the online bootstrap
+### Development/source install
 
-ASCII Saver is intended for a Linux desktop running KDE Plasma 6. It needs
-a C++17 compiler, CMake 3.20 or newer, Qt 6, KDE Frameworks 6 KIdleTime,
-Python 3 with virtual-environment support, PyGObject, GTK 4, and GTK4 VTE
-(`Vte 3.91`). GTK4 Layer Shell is optional but recommended for full panel
-coverage on Plasma Wayland.
-
-The online bootstrap itself requires Bash, `curl`, Python 3, and either
-`sha256sum` or `shasum`.
-
-The application installation is user-local. When dependencies are missing, the
-interactive installer displays the native package-manager command and asks
-before invoking it with `sudo`. Pass `--no-install-deps` to keep dependency
-installation fully manual. See [Distribution support](DISTRIBUTIONS.md) for
-exact package names.
+A source installation is user-local and needs a C++17 compiler, CMake 3.20 or
+newer, Qt 6, KDE Frameworks 6 KIdleTime, Python 3 with virtual-environment
+support, PyGObject, GTK 4, GTK4 VTE (`Vte 3.91`), and Rust/Cargo for `ttfx`.
+GTK4 Layer Shell is optional but recommended for full panel coverage on Plasma
+Wayland. When dependencies are missing, the interactive installer displays the
+native package-manager command and asks before invoking it with `sudo`. Pass
+`--no-install-deps` to keep dependency installation fully manual. See
+[Distribution support](DISTRIBUTIONS.md) for exact package names.
 
 ## Recommended online install
 
@@ -48,11 +42,19 @@ exact package names.
 curl -fsSL https://raw.githubusercontent.com/JustAdreamerFL/ascii-saver/main/install-online.sh | bash
 ```
 
-The bootstrap obtains the latest stable tagged release archive and its
-published SHA-256 checksum, verifies the archive, extracts it to a temporary
-directory, and runs the included installer. Installation stops on a missing or
-mismatched checksum. The checksum detects a damaged or mismatched archive; the
-GitHub repository and its release assets remain part of the trust boundary.
+This is the user installation mode. The bootstrap detects the distribution,
+release and architecture, downloads the matching package from the latest
+GitHub release, verifies it against the release `SHA256SUMS`, and installs it
+with `apt`, `dnf` or `pacman`. It does not create a virtual environment or
+build Rust/Python components. Supported native targets are Debian 13+,
+Ubuntu 26.04+, Fedora with a published matching release, and Arch Linux
+(including Arch derivatives).
+
+The bootstrap requires Bash, `curl`, either `sha256sum` or `shasum`, the
+distribution package manager, and either `sudo` or `pkexec` for authentication.
+It stops on a missing or mismatched checksum. The checksum detects a damaged or
+mismatched package; the GitHub repository and its release assets remain part of
+the trust boundary.
 
 Piping a network response to a shell is convenient but requires trusting that
 URL at execution time. To review exactly what will run first:
@@ -67,13 +69,14 @@ To install or roll back to a specific published release with the reviewed
 bootstrap:
 
 ```sh
-ASCII_SAVER_VERSION=v0.111.0 bash install-online.sh
+ASCII_SAVER_VERSION=v0.112.0 bash install-online.sh
 ```
 
-The bootstrap also accepts `--version v0.111.0`. Use `--yes` for an unattended
-dependency install, `--no-install-deps` to print guidance only, `--check` to
-validate dependencies, and `--no-start` to leave session processes untouched.
-Run `bash install-online.sh --help` for the complete option list.
+The bootstrap also accepts `--version v0.112.0` and `--check` to verify the
+selected package without installing it. If no matching native package exists,
+rerun with `--source` to use the development/source installation path. Source
+mode additionally accepts `--yes`, `--no-install-deps`, `--no-start`, and
+`--non-interactive`. Run `bash install-online.sh --help` for the full list.
 
 ## Install from a Git clone
 

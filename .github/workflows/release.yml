@@ -13,6 +13,21 @@ on:
         required: false
         default: ""
         type: string
+      debian_version:
+        description: Debian/Ubuntu container tag (latest, trixie, bookworm, ...)
+        required: false
+        default: latest
+        type: string
+      fedora_versions:
+        description: Comma-separated Fedora tags (leave empty for current and previous stable)
+        required: false
+        default: ""
+        type: string
+      arch_image:
+        description: Arch image tag (base-devel, base-devel-YYYYMMDD..., ...)
+        required: false
+        default: base-devel
+        type: string
 
 permissions:
   contents: write
@@ -105,12 +120,16 @@ jobs:
     name: Debian package
     needs: [prepare, ttfx]
     runs-on: ubuntu-latest
-    container: debian:trixie
+    container: "debian:${{ inputs.debian_version }}"
     steps:
       - name: Install git
         run: |
           apt-get update
           apt-get install -y --no-install-recommends git ca-certificates
+      - name: Report build target
+        run: |
+          echo "### Debian build target" >> "$GITHUB_STEP_SUMMARY"
+          grep PRETTY_NAME /etc/os-release >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.branch }}
@@ -138,14 +157,50 @@ jobs:
           path: artifacts/*.deb
           if-no-files-found: error
 
-  fedora:
-    name: Fedora package
-    needs: [prepare, ttfx]
+  fedora_matrix:
+    name: Resolve Fedora versions
+    needs: prepare
     runs-on: ubuntu-latest
-    container: fedora:43
+    outputs:
+      versions: ${{ steps.matrix.outputs.versions }}
+    steps:
+      - name: Build matrix
+        id: matrix
+        shell: bash
+        env:
+          REQUESTED: ${{ inputs.fedora_versions }}
+        run: |
+          versions="$REQUESTED"
+          if [[ -z "$versions" ]]; then
+            latest=$(docker run --rm fedora:latest bash -lc \
+              "grep '^VERSION_ID=' /etc/os-release | cut -d= -f2 | tr -d '\"'")
+            if [[ ! "$latest" =~ ^[0-9]+$ ]]; then
+              printf 'Could not resolve the current Fedora release from fedora:latest\n' >&2
+              exit 1
+            fi
+            versions="$latest,$((latest - 1))"
+          fi
+          printf '### Fedora builds: %s\n' "$versions" >> "$GITHUB_STEP_SUMMARY"
+          json=$(printf '%s' "$versions" | tr -d ' ' | tr ',' '\n' \
+            | awk 'NF' | sort -nru | jq -R -s -c 'split("\n") | map(select(length > 0))')
+          printf 'versions=%s\n' "$json" >> "$GITHUB_OUTPUT"
+
+  fedora:
+    name: Fedora ${{ matrix.version }} package
+    needs: [prepare, ttfx, fedora_matrix]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ${{ fromJSON(needs.fedora_matrix.outputs.versions) }}
+    container: "fedora:${{ matrix.version }}"
     steps:
       - name: Install git
         run: dnf install -y git
+      - name: Report build target
+        run: |
+          echo "### Fedora ${{ matrix.version }} build target" >> "$GITHUB_STEP_SUMMARY"
+          grep PRETTY_NAME /etc/os-release >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.branch }}
@@ -174,7 +229,7 @@ jobs:
           cp "$topdir"/RPMS/*/*.rpm artifacts/
       - uses: actions/upload-artifact@v4
         with:
-          name: release-fedora
+          name: release-fedora-${{ matrix.version }}
           path: artifacts/*.rpm
           if-no-files-found: error
 
@@ -182,10 +237,15 @@ jobs:
     name: Arch package
     needs: [prepare, ttfx]
     runs-on: ubuntu-latest
-    container: archlinux:base-devel
+    container: "archlinux:${{ inputs.arch_image }}"
     steps:
       - name: Install git
         run: pacman -Sy --noconfirm git
+      - name: Report build target
+        run: |
+          echo "### Arch build target" >> "$GITHUB_STEP_SUMMARY"
+          grep PRETTY_NAME /etc/os-release >> "$GITHUB_STEP_SUMMARY"
+          grep -E '^VERSION_ID' /etc/os-release >> "$GITHUB_STEP_SUMMARY"
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.branch }}
@@ -235,6 +295,10 @@ jobs:
         run: |
           cd release-assets
           sha256sum *.deb *.rpm *.pkg.tar.zst *.tar.gz > SHA256SUMS
+      - name: Render release notes
+        shell: bash
+        run: |
+          python3 scripts/render-release-notes.py             release-assets             "${{ needs.prepare.outputs.version }}"             "${{ needs.prepare.outputs.tag }}"             release-notes.md
       - name: Publish
         shell: bash
         env:
@@ -243,5 +307,5 @@ jobs:
           gh release create "${{ needs.prepare.outputs.tag }}" \
             --target "${{ inputs.branch }}" \
             --title "ASCII Saver ${{ needs.prepare.outputs.version }}" \
-            --generate-notes \
+            --notes-file release-notes.md \
             release-assets/*

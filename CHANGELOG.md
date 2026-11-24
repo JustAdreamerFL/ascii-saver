@@ -7,6 +7,18 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 
 ## [Unreleased]
 
+## 0.112.0 (experimental) - 2026-11-24
+- Make `install-online.sh` the default native user installer: detect the
+  distribution/release/architecture, verify the matching package from
+  `SHA256SUMS`, and install it with `apt`, `dnf` or `pacman`. The previous
+  user-local build is available with `--source`.
+- Let the Release workflow choose Debian, Fedora and Arch image tags, defaulting
+  each package build to the newest available distribution image.
+- Resolve the current Fedora release from `fedora:latest` and automatically build
+  the previous release for the expandable release-notes section.
+- Generate release notes from the published assets, highlighting the newest
+  Debian, Fedora and Arch packages and collapsing older Fedora builds.
+
 ## 0.111.0 (experimental) - 2026-11-23
 - Add native Debian, Fedora and Arch packages with prebuilt watchers and ttfx.
 - Consolidate package builds into the manual Release workflow so source
