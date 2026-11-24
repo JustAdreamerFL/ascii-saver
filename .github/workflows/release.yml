@@ -36,6 +36,7 @@ on:
 
 permissions:
   contents: write
+  packages: read
 
 concurrency:
   group: release-${{ inputs.branch }}
@@ -146,27 +147,12 @@ jobs:
     name: Debian package
     needs: [prepare, ttfx]
     runs-on: ubuntu-latest
-    container: "debian:${{ inputs.debian_version }}"
+    container:
+      image: ghcr.io/justadreamerfl/ascii-saver-build-debian:latest
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - name: Cache APT downloads
-        uses: actions/cache@v4
-        with:
-          path: /var/cache/apt/archives
-          key: ${{ runner.os }}-apt-${{ inputs.debian_version }}-v4
-          restore-keys: |
-            ${{ runner.os }}-apt-${{ inputs.debian_version }}-
-      - name: Install build dependencies
-        run: |
-          rm -f /etc/apt/apt.conf.d/docker-clean
-          printf '%s\n' \
-            'APT::Keep-Downloaded-Packages "true";' \
-            'Binary::apt::APT::Keep-Downloaded-Packages "true";' \
-            > /etc/apt/apt.conf.d/99keep-downloads
-          apt-get update
-          apt-get install -y --no-install-recommends \
-            build-essential ca-certificates cmake debhelper devscripts fakeroot \
-            git libglib2.0-dev libjson-glib-dev libkf6idletime-dev pkg-config \
-            qt6-base-dev
       - name: Report build target
         run: |
           echo "### Debian build target" >> "$GITHUB_STEP_SUMMARY"
@@ -226,22 +212,12 @@ jobs:
       fail-fast: false
       matrix:
         version: ${{ fromJSON(needs.fedora_matrix.outputs.versions) }}
-    container: "fedora:${{ matrix.version }}"
+    container:
+      image: ghcr.io/justadreamerfl/ascii-saver-build-fedora:${{ matrix.version }}
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - name: Cache DNF downloads
-        uses: actions/cache@v4
-        with:
-          path: |
-            /var/cache/dnf
-            /var/cache/libdnf5
-          key: ${{ runner.os }}-fedora-${{ matrix.version }}-dnf-v3
-          restore-keys: |
-            ${{ runner.os }}-fedora-${{ matrix.version }}-dnf-
-      - name: Install build dependencies
-        run: |
-          dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs --setopt=keepcache=True \
-            cmake gcc-c++ git glib2-devel json-glib-devel kf6-kidletime-devel \
-            pkgconf-pkg-config qt6-qtbase-devel rpm-build tar gzip
       - name: Report build target
         run: |
           echo "### Fedora ${{ matrix.version }} build target" >> "$GITHUB_STEP_SUMMARY"
@@ -277,19 +253,12 @@ jobs:
     name: Arch package
     needs: [prepare, ttfx]
     runs-on: ubuntu-latest
-    container: "archlinux:${{ inputs.arch_image }}"
+    container:
+      image: ghcr.io/justadreamerfl/ascii-saver-build-arch:base
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - name: Cache Pacman downloads
-        uses: actions/cache@v4
-        with:
-          path: /var/cache/pacman/pkg
-          key: ${{ runner.os }}-arch-${{ inputs.arch_image }}-pacman-v3
-          restore-keys: |
-            ${{ runner.os }}-arch-${{ inputs.arch_image }}-pacman-
-      - name: Install build dependencies
-        run: |
-          pacman -Sy --needed --noconfirm \
-            cmake git glib2 json-glib kidletime pkgconf qt6-base
       - name: Report build target
         run: |
           echo "### Arch build target" >> "$GITHUB_STEP_SUMMARY"
