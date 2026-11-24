@@ -153,12 +153,15 @@ jobs:
           key: ${{ runner.os }}-apt-${{ inputs.debian_version }}-v1
           restore-keys: |
             ${{ runner.os }}-apt-${{ inputs.debian_version }}-
-      - name: Install git
+      - name: Install build dependencies
         run: |
           echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' \
             > /etc/apt/apt.conf.d/99keep-downloads
           apt-get update
-          apt-get install -y --no-install-recommends git ca-certificates
+          apt-get install -y --no-install-recommends \
+            build-essential ca-certificates cmake debhelper devscripts fakeroot \
+            git libglib2.0-dev libjson-glib-dev libkf6idletime-dev pkg-config \
+            qt6-base-dev
       - name: Report build target
         run: |
           echo "### Debian build target" >> "$GITHUB_STEP_SUMMARY"
@@ -170,13 +173,6 @@ jobs:
         with:
           name: ttfx-linux-x86_64
           path: ttfx-bin
-      - name: Install build dependencies
-        run: |
-          apt-get update
-          apt-get install -y --no-install-recommends \
-            build-essential cmake debhelper devscripts fakeroot \
-            libglib2.0-dev libjson-glib-dev libkf6idletime-dev pkg-config \
-            qt6-base-dev
       - name: Build
         shell: bash
         run: |
@@ -236,8 +232,11 @@ jobs:
           key: ${{ runner.os }}-fedora-${{ matrix.version }}-dnf-v1
           restore-keys: |
             ${{ runner.os }}-fedora-${{ matrix.version }}-dnf-
-      - name: Install git
-        run: dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs git
+      - name: Install build dependencies
+        run: |
+          dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs \
+            cmake gcc-c++ git glib2-devel json-glib-devel kf6-kidletime-devel \
+            pkgconf-pkg-config qt6-qtbase-devel rpm-build tar gzip
       - name: Report build target
         run: |
           echo "### Fedora ${{ matrix.version }} build target" >> "$GITHUB_STEP_SUMMARY"
@@ -249,11 +248,6 @@ jobs:
         with:
           name: ttfx-linux-x86_64
           path: ttfx-bin
-      - name: Install build dependencies
-        run: |
-          dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs \
-            cmake gcc-c++ glib2-devel json-glib-devel kf6-kidletime-devel \
-            pkgconf-pkg-config qt6-qtbase-devel rpm-build tar gzip
       - name: Build
         shell: bash
         run: |
@@ -287,8 +281,10 @@ jobs:
           key: ${{ runner.os }}-arch-${{ inputs.arch_image }}-pacman-v1
           restore-keys: |
             ${{ runner.os }}-arch-${{ inputs.arch_image }}-pacman-
-      - name: Install git
-        run: pacman -Sy --noconfirm git
+      - name: Install build dependencies
+        run: |
+          pacman -Sy --needed --noconfirm \
+            cmake git glib2 json-glib kidletime pkgconf qt6-base
       - name: Report build target
         run: |
           echo "### Arch build target" >> "$GITHUB_STEP_SUMMARY"
@@ -301,10 +297,6 @@ jobs:
         with:
           name: ttfx-linux-x86_64
           path: ttfx-bin
-      - name: Install build dependencies
-        run: |
-          pacman -Sy --needed --noconfirm \
-            cmake glib2 json-glib kidletime pkgconf qt6-base
       - name: Build
         shell: bash
         run: |
