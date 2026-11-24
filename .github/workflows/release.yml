@@ -150,12 +150,14 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /var/cache/apt/archives
-          key: ${{ runner.os }}-apt-${{ inputs.debian_version }}-v2
+          key: ${{ runner.os }}-apt-${{ inputs.debian_version }}-v3
           restore-keys: |
             ${{ runner.os }}-apt-${{ inputs.debian_version }}-
       - name: Install build dependencies
         run: |
-          echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' \
+          printf '%s\n' \
+            'APT::Keep-Downloaded-Packages "true";' \
+            'Binary::apt::APT::Keep-Downloaded-Packages "true";' \
             > /etc/apt/apt.conf.d/99keep-downloads
           apt-get update
           apt-get install -y --no-install-recommends \
@@ -229,12 +231,12 @@ jobs:
           path: |
             /var/cache/dnf
             /var/cache/libdnf5
-          key: ${{ runner.os }}-fedora-${{ matrix.version }}-dnf-v2
+          key: ${{ runner.os }}-fedora-${{ matrix.version }}-dnf-v3
           restore-keys: |
             ${{ runner.os }}-fedora-${{ matrix.version }}-dnf-
       - name: Install build dependencies
         run: |
-          dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs \
+          dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs --setopt=keepcache=True \
             cmake gcc-c++ git glib2-devel json-glib-devel kf6-kidletime-devel \
             pkgconf-pkg-config qt6-qtbase-devel rpm-build tar gzip
       - name: Report build target
@@ -278,7 +280,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /var/cache/pacman/pkg
-          key: ${{ runner.os }}-arch-${{ inputs.arch_image }}-pacman-v2
+          key: ${{ runner.os }}-arch-${{ inputs.arch_image }}-pacman-v3
           restore-keys: |
             ${{ runner.os }}-arch-${{ inputs.arch_image }}-pacman-
       - name: Install build dependencies
