@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 Name:           ascii-saver
-Version:        0.113.0
+Version:        0.114.0
 Release:        1%{?dist}
 Summary:        Animated terminal effect screensaver for GNOME and KDE
 
@@ -63,5 +63,5 @@ LIBDIR=%{_libdir} bash packaging/linux/build-payload.sh %{buildroot}
 %doc ttfx-rust/NOTICE ttfx-rust/LICENSE
 
 %changelog
-* Tue Nov 24 2026 JustAdreamerFL <Slavouli@gmail.com> - 0.113.0-1
-- Fix system-package launcher discovery from the controller.
+* Tue Nov 24 2026 JustAdreamerFL <Slavouli@gmail.com> - 0.114.0-1
+- Fix Preferences construction after the packaged launcher fix.

@@ -11,7 +11,7 @@ from effect_metadata import effect_caption
 from animated_preview import AnimatedPreview
 from palette_engine import palette_color_for_round
 from helpers import load_config
-from adwaita_ui import make_group, adaptive_append_action, append_action, action_row, center_string_dropdown
+from adwaita_ui import make_group, adaptive_append_action, adaptive_action_row, append_action, action_row, center_string_dropdown
 
 class GalleryViewMixin:
     def _make_gallery_cards(self):

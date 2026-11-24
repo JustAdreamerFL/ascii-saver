@@ -1,5 +1,7 @@
 # ASCII Saver
 
+> **V114 (experimental, 2026-11-24):** Fixes opening Preferences from the packaged application by importing the missing `adaptive_action_row` helper used by the effect library. See [RELEASE-V114.md](docs/releases/RELEASE-V114.md).
+
 > **V113.0 (experimental, 2026-11-24):** Fixes starting the screensaver from a system package by resolving `/usr/bin/ascii-saver` and `/usr/bin/ascii-saver-settings` instead of leftover per-user launcher paths. See [RELEASE-V113.0.md](docs/releases/RELEASE-V113.0.md).
 
 > **V112 (experimental, 2026-11-24):** The online installer now installs the matching Debian, Fedora or Arch package through the system package manager, with `--source` available for development installs. Release notes highlight the newest package for each distribution and collapse older Fedora builds. See [RELEASE-V112.md](docs/releases/RELEASE-V112.md).

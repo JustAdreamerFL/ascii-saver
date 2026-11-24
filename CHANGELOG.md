@@ -7,6 +7,10 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 
 ## [Unreleased]
 
+## 0.114.0 (experimental) - 2026-11-24
+- Fix the Preferences window failing to construct with a `NameError` caused by
+  the effect library view not importing `adaptive_action_row`.
+
 ## 0.113.0 (experimental) - 2026-11-24
 - Fix the packaged controller resolving launchers under `~/.local/bin` instead
   of the system `/usr/bin` paths. Starting the screensaver from the installed
