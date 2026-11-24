@@ -27,14 +27,15 @@
 > preserved. Simulation tests passed, real KDE/GNOME Wayland testing is still
 > pending. See [RELEASE-V104.md](docs/releases/RELEASE-V104.md).
 
-ASCII-art terminal-effect screensaver for KDE Plasma/KWin and GNOME/Mutter.
-The fullscreen renderer is GTK4/VTE with a modified Rust `ttfx` binary;
+ASCII-art terminal-effect screensaver for Linux desktops, with native idle
+integration for KDE Plasma/KWin and GNOME/Mutter. The fullscreen renderer is
+GTK4/VTE with a modified Rust `ttfx` binary;
 the settings dashboard uses GTK4/libadwaita. A native idle watcher is built
 for the detected desktop backend.
 
 This is an experimental release. Fullscreen/desktop stacking and lock-screen
 integration depend on the compositor. ASCII Saver does not replace or cover
-the secure KDE/GNOME lock screen. GNOME Shell extensions such as Dash to Dock
+the secure desktop lock screen. GNOME Shell extensions such as Dash to Dock
 can appear above normal fullscreen Wayland windows.
 
 ## Repository layout

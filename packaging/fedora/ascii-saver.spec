@@ -3,7 +3,7 @@
 Name:           ascii-saver
 Version:        0.115.0
 Release:        1%{?dist}
-Summary:        Animated terminal effect screensaver for GNOME and KDE
+Summary:        Animated terminal effect screensaver for Linux desktops
 
 License:        MIT
 URL:            https://github.com/JustAdreamerFL/ascii-saver
@@ -31,8 +31,9 @@ Recommends:     gtk4-layer-shell
 
 %description
 ASCII Saver renders custom artwork with randomized terminal text effects when
-the desktop session becomes idle. It supports multiple monitors, GNOME/Mutter
-and KDE Plasma, dismisses the overlay on lock, and includes a libadwaita
+the desktop session becomes idle. It supports multiple monitors, includes
+native idle integration for KDE Plasma and GNOME sessions, dismisses the
+overlay on lock, and includes a libadwaita
 control panel for artwork, playlists, palettes, previews and diagnostics.
 
 The package ships prebuilt native idle watchers and the instrumented ttfx

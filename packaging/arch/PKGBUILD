@@ -2,7 +2,7 @@
 pkgname=ascii-saver
 pkgver=0.115.0
 pkgrel=1
-pkgdesc="Animated terminal effect screensaver for GNOME and KDE"
+pkgdesc="Animated terminal effect screensaver for Linux desktops"
 arch=('x86_64' 'aarch64')
 url="https://github.com/JustAdreamerFL/ascii-saver"
 license=('MIT')

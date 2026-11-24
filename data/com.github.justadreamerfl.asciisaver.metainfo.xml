@@ -2,7 +2,7 @@
 <component type="desktop-application">
   <id>com.github.justadreamerfl.asciisaver</id>
   <name>ASCII Saver</name>
-  <summary>Animated terminal effect screensaver for GNOME and KDE</summary>
+  <summary>Animated terminal effect screensaver for Linux desktops</summary>
   <developer id="com.github.justadreamerfl">
     <name>JustAdreamerFL</name>
   </developer>
@@ -12,7 +12,8 @@
     <p>
       ASCII Saver displays custom artwork with randomized terminal text
       animations when the desktop session becomes idle. It supports multiple
-      monitors, GNOME Shell and KDE Plasma, and dismisses the overlay on lock.
+      monitors and native idle integration for the current desktop session, and
+dismisses the overlay on lock.
     </p>
     <p>
       The control panel manages automatic activation, idle delay, typography,

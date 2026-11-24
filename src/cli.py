@@ -22,7 +22,7 @@ CONTROL_COMMANDS = (
 def make_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="ascii-saver",
-        description="ASCII Saver: terminal screensaver and control app for GNOME and KDE Plasma",
+        description="ASCII Saver: terminal screensaver and control app for Linux desktops",
         epilog="Examples: ascii-saver | ascii-saver preferences | ascii-saver start | ascii-saver stop",
     )
     parser.add_argument("--version", action="version", version=f"ASCII Saver {read_version()}")

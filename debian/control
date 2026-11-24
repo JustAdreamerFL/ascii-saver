@@ -30,12 +30,12 @@ Depends:
  python3-gi,
  xdg-utils,
 Suggests: gir1.2-gtk4layershell-1.0
-Description: Animated terminal effect screensaver for GNOME and KDE
+Description: Animated terminal effect screensaver for Linux desktops
  ASCII Saver renders custom artwork with randomized terminal text effects
  when the desktop session becomes idle. It supports multiple monitors,
- GNOME/Mutter and KDE Plasma, dismisses the overlay on lock, and includes a
- libadwaita control panel for artwork, playlists, palettes, previews and
- diagnostics.
+ includes native idle integration for KDE Plasma and GNOME sessions,
+ dismisses the overlay on lock, and includes a libadwaita control panel for
+ artwork, playlists, palettes, previews and diagnostics.
  .
  The package ships prebuilt native idle watchers and the instrumented ttfx
  renderer, so no Python virtual environment or Rust toolchain is needed on the
