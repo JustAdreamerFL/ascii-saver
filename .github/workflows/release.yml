@@ -28,6 +28,11 @@ on:
         required: false
         default: base-devel
         type: string
+      dry_run:
+        description: Build all artifacts without creating a GitHub release
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -55,17 +60,19 @@ jobs:
           version=$(head -n 1 VERSION)
           tag="${{ inputs.tag }}"
           tag=${tag:-v$version}
-          if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
-            printf 'Invalid release tag: %s\n' "$tag" >&2
-            exit 1
-          fi
-          if [[ "${tag#v}" != "$version" ]]; then
-            printf 'Tag %s does not match VERSION %s\n' "$tag" "$version" >&2
-            exit 1
-          fi
-          if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
-            printf 'Tag already exists: %s\n' "$tag" >&2
-            exit 1
+          if [[ "${{ inputs.dry_run }}" != "true" ]]; then
+            if [[ ! "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+              printf 'Invalid release tag: %s\n' "$tag" >&2
+              exit 1
+            fi
+            if [[ "${tag#v}" != "$version" ]]; then
+              printf 'Tag %s does not match VERSION %s\n' "$tag" "$version" >&2
+              exit 1
+            fi
+            if git rev-parse -q --verify "refs/tags/$tag" >/dev/null; then
+              printf 'Tag already exists: %s\n' "$tag" >&2
+              exit 1
+            fi
           fi
           printf 'version=%s\ntag=%s\n' "$version" "$tag" >> "$GITHUB_OUTPUT"
       - name: Validate release sources
@@ -213,7 +220,7 @@ jobs:
     container: "fedora:${{ matrix.version }}"
     steps:
       - name: Install git
-        run: dnf install -y git
+        run: dnf install -y --setopt=install_weak_deps=False git
       - name: Report build target
         run: |
           echo "### Fedora ${{ matrix.version }} build target" >> "$GITHUB_STEP_SUMMARY"
@@ -236,7 +243,7 @@ jobs:
             ${{ runner.os }}-fedora-${{ matrix.version }}-dnf-
       - name: Install build dependencies
         run: |
-          dnf install -y \
+          dnf install -y --setopt=install_weak_deps=False \
             cargo cmake gcc-c++ glib2-devel json-glib-devel kf6-kidletime-devel \
             pkgconf-pkg-config qt6-qtbase-devel rpm-build rust tar gzip
       - name: Build
@@ -288,9 +295,8 @@ jobs:
             ${{ runner.os }}-arch-${{ inputs.arch_image }}-pacman-
       - name: Install build dependencies
         run: |
-          pacman -Syu --noconfirm \
-            cargo cmake glib2 json-glib kidletime pkgconf \
-            python qt6-base
+          pacman -Sy --needed --noconfirm \
+            cmake glib2 json-glib kidletime pkgconf qt6-base
       - name: Build
         shell: bash
         run: |
@@ -313,6 +319,7 @@ jobs:
   publish:
     name: Publish GitHub release
     needs: [prepare, source, debian, fedora, arch]
+    if: ${{ !inputs.dry_run }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
