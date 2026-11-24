@@ -110,3 +110,18 @@ The release body is generated from the actual uploaded assets. It shows the
 newest Debian, Fedora and Arch package in the main table, puts older Fedora
 builds behind an expandable section, and adds expandable sections for source
 archives and checksums.
+
+
+## CI build images
+
+The Release workflow runs distribution package jobs inside prebuilt images
+published to GitHub Container Registry:
+
+- `ghcr.io/justadreamerfl/ascii-saver-build-debian:latest`
+- `ghcr.io/justadreamerfl/ascii-saver-build-fedora:<version>`
+- `ghcr.io/justadreamerfl/ascii-saver-build-arch:base`
+
+These images contain the compiler, CMake, Qt/KF6, GLib, JSON-GLib and packaging
+tools. The **Build Environments** workflow rebuilds and publishes them. Run it
+after changing build dependencies or adding a new Fedora release; otherwise a
+new Fedora version has no matching prebuilt image.
