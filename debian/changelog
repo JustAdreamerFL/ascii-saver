@@ -1,3 +1,12 @@
+ascii-saver (0.115.0) unstable; urgency=medium
+
+  * Add an idle watcher toggle to Preferences that starts/stops the watcher
+    and enables/disables it for future logins.
+  * Report packaged XDG autostart correctly instead of a stale inactive
+    systemd user unit.
+
+ -- JustAdreamerFL <Slavouli@gmail.com>  Tue, 24 Nov 2026 01:00:00 +0000
+
 ascii-saver (0.114.0) unstable; urgency=medium
 
   * Fix Preferences failing to construct because adaptive_action_row was not

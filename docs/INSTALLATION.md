@@ -12,13 +12,13 @@ to leave no application files behind.
 
 ```sh
 # Debian 13 / Ubuntu 26.04+
-sudo apt install ./ascii-saver_0.114.0_amd64.deb
+sudo apt install ./ascii-saver_0.115.0_amd64.deb
 
 # Fedora 45 or 44
-sudo dnf install ./ascii-saver-0.114.0-1.fc45.x86_64.rpm
+sudo dnf install ./ascii-saver-0.115.0-1.fc45.x86_64.rpm
 
 # Arch Linux
-sudo pacman -U ascii-saver-0.114.0-1-x86_64.pkg.tar.zst
+sudo pacman -U ascii-saver-0.115.0-1-x86_64.pkg.tar.zst
 ```
 
 The **Release** GitHub workflow builds both source archives and all three
@@ -69,10 +69,10 @@ To install or roll back to a specific published release with the reviewed
 bootstrap:
 
 ```sh
-ASCII_SAVER_VERSION=v0.114.0 bash install-online.sh
+ASCII_SAVER_VERSION=v0.115.0 bash install-online.sh
 ```
 
-The bootstrap also accepts `--version v0.114.0` and `--check` to verify the
+The bootstrap also accepts `--version v0.115.0` and `--check` to verify the
 selected package without installing it. If no matching native package exists,
 rerun with `--source` to use the development/source installation path. Source
 mode additionally accepts `--yes`, `--no-install-deps`, `--no-start`, and

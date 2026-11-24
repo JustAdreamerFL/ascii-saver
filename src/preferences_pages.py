@@ -23,6 +23,7 @@ class PageBuilderMixin:
         preview_page = self._page_boxes["preview"]
         rows = (
             ("general", "Automatic activation", self.enabled),
+            ("general", "Idle watcher", self.watcher),
             ("general", "Respect application inhibitors", self.respect_inhibitors),
             ("general", "Protect fullscreen apps", self.ignore_fullscreen),
             ("general", "Idle delay (seconds)", self.delay),
@@ -41,6 +42,7 @@ class PageBuilderMixin:
         )
         subtitles = {
             "Automatic activation": "Start after the idle delay if no application is inhibiting it.",
+            "Idle watcher": "Background service that detects when the desktop becomes idle.",
             "Respect application inhibitors": "Do not interrupt videos, games and presentations.",
             "Protect fullscreen apps": "Avoid launching over fullscreen windows (requires the KWin helper).",
             "Idle delay (seconds)": "",

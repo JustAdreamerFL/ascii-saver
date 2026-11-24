@@ -194,6 +194,7 @@ class PreferenceStateMixin:
         self._update_monitor_controls()
         self._refresh_fit_warnings()
         self._loading_preferences = False
+        self._refresh_watcher_control()
         self._refresh_gallery_palette()
         if hasattr(self, "_saved_snapshot"):
             self._mark_saved()

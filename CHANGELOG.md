@@ -7,6 +7,15 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 
 ## [Unreleased]
 
+## 0.115.0 (experimental) - 2026-11-24
+- Add an **Idle watcher** switch to Preferences. Turning it on starts the
+  watcher immediately and enables it for future logins; turning it off stops
+  it and masks the packaged XDG autostart entry for the current user.
+- Report packaged autostart or a running watcher correctly instead of treating
+  an unrelated inactive systemd unit as the whole integration state.
+- A removed development install can leave a stale `ascii-saver.service`; the
+  packaged toggle disables that unit before using the packaged watcher.
+
 ## 0.114.0 (experimental) - 2026-11-24
 - Fix the Preferences window failing to construct with a `NameError` caused by
   the effect library view not importing `adaptive_action_row`.

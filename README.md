@@ -1,5 +1,7 @@
 # ASCII Saver
 
+> **V115 (experimental, 2026-11-24):** Preferences now has an **Idle watcher** switch that starts or stops the watcher and enables or disables automatic startup for your user. Packaged autostart is reported correctly even when a stale development systemd unit exists. See [RELEASE-V115.md](docs/releases/RELEASE-V115.md).
+
 > **V114 (experimental, 2026-11-24):** Fixes opening Preferences from the packaged application by importing the missing `adaptive_action_row` helper used by the effect library. See [RELEASE-V114.md](docs/releases/RELEASE-V114.md).
 
 > **V113.0 (experimental, 2026-11-24):** Fixes starting the screensaver from a system package by resolving `/usr/bin/ascii-saver` and `/usr/bin/ascii-saver-settings` instead of leftover per-user launcher paths. See [RELEASE-V113.0.md](docs/releases/RELEASE-V113.0.md).

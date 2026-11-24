@@ -36,6 +36,12 @@ class PreferenceControlsMixin:
             self._page_boxes[name].append(group)
             section_groups[name] = group
         self.enabled = Adw.SwitchRow()
+        self.watcher = Adw.SwitchRow()
+        self.watcher.set_tooltip_text(
+            "Start or stop the idle watcher now. Turning it on also enables it for future logins."
+        )
+        self._watcher_busy = False
+        self.watcher.connect("notify::active", self._toggle_watcher)
         self.respect_inhibitors = Adw.SwitchRow()
         self.respect_inhibitors.set_tooltip_text("Don't interrupt video, presentations, games or apps that inhibit idle/power management.")
         self.ignore_fullscreen = Adw.SwitchRow()
@@ -206,6 +212,45 @@ class PreferenceControlsMixin:
     def _remove_monitor_color(self, connector):
         buttons = self.monitor_palette_buttons[connector]
         self._replace_monitor_palette(connector, remove_color([self._rgba_hex(b) for b in buttons]))
+
+    @staticmethod
+    def _watcher_status_text(active: bool, detail: str) -> str:
+        if active:
+            if "systemd" in detail:
+                return "Active via the systemd user service."
+            return "Active; starts automatically at login."
+        if "next login" in detail:
+            return "Inactive now; enabled for the next login."
+        return "Disabled; the idle watcher will not start automatically."
+
+    def _refresh_watcher_control(self) -> None:
+        active, detail = ctl.watcher_state()
+        was_loading = getattr(self, "_loading_preferences", False)
+        self._loading_preferences = True
+        try:
+            self.watcher.set_active(active)
+        finally:
+            self._loading_preferences = was_loading
+        self.watcher.set_subtitle(self._watcher_status_text(active, detail))
+
+    def _toggle_watcher(self, row, _pspec) -> None:
+        if getattr(self, "_loading_preferences", False) or self._watcher_busy:
+            return
+        desired = row.get_active()
+        self._watcher_busy = True
+        row.set_sensitive(False)
+        try:
+            ok, message = ctl.set_watcher_enabled(desired)
+            self._refresh_watcher_control()
+            if not ok:
+                self.toast_overlay.add_toast(Adw.Toast.new(message[:180]))
+            else:
+                self.toast_overlay.add_toast(Adw.Toast.new(
+                    "Idle watcher enabled" if desired else "Idle watcher disabled"
+                ))
+        finally:
+            row.set_sensitive(True)
+            self._watcher_busy = False
 
     def _make_monitor_widgets(self):
         general = self._page_boxes["general"]

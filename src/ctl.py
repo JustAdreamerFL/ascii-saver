@@ -76,6 +76,12 @@ settings_launcher = Path(
     os.environ.get("ASCII_SAVER_SETTINGS_LAUNCHER", settings_default)
 )
 service = "ascii-saver.service"
+user_autostart_file = (
+    config_home / "autostart" / "com.github.justadreamerfl.asciisaver.Watcher.desktop"
+)
+system_autostart_file = Path(
+    "/etc/xdg/autostart/com.github.justadreamerfl.asciisaver.Watcher.desktop"
+)
 autostart_file = Path(
     os.environ.get("ASCII_SAVER_AUTOSTART_FILE", autostart_default)
 )
@@ -113,6 +119,195 @@ def systemd_user_available() -> bool:
         stderr=subprocess.DEVNULL,
         check=False,
     ).returncode == 0
+
+
+def service_loaded() -> bool:
+    if not systemd_user_available():
+        return False
+    completed = subprocess.run(
+        ["systemctl", "--user", "show", "-p", "LoadState", "--value", service],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    return completed.stdout.strip() not in ("", "not-found")
+
+
+def service_active() -> bool:
+    if not service_loaded():
+        return False
+    return subprocess.run(
+        ["systemctl", "--user", "is-active", "--quiet", service], check=False
+    ).returncode == 0
+
+
+def service_enabled() -> bool:
+    if not service_loaded():
+        return False
+    completed = subprocess.run(
+        ["systemctl", "--user", "is-enabled", service],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    return completed.stdout.strip() in ("enabled", "enabled-runtime")
+
+
+def autostart_hidden(path: Path) -> bool:
+    try:
+        lines = path.read_text(encoding="utf-8").splitlines()
+    except OSError:
+        return False
+    return any(
+        line.strip().lower() in ("hidden=true", "x-gnome-autostart-enabled=false")
+        for line in lines
+    )
+
+
+def autostart_configured() -> bool:
+    if system_autostart_file.is_file():
+        return not (user_autostart_file.is_file() and autostart_hidden(user_autostart_file))
+    return autostart_file.is_file() and not autostart_hidden(autostart_file)
+
+
+def _write_autostart(path: Path, *, hidden: bool) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if hidden:
+        body = (
+            "[Desktop Entry]\n"
+            "Type=Application\n"
+            "Name=ASCII Saver idle watcher\n"
+            "Hidden=true\n"
+        )
+    else:
+        body = (
+            "[Desktop Entry]\n"
+            "Type=Application\n"
+            "Name=ASCII Saver idle watcher\n"
+            f"Exec={watcher_binary}\n"
+            "Terminal=false\n"
+            "NoDisplay=true\n"
+            "X-GNOME-Autostart-enabled=true\n"
+        )
+    temporary = path.with_suffix(".tmp")
+    temporary.write_text(body, encoding="utf-8")
+    temporary.replace(path)
+
+
+def watcher_state() -> tuple[bool, str]:
+    if current_watcher_pid() is not None:
+        return True, "running"
+    if service_active():
+        return True, "systemd user service active"
+    if service_enabled() or autostart_configured():
+        return False, "inactive (starts at next login)"
+    return False, "disabled"
+
+
+def _start_watcher() -> bool:
+    if not watcher_binary.is_file():
+        return False
+    log_dir = Path(os.environ.get("XDG_CACHE_HOME", home / ".cache")) / "ascii-saver"
+    try:
+        log_dir.mkdir(parents=True, exist_ok=True)
+        log = (log_dir / "watcher.log").open("ab")
+    except OSError:
+        log = subprocess.DEVNULL
+    try:
+        subprocess.Popen(
+            [str(watcher_binary)],
+            start_new_session=True,
+            stdout=log,
+            stderr=log,
+        )
+    except OSError:
+        return False
+    finally:
+        if log is not subprocess.DEVNULL:
+            log.close()
+    deadline = time.monotonic() + 2.0
+    while time.monotonic() < deadline:
+        if current_watcher_pid() is not None:
+            return True
+        time.sleep(0.05)
+    return current_watcher_pid() is not None
+
+
+def _stop_watcher() -> None:
+    pid = current_watcher_pid()
+    if pid is None:
+        return
+    try:
+        send_signal_if_matches(pid, signal.SIGTERM, process_matches_installed_watcher)
+    except PermissionError:
+        return
+    deadline = time.monotonic() + 2.0
+    while process_matches_installed_watcher(pid) and time.monotonic() < deadline:
+        time.sleep(0.05)
+
+
+def set_watcher_enabled(enabled: bool) -> tuple[bool, str]:
+    if enabled:
+        if package_dir:
+            # A removed development install can leave an ascii-saver.service
+            # pointing at a deleted ~/.local/bin watcher. Use the packaged
+            # autostart path instead of resurrecting that stale unit.
+            if service_loaded():
+                subprocess.run(
+                    ["systemctl", "--user", "disable", "--now", service],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    check=False,
+                )
+            if user_autostart_file.exists():
+                user_autostart_file.unlink()
+            if not _start_watcher() and not autostart_configured():
+                return False, "Could not start the idle watcher"
+        else:
+            if service_loaded():
+                completed = subprocess.run(
+                    ["systemctl", "--user", "enable", "--now", service],
+                    text=True,
+                    capture_output=True,
+                    check=False,
+                )
+                if completed.returncode != 0:
+                    detail = (completed.stderr or completed.stdout).strip().splitlines()
+                    return False, detail[-1] if detail else "Could not enable the watcher service"
+            else:
+                if autostart_file.exists() and autostart_hidden(autostart_file):
+                    autostart_file.unlink()
+                if not autostart_file.exists():
+                    _write_autostart(autostart_file, hidden=False)
+                if not _start_watcher():
+                    return False, "Could not start the idle watcher"
+        return True, "Idle watcher enabled"
+    if package_dir:
+        if service_loaded():
+            subprocess.run(
+                ["systemctl", "--user", "disable", "--now", service],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                check=False,
+            )
+        _stop_watcher()
+        _write_autostart(user_autostart_file, hidden=True)
+    else:
+        if service_loaded():
+            completed = subprocess.run(
+                ["systemctl", "--user", "disable", "--now", service],
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+            if completed.returncode != 0:
+                detail = (completed.stderr or completed.stdout).strip().splitlines()
+                return False, detail[-1] if detail else "Could not disable the watcher service"
+        else:
+            _stop_watcher()
+            if autostart_file.exists():
+                _write_autostart(autostart_file, hidden=True)
+    return True, "Idle watcher disabled"
 
 
 def load_config() -> dict:
@@ -329,17 +524,13 @@ def open_path(path: Path) -> bool:
 
 
 def integration_status() -> str:
-    if systemd_user_available():
-        state = subprocess.run(
-            ["systemctl", "--user", "is-active", service],
-            text=True,
-            capture_output=True,
-            check=False,
-        ).stdout.strip()
-        return f"systemd user service ({state or 'unavailable'})"
     if current_watcher_pid() is not None:
         return "XDG session autostart (active)"
-    if autostart_file.exists():
+    if service_active():
+        return "systemd user service (active)"
+    if service_enabled():
+        return "systemd user service (enabled, inactive)"
+    if autostart_configured():
         return "XDG session autostart (starts next login)"
     return "unavailable"
 
