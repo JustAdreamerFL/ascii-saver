@@ -88,6 +88,16 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           toolchain: stable
+      - name: Cache Rust build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ttfx-rust/target
+          key: ${{ runner.os }}-ttfx-${{ hashFiles('ttfx-rust/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-ttfx-
       - name: Build
         run: |
           cargo build --manifest-path ttfx-rust/Cargo.toml --release --locked
@@ -137,6 +147,13 @@ jobs:
         with:
           name: ttfx-linux-x86_64
           path: ttfx-bin
+      - name: Cache APT downloads
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/apt/archives
+          key: ${{ runner.os }}-apt-${{ inputs.debian_version }}-v1
+          restore-keys: |
+            ${{ runner.os }}-apt-${{ inputs.debian_version }}-
       - name: Install build dependencies
         run: |
           apt-get update
@@ -208,6 +225,15 @@ jobs:
         with:
           name: ttfx-linux-x86_64
           path: ttfx-bin
+      - name: Cache DNF downloads
+        uses: actions/cache@v4
+        with:
+          path: |
+            /var/cache/dnf
+            /var/cache/libdnf5
+          key: ${{ runner.os }}-fedora-${{ matrix.version }}-dnf-v1
+          restore-keys: |
+            ${{ runner.os }}-fedora-${{ matrix.version }}-dnf-
       - name: Install build dependencies
         run: |
           dnf install -y \
@@ -253,6 +279,13 @@ jobs:
         with:
           name: ttfx-linux-x86_64
           path: ttfx-bin
+      - name: Cache Pacman downloads
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/pacman/pkg
+          key: ${{ runner.os }}-arch-${{ inputs.arch_image }}-pacman-v1
+          restore-keys: |
+            ${{ runner.os }}-arch-${{ inputs.arch_image }}-pacman-
       - name: Install build dependencies
         run: |
           pacman -Syu --noconfirm \
