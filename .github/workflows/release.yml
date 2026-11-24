@@ -86,7 +86,6 @@ jobs:
 
   ttfx:
     name: Prebuilt ttfx
-    needs: prepare
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -127,7 +126,6 @@ jobs:
 
   source:
     name: Source archives
-    needs: prepare
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -148,8 +146,17 @@ jobs:
     runs-on: ubuntu-latest
     container: "debian:${{ inputs.debian_version }}"
     steps:
+      - name: Cache APT downloads
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/apt/archives
+          key: ${{ runner.os }}-apt-${{ inputs.debian_version }}-v1
+          restore-keys: |
+            ${{ runner.os }}-apt-${{ inputs.debian_version }}-
       - name: Install git
         run: |
+          echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' \
+            > /etc/apt/apt.conf.d/99keep-downloads
           apt-get update
           apt-get install -y --no-install-recommends git ca-certificates
       - name: Report build target
@@ -163,25 +170,18 @@ jobs:
         with:
           name: ttfx-linux-x86_64
           path: ttfx-bin
-      - name: Cache APT downloads
-        uses: actions/cache@v4
-        with:
-          path: /var/cache/apt/archives
-          key: ${{ runner.os }}-apt-${{ inputs.debian_version }}-v1
-          restore-keys: |
-            ${{ runner.os }}-apt-${{ inputs.debian_version }}-
       - name: Install build dependencies
         run: |
           apt-get update
           apt-get install -y --no-install-recommends \
-            build-essential cargo cmake debhelper devscripts fakeroot \
+            build-essential cmake debhelper devscripts fakeroot \
             libglib2.0-dev libjson-glib-dev libkf6idletime-dev pkg-config \
-            qt6-base-dev rustc
+            qt6-base-dev
       - name: Build
         shell: bash
         run: |
           install -m 0755 ttfx-bin/ttfx .package-ttfx
-          dpkg-buildpackage -us -uc -b
+          dpkg-buildpackage -d -us -uc -b
           mkdir -p artifacts
           cp ../ascii-saver_*_*.deb artifacts/
       - uses: actions/upload-artifact@v4
@@ -192,7 +192,6 @@ jobs:
 
   fedora_matrix:
     name: Resolve Fedora versions
-    needs: prepare
     runs-on: ubuntu-latest
     outputs:
       versions: ${{ steps.matrix.outputs.versions }}
@@ -228,8 +227,17 @@ jobs:
         version: ${{ fromJSON(needs.fedora_matrix.outputs.versions) }}
     container: "fedora:${{ matrix.version }}"
     steps:
+      - name: Cache DNF downloads
+        uses: actions/cache@v4
+        with:
+          path: |
+            /var/cache/dnf
+            /var/cache/libdnf5
+          key: ${{ runner.os }}-fedora-${{ matrix.version }}-dnf-v1
+          restore-keys: |
+            ${{ runner.os }}-fedora-${{ matrix.version }}-dnf-
       - name: Install git
-        run: dnf install -y --setopt=install_weak_deps=False git
+        run: dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs git
       - name: Report build target
         run: |
           echo "### Fedora ${{ matrix.version }} build target" >> "$GITHUB_STEP_SUMMARY"
@@ -241,20 +249,11 @@ jobs:
         with:
           name: ttfx-linux-x86_64
           path: ttfx-bin
-      - name: Cache DNF downloads
-        uses: actions/cache@v4
-        with:
-          path: |
-            /var/cache/dnf
-            /var/cache/libdnf5
-          key: ${{ runner.os }}-fedora-${{ matrix.version }}-dnf-v1
-          restore-keys: |
-            ${{ runner.os }}-fedora-${{ matrix.version }}-dnf-
       - name: Install build dependencies
         run: |
-          dnf install -y --setopt=install_weak_deps=False \
-            cargo cmake gcc-c++ glib2-devel json-glib-devel kf6-kidletime-devel \
-            pkgconf-pkg-config qt6-qtbase-devel rpm-build rust tar gzip
+          dnf install -y --setopt=install_weak_deps=False --setopt=tsflags=nodocs \
+            cmake gcc-c++ glib2-devel json-glib-devel kf6-kidletime-devel \
+            pkgconf-pkg-config qt6-qtbase-devel rpm-build tar gzip
       - name: Build
         shell: bash
         run: |
@@ -265,7 +264,7 @@ jobs:
           tar --exclude=.git --exclude=build --exclude=out --exclude=rpmbuild \
             --transform "s,^\./,ascii-saver-$version/," \
             -czf "$topdir/SOURCES/ascii-saver-$version.tar.gz" .
-          rpmbuild -bb packaging/fedora/ascii-saver.spec \
+          rpmbuild -bb --nodeps packaging/fedora/ascii-saver.spec \
             --define "_topdir $topdir" \
             --define "_sourcedir $topdir/SOURCES"
           cp "$topdir"/RPMS/*/*.rpm artifacts/
@@ -281,6 +280,13 @@ jobs:
     runs-on: ubuntu-latest
     container: "archlinux:${{ inputs.arch_image }}"
     steps:
+      - name: Cache Pacman downloads
+        uses: actions/cache@v4
+        with:
+          path: /var/cache/pacman/pkg
+          key: ${{ runner.os }}-arch-${{ inputs.arch_image }}-pacman-v1
+          restore-keys: |
+            ${{ runner.os }}-arch-${{ inputs.arch_image }}-pacman-
       - name: Install git
         run: pacman -Sy --noconfirm git
       - name: Report build target
@@ -295,13 +301,6 @@ jobs:
         with:
           name: ttfx-linux-x86_64
           path: ttfx-bin
-      - name: Cache Pacman downloads
-        uses: actions/cache@v4
-        with:
-          path: /var/cache/pacman/pkg
-          key: ${{ runner.os }}-arch-${{ inputs.arch_image }}-pacman-v1
-          restore-keys: |
-            ${{ runner.os }}-arch-${{ inputs.arch_image }}-pacman-
       - name: Install build dependencies
         run: |
           pacman -Sy --needed --noconfirm \
