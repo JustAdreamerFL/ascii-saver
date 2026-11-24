@@ -122,6 +122,12 @@ published to GitHub Container Registry:
 - `ghcr.io/justadreamerfl/ascii-saver-build-arch:base`
 
 These images contain the compiler, CMake, Qt/KF6, GLib, JSON-GLib and packaging
-tools. The **Build Environments** workflow rebuilds and publishes them. Run it
-after changing build dependencies or adding a new Fedora release; otherwise a
-new Fedora version has no matching prebuilt image.
+tools. The **Build Environments** workflow rebuilds and publishes them. The
+Release workflow also runs a preflight check: it resolves the current/previous
+Fedora releases, checks GHCR for each required image, and builds only the
+missing ones before starting package jobs. A brand-new Fedora release therefore
+works without a separate manual step, at the cost of one image build.
+
+Debian and Arch images use fixed tags, so an existing image is reused even if
+its upstream base has moved. Re-run **Build Environments** periodically to
+refresh those toolchains.

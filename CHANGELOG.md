@@ -8,6 +8,8 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 ## [Unreleased]
 - Speed up CI package builds with cached dependency images, cached watcher
   binaries and retained package-manager archives.
+- Build missing distro build environments automatically before a release,
+  including new Fedora releases.
 
 ## 0.115.0 (experimental) - 2026-11-24
 - Add an **Idle watcher** switch to Preferences. Turning it on starts the
