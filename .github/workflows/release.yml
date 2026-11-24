@@ -105,9 +105,18 @@ jobs:
           key: ${{ runner.os }}-ttfx-${{ hashFiles('ttfx-rust/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-ttfx-
+      - name: Cache ttfx binary
+        id: ttfx_binary
+        uses: actions/cache@v4
+        with:
+          path: ttfx-rust/target/release/ttfx
+          key: ${{ runner.os }}-ttfx-bin-${{ hashFiles('ttfx-rust/Cargo.lock', 'ttfx-rust/Cargo.toml', 'ttfx-rust/src/**') }}
       - name: Build
+        if: steps.ttfx_binary.outputs.cache-hit != 'true'
         run: |
           cargo build --manifest-path ttfx-rust/Cargo.toml --release --locked
+      - name: Collect ttfx
+        run: |
           mkdir -p out
           cp ttfx-rust/target/release/ttfx out/ttfx
       - uses: actions/upload-artifact@v4
