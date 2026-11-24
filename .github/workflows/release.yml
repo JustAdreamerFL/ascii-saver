@@ -91,10 +91,18 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.branch }}
+      - name: Cache ttfx binary
+        id: ttfx_binary
+        uses: actions/cache@v4
+        with:
+          path: ttfx-rust/target/release/ttfx
+          key: ${{ runner.os }}-ttfx-bin-${{ hashFiles('ttfx-rust/Cargo.lock', 'ttfx-rust/Cargo.toml', 'ttfx-rust/src/**') }}
       - uses: actions-rust-lang/setup-rust-toolchain@v1
+        if: steps.ttfx_binary.outputs.cache-hit != 'true'
         with:
           toolchain: stable
       - name: Cache Rust build
+        if: steps.ttfx_binary.outputs.cache-hit != 'true'
         uses: actions/cache@v4
         with:
           path: |
@@ -104,12 +112,6 @@ jobs:
           key: ${{ runner.os }}-ttfx-${{ hashFiles('ttfx-rust/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-ttfx-
-      - name: Cache ttfx binary
-        id: ttfx_binary
-        uses: actions/cache@v4
-        with:
-          path: ttfx-rust/target/release/ttfx
-          key: ${{ runner.os }}-ttfx-bin-${{ hashFiles('ttfx-rust/Cargo.lock', 'ttfx-rust/Cargo.toml', 'ttfx-rust/src/**') }}
       - name: Build
         if: steps.ttfx_binary.outputs.cache-hit != 'true'
         run: |
@@ -150,11 +152,12 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /var/cache/apt/archives
-          key: ${{ runner.os }}-apt-${{ inputs.debian_version }}-v3
+          key: ${{ runner.os }}-apt-${{ inputs.debian_version }}-v4
           restore-keys: |
             ${{ runner.os }}-apt-${{ inputs.debian_version }}-
       - name: Install build dependencies
         run: |
+          rm -f /etc/apt/apt.conf.d/docker-clean
           printf '%s\n' \
             'APT::Keep-Downloaded-Packages "true";' \
             'Binary::apt::APT::Keep-Downloaded-Packages "true";' \
