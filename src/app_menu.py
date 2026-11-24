@@ -27,7 +27,7 @@ SHORTCUTS = (
 def primary_menu() -> Gio.Menu:
     menu = Gio.Menu()
     system = Gio.Menu()
-    system.append('System Information', 'app.components')
+    system.append('System Information & Diagnostics', 'app.components')
     menu.append_section(None, system)
     # Tools are available together on the Preferences > Tools page.
     standard = Gio.Menu()
@@ -88,36 +88,8 @@ def _row(group, title: str, subtitle: str, value: str | None = None):
 
 
 def show_components(parent):
-    win, page, header = _window(parent, 'System Information')
-    group = Adw.PreferencesGroup(title='Installed components', description='Versions and whether the running watcher matches the installed build.')
-    ui = _row(group, 'Application', 'Running graphical interface')
-    package = _row(group, 'Installed release', 'Files currently installed on disk')
-    ui_status = _row(group, 'GUI status', 'Whether the running interface matches the installed release')
-    renderer = _row(group, 'Animation engine', 'Bundled Rust ttfx renderer')
-    watcher = _row(group, 'Idle watcher', 'Native background service')
-    backend = _row(group, 'Desktop integration', 'Detected watcher backend')
-    status = _row(group, 'Watcher status', 'Checks the actual running executable, not just the PID file')
-    page.add(group)
-    session_group = Adw.PreferencesGroup(title='Environment')
-    session = _row(session_group, 'Desktop session', 'Active session reported by the system')
-    page.add(session_group)
-    labels = {'ui': ui, 'installed': package, 'ui_status': ui_status, 'renderer': renderer,
-              'watcher': watcher, 'backend': backend, 'running': status,
-              'session': session}
-
-    def refresh(*_args):
-        versions = collect_versions()
-        for key, row in labels.items():
-            row.set_subtitle(str(versions[key]))
-        if 'Restart required' in versions['running']:
-            status.add_css_class('warning')
-        else:
-            status.remove_css_class('warning')
-
-    button = Gtk.Button(icon_name='view-refresh-symbolic', tooltip_text='Refresh component status')
-    button.connect('clicked', refresh)
-    header.pack_end(button)
-    refresh()
+    from diagnostics_view import DiagnosticsWindow
+    win = DiagnosticsWindow(parent)
     win.present()
     return win
 
@@ -173,7 +145,7 @@ def show_help(parent):
         ('Explore', (
             ('Effect Library', 'Browse all effects, enable or disable them, and preview an individual effect.'),
             ('Playlist Editor', 'Choose which effects run and in what order.'),
-            ('System Information', 'Compare the installed and running application components after an upgrade.'),
+            ('System Information & Diagnostics', 'Compare installed and running components, and run read-only installation checks.'),
         )),
     )
     for title, rows in groups:
