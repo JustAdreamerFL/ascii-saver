@@ -20,6 +20,13 @@ class PreferencesHIGTests(unittest.TestCase):
         self.assertEqual(shell.count('self.compact_categories.connect("notify::selected"'), 1)
         self.assertIn('self.set_size_request(360, 320)', shell)
 
+    def test_breakpoint_swap_releases_focus_before_sidebar_selection(self):
+        """Resizing across 900sp must not let focus-following row selection switch pages."""
+        shell = source('preferences_shell.py')
+        self.assertIn('wide.connect("apply", release_focus_for_layout_swap)', shell)
+        self.assertIn('wide.connect("unapply", release_focus_for_layout_swap)', shell)
+        self.assertIn('self.set_focus(None)', shell)
+
     def test_preferences_have_no_service_polling_or_duplicated_runtime_states(self):
         shell=source('preferences_shell.py')
         settings=source('settings.py')

@@ -137,6 +137,16 @@ class ShellBuilderMixin:
         wide.add_setter(self.wide_sidebar, "visible", True)
         wide.add_setter(self.compact_categories, "visible", False)
         wide.add_setter(self.header_title, "visible", True)
+
+        def release_focus_for_layout_swap(*_args):
+            # The breakpoint hides the focused compact selector. GTK then
+            # relocates focus into the newly mapped navigation ListBox, whose
+            # selection follows focus and would switch the visible page during
+            # a resize. Drop focus before that relocation happens.
+            self.set_focus(None)
+
+        wide.connect("apply", release_focus_for_layout_swap)
+        wide.connect("unapply", release_focus_for_layout_swap)
         self.add_breakpoint(wide)
         self.sections.connect("notify::visible-child-name", reflect_section)
         self.notice = Gtk.Label()  # Messages appear as toasts, not permanent rows.
