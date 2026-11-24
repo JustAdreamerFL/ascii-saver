@@ -51,6 +51,8 @@ class AdwaitaArchitectureTests(unittest.TestCase):
         self.assertIn('self.columns.set_show_content(True)', source)
         self.assertIn('Adw.EntryRow(title="Playlist name")', source)
         self.assertIn('Adw.SwitchRow(title="Enabled")', source)
+        self.assertIn("self.chooser.add_css_class('navigation-sidebar')", source)
+        self.assertNotIn("self.chooser.add_css_class('boxed-list')", source)
 
     def test_specialized_windows_use_adwaita_chrome(self):
         for name, marker in (

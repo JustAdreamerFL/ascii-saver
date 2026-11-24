@@ -48,7 +48,7 @@ class Editor(Adw.ApplicationWindow):
         left.append(Gtk.Label(label='Playlists run from top to bottom.',
                               xalign=0, wrap=True, css_classes=['dim-label']))
         self.chooser = Gtk.ListBox(selection_mode=Gtk.SelectionMode.SINGLE)
-        self.chooser.add_css_class('boxed-list')
+        self.chooser.add_css_class('navigation-sidebar')
         self.chooser.connect('row-selected', self.select)
         ls = Gtk.ScrolledWindow(min_content_height=280)
         ls.set_vexpand(True)
@@ -357,7 +357,8 @@ class Editor(Adw.ApplicationWindow):
         self.loading=True
         while row:=self.chooser.get_row_at_index(0):self.chooser.remove(row)
         for p in self.items:
-            label=Gtk.Label(label=('● ' if p['enabled'] else '○ ')+p['name'],xalign=0)
+            label=Gtk.Label(label=('● ' if p['enabled'] else '○ ')+p['name'],xalign=0,
+                            margin_start=12,margin_end=12,margin_top=9,margin_bottom=9)
             row=Gtk.ListBoxRow();row.set_child(label);self.chooser.append(row)
         self.loading=False
         if self.items:
