@@ -1,3 +1,10 @@
+ascii-saver (0.113.0) unstable; urgency=medium
+
+  * Fix packaged controller resolving per-user launcher paths instead of
+    /usr/bin from a system package installation.
+
+ -- JustAdreamerFL <Slavouli@gmail.com>  Tue, 24 Nov 2026 00:18:00 +0000
+
 ascii-saver (0.112.0) unstable; urgency=medium
 
   * Native package mode for install-online.sh with distribution detection.

@@ -1,5 +1,7 @@
 # ASCII Saver
 
+> **V113.0 (experimental, 2026-11-24):** Fixes starting the screensaver from a system package by resolving `/usr/bin/ascii-saver` and `/usr/bin/ascii-saver-settings` instead of leftover per-user launcher paths. See [RELEASE-V113.0.md](docs/releases/RELEASE-V113.0.md).
+
 > **V112 (experimental, 2026-11-24):** The online installer now installs the matching Debian, Fedora or Arch package through the system package manager, with `--source` available for development installs. Release notes highlight the newest package for each distribution and collapse older Fedora builds. See [RELEASE-V112.md](docs/releases/RELEASE-V112.md).
 
 > **V111 (experimental, 2026-11-23):** Native Debian, Fedora and Arch packages are published with the source archives, using system Python/GTK and prebuilt watchers/ttfx, with no venv or Cargo required on the installed system. The manual Release workflow now builds and publishes all artifacts together. See [RELEASE-V111.md](docs/releases/RELEASE-V111.md).

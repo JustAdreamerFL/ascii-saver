@@ -1,4 +1,7 @@
-import re
+import os
+import subprocess
+import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -61,6 +64,40 @@ class PackagingTests(unittest.TestCase):
         self.assertIn("docker run --rm fedora:latest", workflow)
         self.assertIn("latest - 1", workflow)
         self.assertIn("default: base-devel", workflow)
+
+
+    def test_packaged_controller_resolves_system_launchers(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            bindir = Path(tmp) / "bin"
+            appdir = Path(tmp) / "lib" / "ascii-saver"
+            bindir.mkdir()
+            appdir.mkdir(parents=True)
+            for name in ("ascii-saver", "ascii-saver-settings"):
+                launcher = bindir / name
+                launcher.write_text("#!/bin/sh\n", encoding="utf-8")
+                launcher.chmod(0o755)
+            env = os.environ.copy()
+            env["ASCII_SAVER_PACKAGE_DIR"] = str(appdir)
+            env["PATH"] = f"{bindir}:{env['PATH']}"
+            env["XDG_CURRENT_DESKTOP"] = "KDE"
+            result = subprocess.run(
+                [
+                    sys.executable,
+                    "-c",
+                    "import ctl; print(ctl.launcher); print(ctl.settings_launcher); "
+                    "print(ctl.watcher_binary); print(ctl.ttfx_binary)",
+                ],
+                cwd=ROOT / "src",
+                env=env,
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            lines = result.stdout.splitlines()
+            self.assertEqual(lines[0], str(bindir / "ascii-saver"))
+            self.assertEqual(lines[1], str(bindir / "ascii-saver-settings"))
+            self.assertEqual(lines[2], str(appdir / "ascii-saver-watcher-kde"))
+            self.assertEqual(lines[3], str(appdir / "ttfx"))
 
     def test_package_cache_is_ignored(self):
         ignore = (ROOT / ".gitignore").read_text(encoding="utf-8")

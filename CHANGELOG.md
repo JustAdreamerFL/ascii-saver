@@ -7,6 +7,11 @@ ASCII Saver release history, newest first. Experimental source-level fixes still
 
 ## [Unreleased]
 
+## 0.113.0 (experimental) - 2026-11-24
+- Fix the packaged controller resolving launchers under `~/.local/bin` instead
+  of the system `/usr/bin` paths. Starting the screensaver from the installed
+  package now works.
+
 ## 0.112.0 (experimental) - 2026-11-24
 - Make `install-online.sh` the default native user installer: detect the
   distribution/release/architecture, verify the matching package from

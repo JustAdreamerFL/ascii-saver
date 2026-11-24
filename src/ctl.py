@@ -37,27 +37,47 @@ config_dir = config_home / "ascii-saver"
 config_file = config_dir / "config.json"
 package_dir = os.environ.get("ASCII_SAVER_PACKAGE_DIR")
 data_dir = Path(package_dir).expanduser() if package_dir else data_home / "ascii-saver"
-watcher_binary = Path(
-    os.environ.get("ASCII_SAVER_WATCHER_BINARY", data_dir / "ascii-saver-watcher")
-)
-ttfx_binary = Path(os.environ.get("ASCII_SAVER_TTFX", data_dir / "venv" / "bin" / "ttfx"))
-python_binary = Path(
-    os.environ.get("ASCII_SAVER_PYTHON", data_dir / "venv" / "bin" / "python")
-)
-launcher = Path(
-    os.environ.get("ASCII_SAVER_LAUNCHER", home / ".local" / "bin" / "ascii-saver")
-)
-settings_launcher = Path(
-    os.environ.get(
-        "ASCII_SAVER_SETTINGS_LAUNCHER", home / ".local" / "bin" / "ascii-saver-settings"
+
+
+def _packaged_command(name: str) -> Path:
+    return Path(shutil.which(name) or f"/usr/bin/{name}")
+
+
+if package_dir:
+    backend = os.environ.get("ASCII_SAVER_BACKEND")
+    if not backend:
+        desktop = os.environ.get("XDG_CURRENT_DESKTOP", "").upper()
+        backend = "gnome" if "GNOME" in desktop else "kde"
+    watcher_default = data_dir / f"ascii-saver-watcher-{backend}"
+    ttfx_default = data_dir / "ttfx"
+    python_default = Path(shutil.which("python3") or "/usr/bin/python3")
+    launcher_default = _packaged_command("ascii-saver")
+    settings_default = _packaged_command("ascii-saver-settings")
+    autostart_default = Path(
+        "/etc/xdg/autostart/com.github.justadreamerfl.asciisaver.Watcher.desktop"
     )
+else:
+    watcher_default = data_dir / "ascii-saver-watcher"
+    ttfx_default = data_dir / "venv" / "bin" / "ttfx"
+    python_default = data_dir / "venv" / "bin" / "python"
+    launcher_default = home / ".local" / "bin" / "ascii-saver"
+    settings_default = home / ".local" / "bin" / "ascii-saver-settings"
+    autostart_default = (
+        config_home / "autostart" / "com.github.justadreamerfl.asciisaver.Watcher.desktop"
+    )
+
+watcher_binary = Path(
+    os.environ.get("ASCII_SAVER_WATCHER_BINARY", watcher_default)
+)
+ttfx_binary = Path(os.environ.get("ASCII_SAVER_TTFX", ttfx_default))
+python_binary = Path(os.environ.get("ASCII_SAVER_PYTHON", python_default))
+launcher = Path(os.environ.get("ASCII_SAVER_LAUNCHER", launcher_default))
+settings_launcher = Path(
+    os.environ.get("ASCII_SAVER_SETTINGS_LAUNCHER", settings_default)
 )
 service = "ascii-saver.service"
 autostart_file = Path(
-    os.environ.get(
-        "ASCII_SAVER_AUTOSTART_FILE",
-        config_home / "autostart" / "com.github.justadreamerfl.asciisaver.Watcher.desktop",
-    )
+    os.environ.get("ASCII_SAVER_AUTOSTART_FILE", autostart_default)
 )
 VERSION = read_version()
 LAUNCH_TIMEOUT_SECONDS = 3.0
