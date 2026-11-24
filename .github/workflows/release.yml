@@ -150,7 +150,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /var/cache/apt/archives
-          key: ${{ runner.os }}-apt-${{ inputs.debian_version }}-v1
+          key: ${{ runner.os }}-apt-${{ inputs.debian_version }}-v2
           restore-keys: |
             ${{ runner.os }}-apt-${{ inputs.debian_version }}-
       - name: Install build dependencies
@@ -229,7 +229,7 @@ jobs:
           path: |
             /var/cache/dnf
             /var/cache/libdnf5
-          key: ${{ runner.os }}-fedora-${{ matrix.version }}-dnf-v1
+          key: ${{ runner.os }}-fedora-${{ matrix.version }}-dnf-v2
           restore-keys: |
             ${{ runner.os }}-fedora-${{ matrix.version }}-dnf-
       - name: Install build dependencies
@@ -278,7 +278,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: /var/cache/pacman/pkg
-          key: ${{ runner.os }}-arch-${{ inputs.arch_image }}-pacman-v1
+          key: ${{ runner.os }}-arch-${{ inputs.arch_image }}-pacman-v2
           restore-keys: |
             ${{ runner.os }}-arch-${{ inputs.arch_image }}-pacman-
       - name: Install build dependencies
