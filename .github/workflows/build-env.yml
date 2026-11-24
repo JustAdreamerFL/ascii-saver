@@ -1,0 +1,47 @@
+name: Build Environments
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build:
+    name: ${{ matrix.image }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - image: ascii-saver-build-debian
+            dockerfile: debian.Dockerfile
+            tag: latest
+            build_args: ""
+          - image: ascii-saver-build-fedora
+            dockerfile: fedora.Dockerfile
+            tag: "45"
+            build_args: FEDORA_VERSION=45
+          - image: ascii-saver-build-fedora
+            dockerfile: fedora.Dockerfile
+            tag: "44"
+            build_args: FEDORA_VERSION=44
+          - image: ascii-saver-build-arch
+            dockerfile: arch.Dockerfile
+            tag: base
+            build_args: ""
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: .github/images
+          file: .github/images/${{ matrix.dockerfile }}
+          push: true
+          build-args: ${{ matrix.build_args }}
+          tags: ghcr.io/justadreamerfl/${{ matrix.image }}:${{ matrix.tag }}
